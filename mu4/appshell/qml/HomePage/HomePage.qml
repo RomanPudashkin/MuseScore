@@ -5,6 +5,7 @@ import MuseScore.Dock 1.0
 import MuseScore.UiComponents 1.0
 import MuseScore.Scores 1.0
 import MuseScore.Extensions 1.0
+import MuseScore.Account 1.0
 
 DockPage {
     id: homePage
@@ -19,22 +20,33 @@ DockPage {
             width: 200
             color: ui.theme.window
 
-            HomeMenu {
+            Column {
+                anchors.fill: parent
 
-                model: [
-                    { "name": "scores", "title": "Scores" },
-                    { "name": "extensions", "title": "Add-ons" },
-                    { "name": "audio", "title": "Audio & VST" },
-                    { "name": "feautured", "title": "Featured" },
-                    { "name": "learn", "title": "Learn" },
-                    { "name": "support", "title": "Support" },
-                    { "name": "account", "title": "Account" }
-                ]
-
-                onSelected: {
-                    homeCentral.load(name)
+                AccountInfo {
+                    height: 100
+                    width: parent.width
                 }
 
+                HomeMenu {
+                    height: 200
+                    width: parent.width
+
+                    model: [
+                        { "name": "scores", "title": "Scores" },
+                        { "name": "extensions", "title": "Add-ons" },
+                        { "name": "audio", "title": "Audio & VST" },
+                        { "name": "feautured", "title": "Featured" },
+                        { "name": "learn", "title": "Learn" },
+                        { "name": "support", "title": "Support" },
+                        { "name": "account", "title": "Account" }
+                    ]
+
+                    onSelected: {
+                        homeCentral.load(name)
+                    }
+
+                }
             }
         }
     ]
