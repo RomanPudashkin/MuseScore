@@ -23,6 +23,7 @@
 #include "mu4/scenes/palette/internal/palette/masterpalette.h"
 #include "mu4/account/internal/loginmanager.h"
 #include "mu3paletteadapter.h"
+#include "mu3loginmanageradapter.h"
 
 #include "config.h"
 
@@ -1069,6 +1070,7 @@ MuseScore::MuseScore()
 {
     mu::framework::ioc()->registerExportNoDelete<mu::framework::IMainWindow>("mscore", this);
     mu::framework::ioc()->registerExport<mu::scene::palette::IPaletteAdapter>("mscore", new MU3PaletteAdapter());
+    mu::framework::ioc()->registerExport<mu::account::ILoginManagerAdapter>("mscore", new MU3LoginManagerAdapter());
 
     _tourHandler = new TourHandler(this);
     qApp->installEventFilter(_tourHandler);
@@ -2063,8 +2065,6 @@ MuseScore::MuseScore()
     if (!converterMode && !pluginMode) {
         _progressDialog = new QProgressDialog(this);
         _loginManager = new LoginManager(getAction(saveOnlineMenuItem), _progressDialog, this);
-
-        connect(_loginManager, &LoginManager::loginDialogRequested, this, &MuseScore::showLoginDialog);
     }
 
     connect(qApp, &QGuiApplication::focusWindowChanged, this, &MuseScore::onFocusWindowChanged);
@@ -2087,6 +2087,7 @@ MuseScore::~MuseScore()
 
     mu::framework::ioc()->unregisterExport<mu::framework::IMainWindow>();
     mu::framework::ioc()->unregisterExport<mu::scene::palette::IPaletteAdapter>();
+    mu::framework::ioc()->unregisterExport<mu::account::ILoginManagerAdapter>();
 }
 
 //---------------------------------------------------------
@@ -7385,7 +7386,7 @@ bool MuseScore::canSaveMp3()
 //   saveMp3
 //---------------------------------------------------------
 
-bool MuseScore::saveMp3(Score* score, const QString& name)
+bool MuseScore::saveMp3(Score* score, const QString& name, int preferedMp3Bitrate)
 {
     QFile file(name);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -7398,7 +7399,7 @@ bool MuseScore::saveMp3(Score* score, const QString& name)
         return false;
     }
     bool wasCanceled = false;
-    bool res = saveMp3(score, &file, wasCanceled);
+    bool res = saveMp3(score, &file, wasCanceled, preferedMp3Bitrate);
     file.close();
     if (wasCanceled || !res) {
         file.remove();
@@ -7406,7 +7407,7 @@ bool MuseScore::saveMp3(Score* score, const QString& name)
     return res;
 }
 
-bool MuseScore::saveMp3(Score* score, QIODevice* device, bool& wasCanceled)
+bool MuseScore::saveMp3(Score* score, QIODevice* device, bool& wasCanceled, int preferedMp3Bitrate)
 {
 #ifndef USE_LAME
     Q_UNUSED(score);
@@ -7466,7 +7467,9 @@ bool MuseScore::saveMp3(Score* score, QIODevice* device, bool& wasCanceled)
 
     int oldSampleRate = MScore::sampleRate;
     int sampleRate = preferences.getInt(PREF_EXPORT_AUDIO_SAMPLERATE);
-    exporter.setBitrate(preferences.getInt(PREF_EXPORT_MP3_BITRATE));
+
+    preferedMp3Bitrate = preferedMp3Bitrate > 0 ? preferedMp3Bitrate : preferences.getInt(PREF_EXPORT_MP3_BITRATE);
+    exporter.setBitrate(preferedMp3Bitrate);
 
     int inSamples = exporter.initializeStream(channels, sampleRate);
     if (inSamples < 0) {
