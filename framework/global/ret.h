@@ -43,6 +43,9 @@ public:
         UiFirst         = 100,
         UiLast          = 199,
 
+        ExtensionsFirst = 200,
+        ExtensionsLast  = 299,
+
         AudioFirst      = 300,
         AudioLast       = 399,
 

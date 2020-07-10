@@ -18,7 +18,15 @@
 //=============================================================================
 #include "extensionsmodule.h"
 
+#include <QQmlEngine>
+
+#include "internal/extensionsconfiguration.h"
+#include "internal/extensionscontroller.h"
+#include "view/extensionlistmodel.h"
+
 using namespace mu::extensions;
+
+static ExtensionsConfiguration* m_extensionsConfiguration = new ExtensionsConfiguration();
 
 static void extensions_init_qrc()
 {
@@ -30,6 +38,12 @@ std::string ExtensionsModule::moduleName() const
     return "extensions";
 }
 
+void ExtensionsModule::registerExports()
+{
+    framework::ioc()->registerExport<IExtensionsConfiguration>(moduleName(), m_extensionsConfiguration);
+    framework::ioc()->registerExport<IExtensionsController>(moduleName(), new ExtensionsController());
+}
+
 void ExtensionsModule::registerResources()
 {
     extensions_init_qrc();
@@ -37,4 +51,10 @@ void ExtensionsModule::registerResources()
 
 void ExtensionsModule::registerUiTypes()
 {
+    qmlRegisterType<ExtensionListModel>("MuseScore.Extensions", 1, 0, "ExtensionListModel");
+}
+
+void ExtensionsModule::onInit()
+{
+    m_extensionsConfiguration->init();
 }

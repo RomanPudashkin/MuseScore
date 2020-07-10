@@ -16,25 +16,29 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_EXTENSIONS_EXTENSIONSSMODULE_H
-#define MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#ifndef MU_EXTENSIONS_EXTENSIONSCONTROLLER_H
+#define MU_EXTENSIONS_EXTENSIONSCONTROLLER_H
 
-#include "modularity/imodulesetup.h"
+#include "modularity/ioc.h"
+#include "../iextensionscontroller.h"
+#include "../iextensionsconfiguration.h"
 
 namespace mu {
 namespace extensions {
-class ExtensionsModule : public framework::IModuleSetup
+class ExtensionsController : public IExtensionsController
 {
+    INJECT(extensions, IExtensionsConfiguration, configuration)
+
 public:
+    ExtensionsController() = default;
 
-    std::string moduleName() const;
+    Ret refreshExtensionList() override;
+    ValCh<ExtensionList> extensionList() override;
 
-    void registerExports();
-    void registerResources() override;
-    void registerUiTypes() override;
-    void onInit() override;
+private:
+    RetVal<ExtensionList> parseExtensionConfig(const QByteArray& json) const;
 };
 }
 }
 
-#endif // MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#endif // MU_EXTENSIONS_EXTENSIONSCONTROLLER_H

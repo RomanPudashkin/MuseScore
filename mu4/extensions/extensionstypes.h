@@ -16,25 +16,46 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_EXTENSIONS_EXTENSIONSSMODULE_H
-#define MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#ifndef MU_EXTENSIONS_EXTENSIONSTYPES_H
+#define MU_EXTENSIONS_EXTENSIONSTYPES_H
 
-#include "modularity/imodulesetup.h"
+#include <QString>
+#include <QJsonObject>
 
 namespace mu {
 namespace extensions {
-class ExtensionsModule : public framework::IModuleSetup
+enum class ExtensionStatus
 {
-public:
-
-    std::string moduleName() const;
-
-    void registerExports();
-    void registerResources() override;
-    void registerUiTypes() override;
-    void onInit() override;
+    Undefined,
+    Installed,
+    NoInstalled,
+    NeedUpdate
 };
+
+struct Extension
+{
+    QString code;
+    QString name;
+    QString description;
+    QString fileName;
+    double fileSize = 0.0;
+    QString version;
+    ExtensionStatus status = ExtensionStatus::Undefined;
+
+    Extension() {}
+
+    QJsonObject toJson() const
+    {
+        return { { "name", name },
+                 { "description", description },
+                 { "fileName", fileName },
+                 { "fileSize", fileSize },
+                 { "version", version } };
+    }
+};
+
+using ExtensionList = QList<Extension>;
 }
 }
 
-#endif // MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#endif // MU_EXTENSIONS_EXTENSIONSTYPES_H

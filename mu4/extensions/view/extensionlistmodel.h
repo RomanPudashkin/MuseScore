@@ -16,25 +16,46 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_EXTENSIONS_EXTENSIONSSMODULE_H
-#define MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#ifndef MU_EXTENSIONS_EXTENSIONLISTMODEL_H
+#define MU_EXTENSIONS_EXTENSIONLISTMODEL_H
 
-#include "modularity/imodulesetup.h"
+#include <QAbstractListModel>
+
+#include "modularity/ioc.h"
+#include "../iextensionscontroller.h"
+#include "async/asyncable.h"
 
 namespace mu {
 namespace extensions {
-class ExtensionsModule : public framework::IModuleSetup
+class ExtensionListModel : public QAbstractListModel, async::Asyncable
 {
+    Q_OBJECT
+
+    INJECT(extensions, IExtensionsController, extensionsController)
+
 public:
+    ExtensionListModel(QObject* parent = nullptr);
 
-    std::string moduleName() const;
+    enum Roles {
+        rName = Qt::UserRole + 1,
+        rVersion,
+        rFileSize,
+        rStatus
+    };
 
-    void registerExports();
-    void registerResources() override;
-    void registerUiTypes() override;
-    void onInit() override;
+    QVariant data(const QModelIndex& index, int role) const override;
+
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    QHash<int,QByteArray> roleNames() const override;
+
+    Q_INVOKABLE void load();
+    Q_INVOKABLE void updateList();
+
+private:
+    QHash<int, QByteArray> m_roles;
+    QList<Extension> m_list;
 };
 }
 }
 
-#endif // MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#endif // MU_EXTENSIONS_EXTENSIONLISTMODEL_H

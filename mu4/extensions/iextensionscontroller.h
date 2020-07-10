@@ -16,25 +16,28 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_EXTENSIONS_EXTENSIONSSMODULE_H
-#define MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#ifndef MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
+#define MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
 
-#include "modularity/imodulesetup.h"
+#include "modularity/imoduleexport.h"
+#include "retval.h"
+
+#include "extensionstypes.h"
 
 namespace mu {
 namespace extensions {
-class ExtensionsModule : public framework::IModuleSetup
+class IExtensionsController : MODULE_EXPORT_INTERFACE
 {
+    INTERFACE_ID(IExtensionsController)
+
 public:
+    virtual ~IExtensionsController() = default;
 
-    std::string moduleName() const;
+    virtual Ret refreshExtensionList() = 0;
 
-    void registerExports();
-    void registerResources() override;
-    void registerUiTypes() override;
-    void onInit() override;
+    virtual ValCh<ExtensionList> extensionList() = 0;
 };
 }
 }
 
-#endif // MU_EXTENSIONS_EXTENSIONSSMODULE_H
+#endif // MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
