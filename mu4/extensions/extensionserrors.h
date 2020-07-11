@@ -30,10 +30,19 @@ enum class Err {
     UnknownError    = int(Ret::Code::ExtensionsFirst),
 
     ErrorParseConfig,
-    ErrorLoadingExtension
+    ErrorLoadingExtension,
+
+    UnpackDestinationReadOnly,
+    UnpackNoFreeSpace,
+    UnpackInvalidStructure,
+    UnpackInvalidOldExtension,
+    UnpackPreviousVersionExists,
+    UnpackErrorRemovePreviousVersion,
+    UnpackNoActualVersion,
+    UnpackError
 };
 
-inline mu::Ret make_ret(Err e)
+inline Ret make_ret(Err e)
 {
     switch (e) {
     case Err::Undefined: return Ret(static_cast<int>(Ret::Code::Undefined));
@@ -42,7 +51,23 @@ inline mu::Ret make_ret(Err e)
     case Err::ErrorParseConfig: return Ret(static_cast<int>(Err::ErrorParseConfig),
                                            trc("extensions", "Error parsing response from server"));
     case Err::ErrorLoadingExtension: return Ret(static_cast<int>(Err::ErrorLoadingExtension),
-                                        trc("extensions", "Error loading extension"));
+                                                trc("extensions", "Error loading extension"));
+    case Err::UnpackDestinationReadOnly: return Ret(static_cast<int>(Err::UnpackDestinationReadOnly),
+                                                    trc("extensions", "Cannot import extension on read-only storage"));
+    case Err::UnpackNoFreeSpace: return Ret(static_cast<int>(Err::UnpackNoFreeSpace),
+                                            trc("extensions", "Cannot import extension on full storage"));
+    case Err::UnpackInvalidStructure: return Ret(static_cast<int>(Err::UnpackInvalidStructure),
+                                                 trc("extensions", "Invalid archive structure"));
+    case Err::UnpackInvalidOldExtension: return Ret(static_cast<int>(Err::UnpackInvalidOldExtension),
+                                                    trc("extensions", "Invalid old extension"));
+    case Err::UnpackPreviousVersionExists: return Ret(static_cast<int>(Err::UnpackPreviousVersionExists),
+                                                      trc("extensions", "Previous version of extension exists"));
+    case Err::UnpackErrorRemovePreviousVersion: return Ret(static_cast<int>(Err::UnpackErrorRemovePreviousVersion),
+                                                           trc("extensions", "Error removing previous version"));
+    case Err::UnpackNoActualVersion: return Ret(static_cast<int>(Err::UnpackNoActualVersion),
+                                                trc("extensions", "A newer version is already installed"));
+    case Err::UnpackError: return Ret(static_cast<int>(Err::UnpackError),
+                                      trc("extensions", "Error unpacking extension"));
     }
 
     return Ret(static_cast<int>(e));

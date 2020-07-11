@@ -28,12 +28,15 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/extensionsmodule.h
     ${CMAKE_CURRENT_LIST_DIR}/iextensionscontroller.h
     ${CMAKE_CURRENT_LIST_DIR}/iextensionsconfiguration.h
+    ${CMAKE_CURRENT_LIST_DIR}/iextensionunpacker.h
     ${CMAKE_CURRENT_LIST_DIR}/extensionstypes.h
     ${CMAKE_CURRENT_LIST_DIR}/extensionserrors.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/extensionscontroller.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/extensionscontroller.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/extensionsconfiguration.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/extensionsconfiguration.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/extensionunpacker.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/extensionunpacker.h
     ${CMAKE_CURRENT_LIST_DIR}/view/extensionlistmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/extensionlistmodel.h
     )

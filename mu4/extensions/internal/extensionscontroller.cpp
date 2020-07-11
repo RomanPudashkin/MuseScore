@@ -78,20 +78,35 @@ Ret ExtensionsController::install(const QString &extensionCode)
     ValCh<ExtensionHash> extensions = configuration()->extensions();
     QString fileName = extensions.val.value(extensionCode).fileName;
 
-    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/Extensions/";
+    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/extensions";
     if (!extensionsDir.exists()) {
         extensionsDir.mkpath(extensionsDir.absolutePath());
     }
 
+    QString extensionArchivePath = extensionsDir.absolutePath() + "/" + fileName;
+
     Ms::DownloadUtils* js = new Ms::DownloadUtils();
     js->setTarget(configuration()->extensionsFileServerUrl().toString() + fileName);
-    js->setLocalFile(extensionsDir.absolutePath() + "/" + fileName);
+    js->setLocalFile(extensionArchivePath);
     js->download(true);
 
     if (!js->saveFile()) {
         LOGE() << "Error save file";
         return make_ret(Err::ErrorLoadingExtension);
     }
+
+    QDir extensionsShareDir(io::pathToQString(globalConfiguration()->sharePath()) + "/extensions");
+    if (!extensionsShareDir.exists()) {
+        extensionsShareDir.mkpath(extensionsShareDir.absolutePath());
+    }
+
+    Ret unpack = extensionUnpacker()->unpack(extensionArchivePath, extensionsShareDir.absolutePath());
+    if (!unpack) {
+        LOGE() << "Error unpack" << unpack.code();
+        return unpack;
+    }
+
+    // TODO send update extension
 
     return make_ret(Err::NoError);
 }
@@ -133,6 +148,6 @@ RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArra
 
 bool ExtensionsController::isExtensionExists(const QString &extensionCode) const
 {
-    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/Extensions/" + extensionCode;
+    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
     return extensionDir.exists();
 }
