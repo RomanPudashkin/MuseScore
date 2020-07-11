@@ -72,10 +72,16 @@ void ExtensionListModel::load()
     m_list = extensions.val.values();
     endResetModel();
 
-    extensions.ch.onReceive(this, [this](const ExtensionHash& extensions) {
-        beginResetModel();
-        m_list = extensions.values();
-        endResetModel();
+    RetCh<Extension> extensionChanged = extensionsController()->extensionChanged();
+    extensionChanged.ch.onReceive(this, [this](const Extension& newExtension) {
+        for (int i = 0; i < m_list.count(); i++) {
+            if (m_list[i].code == newExtension.code) {
+                m_list[i] = newExtension;
+                QModelIndex index = createIndex(0, i);
+                emit dataChanged(index, index);
+                return;
+            }
+        }
     });
 }
 

@@ -106,9 +106,26 @@ Ret ExtensionsController::install(const QString &extensionCode)
         return unpack;
     }
 
-    // TODO send update extension
+    ExtensionHash extensionHash = this->extensions().val;
+
+    extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
+
+    Ret ret = configuration()->setExtensionHash(extensionHash);
+    if (!ret) {
+        return ret;
+    }
+
+    m_extensionChanged.send(extensionHash[extensionCode]);
 
     return make_ret(Err::NoError);
+}
+
+RetCh<Extension> ExtensionsController::extensionChanged()
+{
+    RetCh<Extension> result;
+    result.ret = make_ret(Err::NoError);
+    result.ch = m_extensionChanged;
+    return result;
 }
 
 RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray &json) const

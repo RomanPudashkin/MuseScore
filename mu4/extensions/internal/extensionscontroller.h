@@ -22,6 +22,7 @@
 #include "modularity/ioc.h"
 #include "../iextensionscontroller.h"
 #include "../iextensionsconfiguration.h"
+#include "../iextensionunpacker.h"
 #include "iglobalconfiguration.h"
 
 namespace mu {
@@ -29,6 +30,7 @@ namespace extensions {
 class ExtensionsController : public IExtensionsController
 {
     INJECT(extensions, IExtensionsConfiguration, configuration)
+    INJECT(extensions, IExtensionsUnpacker, extensionUnpacker)
     INJECT(extensions, framework::IGlobalConfiguration, globalConfiguration)
 
 public:
@@ -38,9 +40,14 @@ public:
     ValCh<ExtensionHash> extensions() override;
     Ret install(const QString& extensionCode) override;
 
+    RetCh<Extension> extensionChanged() override;
+
 private:
     RetVal<ExtensionHash> parseExtensionConfig(const QByteArray& json) const;
     bool isExtensionExists(const QString &extensionCode) const;
+
+private:
+    async::Channel<Extension> m_extensionChanged;
 };
 }
 }
