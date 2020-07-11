@@ -88,6 +88,10 @@ void ExtensionListModel::load()
 void ExtensionListModel::updateList()
 {
     extensionsController()->refreshExtensions();
+
+    beginResetModel();
+    m_list = extensionsController()->extensions().val.values();
+    endResetModel();
 }
 
 void ExtensionListModel::install(int index)
@@ -118,5 +122,13 @@ void ExtensionListModel::uninstall(int index)
 
 void ExtensionListModel::update(int index)
 {
+    if (index < 0 || index > m_list.count()) {
+        return;
+    }
 
+    Ret ret = extensionsController()->update(m_list.at(index).code);
+    if (!ret) {
+        LOGE() << "Error" << ret.code();
+        return;
+    }
 }

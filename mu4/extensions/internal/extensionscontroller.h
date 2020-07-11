@@ -39,7 +39,8 @@ public:
     Ret refreshExtensions() override;
     ValCh<ExtensionHash> extensions() override;
     Ret install(const QString& extensionCode) override;
-    Ret uninstall(const QString &extensionCode);
+    Ret uninstall(const QString &extensionCode) override;
+    Ret update(const QString &extensionCode) override;
 
     RetCh<Extension> extensionChanged() override;
 
@@ -48,6 +49,9 @@ private:
     bool isExtensionExists(const QString &extensionCode) const;
 
     RetVal<ExtensionHash> correctExtensionsStates(ExtensionHash& extensions) const;
+
+    RetVal<QString> downloadExtension(const QString& extensionCode) const;
+    Ret removeExtension(const QString& extensionCode) const;
 
 private:
     async::Channel<Extension> m_extensionChanged;

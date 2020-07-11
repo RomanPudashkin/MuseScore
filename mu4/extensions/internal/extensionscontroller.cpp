@@ -76,27 +76,14 @@ ValCh<ExtensionHash> ExtensionsController::extensions()
     return extensionHash;
 }
 
-Ret ExtensionsController::install(const QString &extensionCode)
+Ret ExtensionsController::install(const QString& extensionCode)
 {
-    ValCh<ExtensionHash> extensions = configuration()->extensions();
-    QString fileName = extensions.val.value(extensionCode).fileName;
-
-    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/extensions";
-    if (!extensionsDir.exists()) {
-        extensionsDir.mkpath(extensionsDir.absolutePath());
+    RetVal<QString> download = downloadExtension(extensionCode);
+    if (!download.ret) {
+        return download.ret;
     }
 
-    QString extensionArchivePath = extensionsDir.absolutePath() + "/" + fileName;
-
-    Ms::DownloadUtils* js = new Ms::DownloadUtils();
-    js->setTarget(configuration()->extensionsFileServerUrl().toString() + fileName);
-    js->setLocalFile(extensionArchivePath);
-    js->download(true);
-
-    if (!js->saveFile()) {
-        LOGE() << "Error save file";
-        return make_ret(Err::ErrorLoadingExtension);
-    }
+    QString extensionArchivePath = download.val;
 
     QDir extensionsShareDir(io::pathToQString(globalConfiguration()->sharePath()) + "/extensions");
     if (!extensionsShareDir.exists()) {
@@ -126,7 +113,7 @@ Ret ExtensionsController::install(const QString &extensionCode)
     return make_ret(Err::NoError);
 }
 
-Ret ExtensionsController::uninstall(const QString &extensionCode)
+Ret ExtensionsController::uninstall(const QString& extensionCode)
 {
     ExtensionHash extensionHash = extensions().val;
 
@@ -134,15 +121,59 @@ Ret ExtensionsController::uninstall(const QString &extensionCode)
         return make_ret(Err::ErrorExtensionNotFound);
     }
 
-    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
-    if (!extensionDir.removeRecursively()) {
-        return make_ret(Err::ErrorRemoveExtensionDirectory);
+    Ret remove = removeExtension(extensionCode);
+    if (!remove) {
+        return remove;
     }
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::NoInstalled;
+    Ret ret = configuration()->setExtensionHash(extensionHash);
+    if (!ret) {
+        return ret;
+    }
+
     m_extensionChanged.send(extensionHash[extensionCode]);
 
-    return configuration()->setExtensionHash(extensionHash);
+    return make_ret(Err::NoError);
+}
+
+Ret ExtensionsController::update(const QString& extensionCode)
+{
+    RetVal<QString> download = downloadExtension(extensionCode);
+    if (!download.ret) {
+        return download.ret;
+    }
+
+    QString extensionArchivePath = download.val;
+
+    Ret remove = removeExtension(extensionCode);
+    if (!remove) {
+        return remove;
+    }
+
+    QDir extensionsShareDir(io::pathToQString(globalConfiguration()->sharePath()) + "/extensions");
+
+    Ret unpack = extensionUnpacker()->unpack(extensionArchivePath, extensionsShareDir.absolutePath());
+    if (!unpack) {
+        LOGE() << "Error unpack" << unpack.code();
+        return unpack;
+    }
+
+    QFile extensionArchive(extensionArchivePath);
+    extensionArchive.remove();
+
+    ExtensionHash extensionHash = extensions().val;
+
+    extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
+
+    Ret ret = configuration()->setExtensionHash(extensionHash);
+    if (!ret) {
+        return ret;
+    }
+
+    m_extensionChanged.send(extensionHash[extensionCode]);
+
+    return make_ret(Err::NoError);
 }
 
 RetCh<Extension> ExtensionsController::extensionChanged()
@@ -153,7 +184,7 @@ RetCh<Extension> ExtensionsController::extensionChanged()
     return result;
 }
 
-RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray &json) const
+RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray& json) const
 {
     RetVal<ExtensionHash> result;
 
@@ -188,13 +219,13 @@ RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArra
     return result;
 }
 
-bool ExtensionsController::isExtensionExists(const QString &extensionCode) const
+bool ExtensionsController::isExtensionExists(const QString& extensionCode) const
 {
     QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
     return extensionDir.exists();
 }
 
-RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHash &extensions) const
+RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHash& extensions) const
 {
     RetVal<ExtensionHash> result;
     bool isNeedUpdate = false;
@@ -217,4 +248,44 @@ RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHas
     result.ret = make_ret(Err::NoError);
     result.val = extensions;
     return result;
+}
+
+RetVal<QString> ExtensionsController::downloadExtension(const QString& extensionCode) const
+{
+    RetVal<QString> result;
+
+    ValCh<ExtensionHash> extensions = configuration()->extensions();
+    QString fileName = extensions.val.value(extensionCode).fileName;
+
+    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/extensions";
+    if (!extensionsDir.exists()) {
+        extensionsDir.mkpath(extensionsDir.absolutePath());
+    }
+
+    QString extensionArchivePath = extensionsDir.absolutePath() + "/" + fileName;
+
+    Ms::DownloadUtils* js = new Ms::DownloadUtils();
+    js->setTarget(configuration()->extensionsFileServerUrl().toString() + fileName);
+    js->setLocalFile(extensionArchivePath);
+    js->download(true);
+
+    if (!js->saveFile()) {
+        LOGE() << "Error save file";
+        result.ret = make_ret(Err::ErrorLoadingExtension);
+        return result;
+    }
+
+    result.ret = make_ret(Err::NoError);
+    result.val = extensionArchivePath;
+    return result;
+}
+
+Ret ExtensionsController::removeExtension(const QString& extensionCode) const
+{
+    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
+    if (!extensionDir.removeRecursively()) {
+        return make_ret(Err::ErrorRemoveExtensionDirectory);
+    }
+
+    return make_ret(Err::NoError);
 }
