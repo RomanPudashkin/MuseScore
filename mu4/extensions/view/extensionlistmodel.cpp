@@ -92,7 +92,7 @@ void ExtensionListModel::updateList()
 
 void ExtensionListModel::install(int index)
 {
-    if (!hasIndex(0, index)) {
+    if (index < 0 || index > m_list.count()) {
         return;
     }
 
@@ -101,13 +101,19 @@ void ExtensionListModel::install(int index)
         LOGE() << "Error" << ret.code();
         return;
     }
-
-
 }
 
 void ExtensionListModel::uninstall(int index)
 {
+    if (index < 0 || index > m_list.count()) {
+        return;
+    }
 
+    Ret ret = extensionsController()->uninstall(m_list.at(index).code);
+    if (!ret) {
+        LOGE() << "Error" << ret.code();
+        return;
+    }
 }
 
 void ExtensionListModel::update(int index)

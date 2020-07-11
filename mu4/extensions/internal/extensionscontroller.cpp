@@ -70,7 +70,10 @@ Ret ExtensionsController::refreshExtensions()
 
 ValCh<ExtensionHash> ExtensionsController::extensions()
 {
-    return configuration()->extensions();
+    ValCh<ExtensionHash> extensionHash = configuration()->extensions();
+    extensionHash.val = correctExtensionsStates(extensionHash.val).val;
+
+    return extensionHash;
 }
 
 Ret ExtensionsController::install(const QString &extensionCode)
@@ -106,6 +109,9 @@ Ret ExtensionsController::install(const QString &extensionCode)
         return unpack;
     }
 
+    QFile extensionArchive(extensionArchivePath);
+    extensionArchive.remove();
+
     ExtensionHash extensionHash = this->extensions().val;
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
@@ -118,6 +124,25 @@ Ret ExtensionsController::install(const QString &extensionCode)
     m_extensionChanged.send(extensionHash[extensionCode]);
 
     return make_ret(Err::NoError);
+}
+
+Ret ExtensionsController::uninstall(const QString &extensionCode)
+{
+    ExtensionHash extensionHash = extensions().val;
+
+    if (!extensionHash.contains(extensionCode)) {
+        return make_ret(Err::ErrorExtensionNotFound);
+    }
+
+    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
+    if (!extensionDir.removeRecursively()) {
+        return make_ret(Err::ErrorRemoveExtensionDirectory);
+    }
+
+    extensionHash[extensionCode].status = ExtensionStatus::Status::NoInstalled;
+    m_extensionChanged.send(extensionHash[extensionCode]);
+
+    return configuration()->setExtensionHash(extensionHash);
 }
 
 RetCh<Extension> ExtensionsController::extensionChanged()
@@ -167,4 +192,29 @@ bool ExtensionsController::isExtensionExists(const QString &extensionCode) const
 {
     QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
     return extensionDir.exists();
+}
+
+RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHash &extensions) const
+{
+    RetVal<ExtensionHash> result;
+    bool isNeedUpdate = false;
+
+    for (Extension& extension: extensions) {
+        if (extension.status == ExtensionStatus::Status::Installed && !isExtensionExists(extension.code)) {
+            extension.status = ExtensionStatus::Status::NoInstalled;
+            isNeedUpdate = true;
+        }
+    }
+
+    if (isNeedUpdate) {
+        Ret update = configuration()->setExtensionHash(extensions);
+        if (!update) {
+            result.ret = update;
+            return result;
+        }
+    }
+
+    result.ret = make_ret(Err::NoError);
+    result.val = extensions;
+    return result;
 }

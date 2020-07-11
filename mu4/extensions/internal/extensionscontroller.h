@@ -39,12 +39,15 @@ public:
     Ret refreshExtensions() override;
     ValCh<ExtensionHash> extensions() override;
     Ret install(const QString& extensionCode) override;
+    Ret uninstall(const QString &extensionCode);
 
     RetCh<Extension> extensionChanged() override;
 
 private:
     RetVal<ExtensionHash> parseExtensionConfig(const QByteArray& json) const;
     bool isExtensionExists(const QString &extensionCode) const;
+
+    RetVal<ExtensionHash> correctExtensionsStates(ExtensionHash& extensions) const;
 
 private:
     async::Channel<Extension> m_extensionChanged;

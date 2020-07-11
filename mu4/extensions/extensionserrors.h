@@ -31,6 +31,8 @@ enum class Err {
 
     ErrorParseConfig,
     ErrorLoadingExtension,
+    ErrorExtensionNotFound,
+    ErrorRemoveExtensionDirectory,
 
     UnpackDestinationReadOnly,
     UnpackNoFreeSpace,
@@ -52,6 +54,10 @@ inline Ret make_ret(Err e)
                                            trc("extensions", "Error parsing response from server"));
     case Err::ErrorLoadingExtension: return Ret(static_cast<int>(Err::ErrorLoadingExtension),
                                                 trc("extensions", "Error loading extension"));
+    case Err::ErrorExtensionNotFound: return Ret(static_cast<int>(Err::ErrorExtensionNotFound),
+                                                 trc("extensions", "Extension not found"));
+    case Err::ErrorRemoveExtensionDirectory: return Ret(static_cast<int>(Err::ErrorRemoveExtensionDirectory),
+                                                        trc("extensions", "Error remove extension directory"));
     case Err::UnpackDestinationReadOnly: return Ret(static_cast<int>(Err::UnpackDestinationReadOnly),
                                                     trc("extensions", "Cannot import extension on read-only storage"));
     case Err::UnpackNoFreeSpace: return Ret(static_cast<int>(Err::UnpackNoFreeSpace),
