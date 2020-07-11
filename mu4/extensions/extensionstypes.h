@@ -20,16 +20,24 @@
 #define MU_EXTENSIONS_EXTENSIONSTYPES_H
 
 #include <QString>
+#include <QVersionNumber>
 #include <QJsonObject>
+#include <QObject>
+#include <QMetaObject>
 
 namespace mu {
 namespace extensions {
-enum class ExtensionStatus
+class ExtensionStatus
 {
-    Undefined,
-    Installed,
-    NoInstalled,
-    NeedUpdate
+    Q_GADGET
+public:
+    enum class Status {
+        Undefined = 0,
+        Installed,
+        NoInstalled,
+        NeedUpdate
+    };
+    Q_ENUM(Status)
 };
 
 struct Extension
@@ -39,10 +47,10 @@ struct Extension
     QString description;
     QString fileName;
     double fileSize = 0.0;
-    QString version;
-    ExtensionStatus status = ExtensionStatus::Undefined;
+    QVersionNumber version;
+    ExtensionStatus::Status status = ExtensionStatus::Status::Undefined;
 
-    Extension() {}
+    Extension() = default;
 
     QJsonObject toJson() const
     {
@@ -50,11 +58,12 @@ struct Extension
                  { "description", description },
                  { "fileName", fileName },
                  { "fileSize", fileSize },
-                 { "version", version } };
+                 { "version", version.toString() },
+                 { "status", QString::number(static_cast<int>(status)) } };
     }
 };
 
-using ExtensionList = QList<Extension>;
+using ExtensionHash = QHash<QString /*code*/, Extension>;
 }
 }
 

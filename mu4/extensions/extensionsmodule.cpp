@@ -52,6 +52,7 @@ void ExtensionsModule::registerResources()
 void ExtensionsModule::registerUiTypes()
 {
     qmlRegisterType<ExtensionListModel>("MuseScore.Extensions", 1, 0, "ExtensionListModel");
+    qmlRegisterUncreatableType<ExtensionStatus>("MuseScore.Extensions", 1, 0, "ExtensionStatus", "Cannot create an ExtensionStatus");
 }
 
 void ExtensionsModule::onInit()

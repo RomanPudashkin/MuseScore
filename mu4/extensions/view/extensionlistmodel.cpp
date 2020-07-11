@@ -18,6 +18,8 @@
 //=============================================================================
 #include "extensionlistmodel.h"
 
+#include "log.h"
+
 using namespace mu::extensions;
 
 ExtensionListModel::ExtensionListModel(QObject* parent)
@@ -45,7 +47,7 @@ QVariant ExtensionListModel::data(const QModelIndex& index, int role) const
     case rFileSize:
         return QVariant::fromValue(item.fileSize);
     case rStatus:
-        return QVariant();
+        return QVariant::fromValue(static_cast<int>(item.status));
     }
 
     return QVariant();
@@ -64,20 +66,22 @@ QHash<int, QByteArray> mu::extensions::ExtensionListModel::roleNames() const
 
 void ExtensionListModel::load()
 {
-    ValCh<ExtensionList> extensions = extensionsController()->extensionList();
+    ValCh<ExtensionHash> extensions = extensionsController()->extensions();
 
     beginResetModel();
-    m_list = extensions.val;
+    m_list = extensions.val.values();
     endResetModel();
 
-    extensions.ch.onReceive(this, [this](const ExtensionList& extensions) {
+    extensions.ch.onReceive(this, [this](const ExtensionHash& extensions) {
         beginResetModel();
-        m_list = extensions;
+        m_list = extensions.values();
         endResetModel();
     });
 }
 
 void ExtensionListModel::updateList()
 {
-    extensionsController()->refreshExtensionList();
+    extensionsController()->refreshExtensions();
+}
+
 }

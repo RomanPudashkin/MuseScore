@@ -18,39 +18,68 @@
 //=============================================================================
 #include "extensionscontroller.h"
 
+#include <QDir>
+
+#include "log.h"
 #include "mscore/downloadUtils.h"
 #include "extensionserrors.h"
 
 using namespace mu;
 using namespace mu::extensions;
 
-Ret ExtensionsController::refreshExtensionList()
+Ret ExtensionsController::refreshExtensions()
 {
     Ms::DownloadUtils* js = new Ms::DownloadUtils();
-    js->setTarget(configuration()->extensionListUpdateUrl().toString());
+    js->setTarget(configuration()->extensionsUpdateUrl().toString());
     js->download();
 
     QByteArray json = js->returnData();
-    RetVal<ExtensionList> extensions = parseExtensionConfig(json);
+    RetVal<ExtensionHash> actualExtensions = parseExtensionConfig(json);
 
-    if (!extensions.ret) {
-        return extensions.ret;
+    if (!actualExtensions.ret) {
+        return actualExtensions.ret;
     }
 
-    Ret ret = configuration()->setExtensionList(extensions.val);
+    ExtensionHash savedExtensions = configuration()->extensions().val;
+
+    ExtensionHash resultExtensions = savedExtensions;
+
+    for (Extension& extension : actualExtensions.val) {
+        if (savedExtensions.contains(extension.code)) {
+            Extension& savedExtension = savedExtensions[extension.code];
+
+            if (!isExtensionExists(extension.code)) {
+                savedExtension.status = ExtensionStatus::Status::NoInstalled;
+                continue;
+            }
+
+            if (savedExtension.version < extension.version) {
+                savedExtension.status = ExtensionStatus::Status::NeedUpdate;
+            }
+
+            savedExtension.status = ExtensionStatus::Status::Installed;
+        } else {
+            extension.status = ExtensionStatus::Status::NoInstalled;
+            resultExtensions.insert(extension.code, extension);
+        }
+    }
+
+    Ret ret = configuration()->setExtensionHash(resultExtensions);
     return ret;
 }
 
-ValCh<ExtensionList> ExtensionsController::extensionList()
+ValCh<ExtensionHash> ExtensionsController::extensions()
+{
+    return configuration()->extensions();
+}
 {
     return configuration()->extensionList();
 }
 
-RetVal<ExtensionList> ExtensionsController::parseExtensionConfig(const QByteArray &json) const
+RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray &json) const
 {
-    RetVal<ExtensionList> result;
+    RetVal<ExtensionHash> result;
 
-    // parse the json file
     QJsonParseError err;
     QJsonDocument jsodDoc = QJsonDocument::fromJson(json, &err);
     if (err.error != QJsonParseError::NoError || !jsodDoc.isObject()) {
@@ -73,10 +102,17 @@ RetVal<ExtensionList> ExtensionsController::parseExtensionConfig(const QByteArra
         extension.description = value.value("description").toString();
         extension.fileName = value.value("file_name").toString();
         extension.fileSize = value.value("file_size").toDouble();
-        extension.version = value.value("version").toString();
+        extension.version = QVersionNumber::fromString(value.value("version").toString());
+        extension.status = ExtensionStatus::Status::Undefined;
 
-        result.val << extension;
+        result.val.insert(key, extension);
     }
 
     return result;
+}
+
+bool ExtensionsController::isExtensionExists(const QString &extensionCode) const
+{
+    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/Extensions/" + extensionCode;
+    return extensionDir.exists();
 }

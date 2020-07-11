@@ -50,13 +50,53 @@ Rectangle {
                 width: 180
                 color: ui.theme.popupBackgroundColor
 
-                StyledTextLabel {
+                Column {
                     anchors.fill: parent
-                    text: name
-                }
+                    spacing: 10
 
+                    StyledTextLabel {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        text: name
+                    }
+
+                    Row {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+
+                        FlatButton {
+                            text: qsTrc("extensions", "Install")
+                            width: 60
+
+                            visible: status === ExtensionStatus.NoInstalled
+
+                            onClicked: {
+                                extensiomListModel.install(index)
+                            }
+                        }
+                        FlatButton {
+                            text: qsTrc("extensions", "Update")
+                            width: 60
+
+                            visible: status === ExtensionStatus.NeedUpdate
+
+                            onClicked: {
+                                extensiomListModel.update(index)
+                            }
+                        }
+                        FlatButton {
+                            text: qsTrc("extensions", "Uninstall")
+                            width: 60
+
+                            visible: status === ExtensionStatus.Installed || status === ExtensionStatus.NeedUpdate
+
+                            onClicked: {
+                                extensiomListModel.uninstall(index)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
-
 }

@@ -33,10 +33,10 @@ class IExtensionsConfiguration : MODULE_EXPORT_INTERFACE
 public:
     virtual ~IExtensionsConfiguration() = default;
 
-    virtual QUrl extensionListUpdateUrl() = 0;
+    virtual QUrl extensionsUpdateUrl() = 0;
 
-    virtual ValCh<ExtensionList> extensionList() = 0;
-    virtual Ret setExtensionList(const ExtensionList& extensionList) = 0;
+    virtual ValCh<ExtensionHash> extensions() = 0;
+    virtual Ret setExtensionHash(const ExtensionHash& extensions) = 0;
 };
 }
 }

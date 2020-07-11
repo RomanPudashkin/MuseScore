@@ -33,9 +33,9 @@ class IExtensionsController : MODULE_EXPORT_INTERFACE
 public:
     virtual ~IExtensionsController() = default;
 
-    virtual Ret refreshExtensionList() = 0;
+    virtual Ret refreshExtensions() = 0;
 
-    virtual ValCh<ExtensionList> extensionList() = 0;
+    virtual ValCh<ExtensionHash> extensions() = 0;
 };
 }
 }

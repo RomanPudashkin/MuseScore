@@ -22,21 +22,24 @@
 #include "modularity/ioc.h"
 #include "../iextensionscontroller.h"
 #include "../iextensionsconfiguration.h"
+#include "iglobalconfiguration.h"
 
 namespace mu {
 namespace extensions {
 class ExtensionsController : public IExtensionsController
 {
     INJECT(extensions, IExtensionsConfiguration, configuration)
+    INJECT(extensions, framework::IGlobalConfiguration, globalConfiguration)
 
 public:
     ExtensionsController() = default;
 
-    Ret refreshExtensionList() override;
-    ValCh<ExtensionList> extensionList() override;
+    Ret refreshExtensions() override;
+    ValCh<ExtensionHash> extensions() override;
 
 private:
-    RetVal<ExtensionList> parseExtensionConfig(const QByteArray& json) const;
+    RetVal<ExtensionHash> parseExtensionConfig(const QByteArray& json) const;
+    bool isExtensionExists(const QString &extensionCode) const;
 };
 }
 }

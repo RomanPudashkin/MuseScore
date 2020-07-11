@@ -34,15 +34,15 @@ public:
 
     void init();
 
-    QUrl extensionListUpdateUrl();
+    QUrl extensionsUpdateUrl() override;
 
-    ValCh<ExtensionList> extensionList() override;
-    Ret setExtensionList(const ExtensionList& extensionList) override;
+    ValCh<ExtensionHash> extensions() override;
+    Ret setExtensionHash(const ExtensionHash& extensions) override;
 
 private:
-    ExtensionList parseExtensionConfig(const QByteArray& json) const;
+    ExtensionHash parseExtensionConfig(const QByteArray& json) const;
 
-    async::Channel<ExtensionList> m_extensionListChanged;
+    async::Channel<ExtensionHash> m_extensionHashChanged;
 };
 }
 }
