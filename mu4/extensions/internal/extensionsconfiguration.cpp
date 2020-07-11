@@ -47,7 +47,10 @@ QUrl ExtensionsConfiguration::extensionsUpdateUrl()
     return QUrl("http://extensions.musescore.org/4.0/extensions/details.json");
 }
 
-ValCh<ExtensionList> ExtensionsConfiguration::extensionList()
+QUrl ExtensionsConfiguration::extensionsFileServerUrl()
+{
+    return QUrl("http://extensions.musescore.org/4.0/extensions/");
+}
 
 ValCh<ExtensionHash> ExtensionsConfiguration::extensions()
 {

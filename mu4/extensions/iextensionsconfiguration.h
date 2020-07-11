@@ -34,6 +34,7 @@ public:
     virtual ~IExtensionsConfiguration() = default;
 
     virtual QUrl extensionsUpdateUrl() = 0;
+    virtual QUrl extensionsFileServerUrl() = 0;
 
     virtual ValCh<ExtensionHash> extensions() = 0;
     virtual Ret setExtensionHash(const ExtensionHash& extensions) = 0;

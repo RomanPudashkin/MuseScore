@@ -72,8 +72,28 @@ ValCh<ExtensionHash> ExtensionsController::extensions()
 {
     return configuration()->extensions();
 }
+
+Ret ExtensionsController::install(const QString &extensionCode)
 {
-    return configuration()->extensionList();
+    ValCh<ExtensionHash> extensions = configuration()->extensions();
+    QString fileName = extensions.val.value(extensionCode).fileName;
+
+    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/Extensions/";
+    if (!extensionsDir.exists()) {
+        extensionsDir.mkpath(extensionsDir.absolutePath());
+    }
+
+    Ms::DownloadUtils* js = new Ms::DownloadUtils();
+    js->setTarget(configuration()->extensionsFileServerUrl().toString() + fileName);
+    js->setLocalFile(extensionsDir.absolutePath() + "/" + fileName);
+    js->download(true);
+
+    if (!js->saveFile()) {
+        LOGE() << "Error save file";
+        return make_ret(Err::ErrorLoadingExtension);
+    }
+
+    return make_ret(Err::NoError);
 }
 
 RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray &json) const

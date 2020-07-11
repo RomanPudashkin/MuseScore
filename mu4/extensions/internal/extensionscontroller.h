@@ -36,6 +36,7 @@ public:
 
     Ret refreshExtensions() override;
     ValCh<ExtensionHash> extensions() override;
+    Ret install(const QString& extensionCode) override;
 
 private:
     RetVal<ExtensionHash> parseExtensionConfig(const QByteArray& json) const;

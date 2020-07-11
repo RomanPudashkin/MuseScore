@@ -50,6 +50,9 @@ public:
 
     Q_INVOKABLE void load();
     Q_INVOKABLE void updateList();
+    Q_INVOKABLE void install(int index);
+    Q_INVOKABLE void uninstall(int index);
+    Q_INVOKABLE void update(int index);
 
 private:
     QHash<int, QByteArray> m_roles;

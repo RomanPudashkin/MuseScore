@@ -36,6 +36,7 @@ public:
     virtual Ret refreshExtensions() = 0;
 
     virtual ValCh<ExtensionHash> extensions() = 0;
+    virtual Ret install(const QString& extensionCode) = 0;
 };
 }
 }

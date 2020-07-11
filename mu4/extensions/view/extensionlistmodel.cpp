@@ -84,4 +84,27 @@ void ExtensionListModel::updateList()
     extensionsController()->refreshExtensions();
 }
 
+void ExtensionListModel::install(int index)
+{
+    if (!hasIndex(0, index)) {
+        return;
+    }
+
+    Ret ret = extensionsController()->install(m_list.at(index).code);
+    if (!ret) {
+        LOGE() << "Error" << ret.code();
+        return;
+    }
+
+
+}
+
+void ExtensionListModel::uninstall(int index)
+{
+
+}
+
+void ExtensionListModel::update(int index)
+{
+
 }

@@ -29,7 +29,8 @@ enum class Err {
     NoError         = int(Ret::Code::Ok),
     UnknownError    = int(Ret::Code::ExtensionsFirst),
 
-    ErrorParseConfig
+    ErrorParseConfig,
+    ErrorLoadingExtension
 };
 
 inline mu::Ret make_ret(Err e)
@@ -40,6 +41,8 @@ inline mu::Ret make_ret(Err e)
     case Err::UnknownError: return Ret(static_cast<int>(Ret::Code::UnknownError));
     case Err::ErrorParseConfig: return Ret(static_cast<int>(Err::ErrorParseConfig),
                                            trc("extensions", "Error parsing response from server"));
+    case Err::ErrorLoadingExtension: return Ret(static_cast<int>(Err::ErrorLoadingExtension),
+                                        trc("extensions", "Error loading extension"));
     }
 
     return Ret(static_cast<int>(e));
