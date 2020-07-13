@@ -42,17 +42,17 @@ void ExtensionsConfiguration::init()
     });
 }
 
-QUrl ExtensionsConfiguration::extensionsUpdateUrl()
+QUrl ExtensionsConfiguration::extensionsUpdateUrl() const
 {
     return QUrl("http://extensions.musescore.org/4.0/extensions/details.json");
 }
 
-QUrl ExtensionsConfiguration::extensionsFileServerUrl()
+QUrl ExtensionsConfiguration::extensionsFileServerUrl() const
 {
     return QUrl("http://extensions.musescore.org/4.0/extensions/");
 }
 
-ValCh<ExtensionHash> ExtensionsConfiguration::extensions()
+ValCh<ExtensionHash> ExtensionsConfiguration::extensions() const
 {
     ValCh<ExtensionHash> result;
     result.val = parseExtensionConfig(io::pathToQString(settings()->value(EXTENSION_JSON).toString()).toLocal8Bit());
@@ -61,10 +61,10 @@ ValCh<ExtensionHash> ExtensionsConfiguration::extensions()
     return result;
 }
 
-Ret ExtensionsConfiguration::setExtensionHash(const ExtensionHash& extensionHash)
+Ret ExtensionsConfiguration::setExtensions(const ExtensionHash& extensions) const
 {
     QJsonArray jsonArray;
-    for (const Extension& extension: extensionHash) {
+    for (const Extension& extension: extensions) {
         QJsonObject obj;
         obj[extension.code] = extension.toJson();
 

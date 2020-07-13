@@ -34,8 +34,11 @@ public:
 
     void init();
 
-    QUrl extensionsUpdateUrl() override;
-    QUrl extensionsFileServerUrl() override;
+    QUrl extensionsUpdateUrl() const override;
+    QUrl extensionsFileServerUrl() const override;
+
+    ValCh<ExtensionHash> extensions() const override;
+    Ret setExtensions(const ExtensionHash& extensions) const override;
 
     ValCh<ExtensionHash> extensions() override;
     Ret setExtensionHash(const ExtensionHash& extensions) override;

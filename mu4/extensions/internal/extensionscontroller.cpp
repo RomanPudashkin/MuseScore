@@ -64,7 +64,7 @@ Ret ExtensionsController::refreshExtensions()
         }
     }
 
-    Ret ret = configuration()->setExtensionHash(resultExtensions);
+    Ret ret = configuration()->setExtensions(resultExtensions);
     return ret;
 }
 
@@ -103,7 +103,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
 
-    Ret ret = configuration()->setExtensionHash(extensionHash);
+    Ret ret = configuration()->setExtensions(extensionHash);
     if (!ret) {
         return ret;
     }
@@ -127,7 +127,7 @@ Ret ExtensionsController::uninstall(const QString& extensionCode)
     }
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::NoInstalled;
-    Ret ret = configuration()->setExtensionHash(extensionHash);
+    Ret ret = configuration()->setExtensions(extensionHash);
     if (!ret) {
         return ret;
     }
@@ -166,7 +166,7 @@ Ret ExtensionsController::update(const QString& extensionCode)
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
 
-    Ret ret = configuration()->setExtensionHash(extensionHash);
+    Ret ret = configuration()->setExtensions(extensionHash);
     if (!ret) {
         return ret;
     }
@@ -238,7 +238,7 @@ RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHas
     }
 
     if (isNeedUpdate) {
-        Ret update = configuration()->setExtensionHash(extensions);
+        Ret update = configuration()->setExtensions(extensions);
         if (!update) {
             result.ret = update;
             return result;
