@@ -45,8 +45,8 @@ Ret ExtensionsController::refreshExtensions()
     ExtensionHash resultExtensions = savedExtensions;
 
     for (Extension& extension : actualExtensions.val) {
-        if (savedExtensions.contains(extension.code)) {
-            Extension& savedExtension = savedExtensions[extension.code];
+        if (resultExtensions.contains(extension.code)) {
+            Extension& savedExtension = resultExtensions[extension.code];
 
             if (!isExtensionExists(extension.code)) {
                 savedExtension.status = ExtensionStatus::Status::NoInstalled;
@@ -85,7 +85,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
 
     QString extensionArchivePath = download.val;
 
-    QDir extensionsShareDir(io::pathToQString(globalConfiguration()->sharePath()) + "/extensions");
+    QDir extensionsShareDir(configuration()->extensionsSharePath());
     if (!extensionsShareDir.exists()) {
         extensionsShareDir.mkpath(extensionsShareDir.absolutePath());
     }
@@ -151,7 +151,7 @@ Ret ExtensionsController::update(const QString& extensionCode)
         return remove;
     }
 
-    QDir extensionsShareDir(io::pathToQString(globalConfiguration()->sharePath()) + "/extensions");
+    QDir extensionsShareDir(configuration()->extensionsSharePath());
 
     Ret unpack = extensionUnpacker()->unpack(extensionArchivePath, extensionsShareDir.absolutePath());
     if (!unpack) {
@@ -221,7 +221,7 @@ RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArra
 
 bool ExtensionsController::isExtensionExists(const QString& extensionCode) const
 {
-    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
+    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
     return extensionDir.exists();
 }
 
@@ -257,7 +257,7 @@ RetVal<QString> ExtensionsController::downloadExtension(const QString& extension
     ValCh<ExtensionHash> extensions = configuration()->extensions();
     QString fileName = extensions.val.value(extensionCode).fileName;
 
-    QDir extensionsDir = io::pathToQString(globalConfiguration()->dataPath()) + "/extensions";
+    QDir extensionsDir(configuration()->extensionsDataPath());
     if (!extensionsDir.exists()) {
         extensionsDir.mkpath(extensionsDir.absolutePath());
     }
@@ -282,7 +282,7 @@ RetVal<QString> ExtensionsController::downloadExtension(const QString& extension
 
 Ret ExtensionsController::removeExtension(const QString& extensionCode) const
 {
-    QDir extensionDir = io::pathToQString(globalConfiguration()->sharePath()) + "/extensions/" + extensionCode;
+    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
     if (!extensionDir.removeRecursively()) {
         return make_ret(Err::ErrorRemoveExtensionDirectory);
     }

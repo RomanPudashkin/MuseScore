@@ -108,3 +108,30 @@ ExtensionHash ExtensionsConfiguration::parseExtensionConfig(const QByteArray& js
 
     return result;
 }
+
+QString mu::extensions::ExtensionsConfiguration::extensionsSharePath() const
+{
+    return io::pathToQString(globalConfiguration()->sharePath() + "/extensions");
+}
+
+QString ExtensionsConfiguration::extensionsDataPath() const
+{
+    return io::pathToQString(globalConfiguration()->dataPath() + "/extensions");
+}
+
+QStringList ExtensionsConfiguration::workspacesPaths() const
+{
+    QStringList paths;
+
+    ExtensionHash extensions = this->extensions().val;
+
+    QString extensionsPath = extensionsSharePath();
+    for (const Extension& extension: extensions.values()) {
+        QDir extensionWorkspaceDir(extensionsPath + "/" + extension.code + "/workspaces");
+        if (extensionWorkspaceDir.exists()) {
+            paths << extensionWorkspaceDir.absolutePath();
+        }
+    }
+
+    return paths;
+}

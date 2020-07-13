@@ -19,8 +19,11 @@
 #ifndef MU_EXTENSIONS_IEXTENSIONSCONFIGURATION_H
 #define MU_EXTENSIONS_IEXTENSIONSCONFIGURATION_H
 
-#include "modularity/imoduleexport.h"
+#include <vector>
+
+#include "io/path.h"
 #include "retval.h"
+#include "modularity/imoduleexport.h"
 
 #include "extensionstypes.h"
 
@@ -39,8 +42,10 @@ public:
     virtual ValCh<ExtensionHash> extensions() const = 0;
     virtual Ret setExtensions(const ExtensionHash& extensions) const = 0;
 
-    virtual ValCh<ExtensionHash> extensions() = 0;
-    virtual Ret setExtensionHash(const ExtensionHash& extensions) = 0;
+    virtual QString extensionsSharePath() const = 0;
+    virtual QString extensionsDataPath() const = 0;
+
+    virtual QStringList workspacesPaths() const = 0;
 };
 }
 }

@@ -40,8 +40,10 @@ public:
     ValCh<ExtensionHash> extensions() const override;
     Ret setExtensions(const ExtensionHash& extensions) const override;
 
-    ValCh<ExtensionHash> extensions() override;
-    Ret setExtensionHash(const ExtensionHash& extensions) override;
+    QString extensionsSharePath() const override;
+    QString extensionsDataPath() const override;
+
+    QStringList workspacesPaths() const override;
 
 private:
     ExtensionHash parseExtensionConfig(const QByteArray& json) const;
