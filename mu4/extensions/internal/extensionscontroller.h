@@ -53,6 +53,8 @@ private:
     RetVal<QString> downloadExtension(const QString& extensionCode) const;
     Ret removeExtension(const QString& extensionCode) const;
 
+    Extension::ExtensionTypes extensionTypes(const QString& extensionCode) const;
+
 private:
     async::Channel<Extension> m_extensionChanged;
 };

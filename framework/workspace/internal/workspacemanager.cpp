@@ -49,8 +49,10 @@ void WorkspaceManager::init()
 {
     RetCh<Extension> extensionChanged = extensionsController()->extensionChanged();
     if (extensionChanged.ret) {
-        extensionChanged.ch.onReceive(this, [this](const Extension&) {
-            load();
+        extensionChanged.ch.onReceive(this, [this](const Extension& newExtension) {
+            if (newExtension.types.testFlag(Extension::Workspaces)) {
+                load();
+            }
         });
     }
 

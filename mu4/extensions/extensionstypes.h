@@ -42,6 +42,15 @@ public:
 
 struct Extension
 {
+    enum ExtensionType {
+        Workspaces = 0x0000,
+        SFZS = 0x0001,
+        Soundfonts = 0x0002,
+        Templates = 0x0003,
+        Instruments = 0x0004
+    };
+    Q_DECLARE_FLAGS(ExtensionTypes, ExtensionType)
+
     QString code;
     QString name;
     QString description;
@@ -49,6 +58,7 @@ struct Extension
     double fileSize = 0.0;
     QVersionNumber version;
     ExtensionStatus::Status status = ExtensionStatus::Status::Undefined;
+    ExtensionTypes types = { };
 
     Extension() = default;
 
@@ -63,7 +73,8 @@ struct Extension
     }
 };
 
-using ExtensionHash = QHash<QString /*code*/, Extension>;
+Q_DECLARE_OPERATORS_FOR_FLAGS(Extension::ExtensionTypes)
+
 using ExtensionsHash = QHash<QString /*code*/, Extension>;
 }
 }

@@ -102,6 +102,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
     ExtensionsHash extensionHash = this->extensions().val;
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
+    extensionHash[extensionCode].types = extensionTypes(extensionCode);
 
     Ret ret = configuration()->setExtensions(extensionHash);
     if (!ret) {
@@ -165,6 +166,7 @@ Ret ExtensionsController::update(const QString& extensionCode)
     ExtensionsHash extensionHash = extensions().val;
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
+    extensionHash[extensionCode].types = extensionTypes(extensionCode);
 
     Ret ret = configuration()->setExtensions(extensionHash);
     if (!ret) {
@@ -212,6 +214,7 @@ RetVal<ExtensionsHash> ExtensionsController::parseExtensionConfig(const QByteArr
         extension.fileSize = value.value("file_size").toDouble();
         extension.version = QVersionNumber::fromString(value.value("version").toString());
         extension.status = ExtensionStatus::Status::Undefined;
+        extension.types = {};
 
         result.val.insert(key, extension);
     }
@@ -235,6 +238,8 @@ RetVal<ExtensionsHash> ExtensionsController::correctExtensionsStates(ExtensionsH
             extension.status = ExtensionStatus::Status::NoInstalled;
             isNeedUpdate = true;
         }
+
+        extension.types = extensionTypes(extension.code);
     }
 
     if (isNeedUpdate) {
@@ -288,4 +293,20 @@ Ret ExtensionsController::removeExtension(const QString& extensionCode) const
     }
 
     return make_ret(Err::NoError);
+}
+
+Extension::ExtensionTypes ExtensionsController::extensionTypes(const QString &extensionCode) const
+{
+    Extension::ExtensionTypes result;
+    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
+
+    QDir workspacesDir(extensionDir.absolutePath() + "/workspaces");
+    if (workspacesDir.exists()) {
+        QStringList files = workspacesDir.entryList({ QString("*.workspace") }, QDir::Files);
+        if (!files.empty()) {
+            result.setFlag(Extension::Workspaces);
+        }
+    }
+
+    return result;
 }
