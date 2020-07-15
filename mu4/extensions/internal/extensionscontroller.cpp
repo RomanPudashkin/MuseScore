@@ -34,15 +34,15 @@ Ret ExtensionsController::refreshExtensions()
     js->download();
 
     QByteArray json = js->returnData();
-    RetVal<ExtensionHash> actualExtensions = parseExtensionConfig(json);
+    RetVal<ExtensionsHash> actualExtensions = parseExtensionConfig(json);
 
     if (!actualExtensions.ret) {
         return actualExtensions.ret;
     }
 
-    ExtensionHash savedExtensions = configuration()->extensions().val;
+    ExtensionsHash savedExtensions = configuration()->extensions().val;
 
-    ExtensionHash resultExtensions = savedExtensions;
+    ExtensionsHash resultExtensions = savedExtensions;
 
     for (Extension& extension : actualExtensions.val) {
         if (resultExtensions.contains(extension.code)) {
@@ -68,9 +68,9 @@ Ret ExtensionsController::refreshExtensions()
     return ret;
 }
 
-ValCh<ExtensionHash> ExtensionsController::extensions()
+ValCh<ExtensionsHash> ExtensionsController::extensions()
 {
-    ValCh<ExtensionHash> extensionHash = configuration()->extensions();
+    ValCh<ExtensionsHash> extensionHash = configuration()->extensions();
     extensionHash.val = correctExtensionsStates(extensionHash.val).val;
 
     return extensionHash;
@@ -99,7 +99,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
     QFile extensionArchive(extensionArchivePath);
     extensionArchive.remove();
 
-    ExtensionHash extensionHash = this->extensions().val;
+    ExtensionsHash extensionHash = this->extensions().val;
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
 
@@ -115,7 +115,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
 
 Ret ExtensionsController::uninstall(const QString& extensionCode)
 {
-    ExtensionHash extensionHash = extensions().val;
+    ExtensionsHash extensionHash = extensions().val;
 
     if (!extensionHash.contains(extensionCode)) {
         return make_ret(Err::ErrorExtensionNotFound);
@@ -162,7 +162,7 @@ Ret ExtensionsController::update(const QString& extensionCode)
     QFile extensionArchive(extensionArchivePath);
     extensionArchive.remove();
 
-    ExtensionHash extensionHash = extensions().val;
+    ExtensionsHash extensionHash = extensions().val;
 
     extensionHash[extensionCode].status = ExtensionStatus::Status::Installed;
 
@@ -184,9 +184,9 @@ RetCh<Extension> ExtensionsController::extensionChanged()
     return result;
 }
 
-RetVal<ExtensionHash> ExtensionsController::parseExtensionConfig(const QByteArray& json) const
+RetVal<ExtensionsHash> ExtensionsController::parseExtensionConfig(const QByteArray& json) const
 {
-    RetVal<ExtensionHash> result;
+    RetVal<ExtensionsHash> result;
 
     QJsonParseError err;
     QJsonDocument jsodDoc = QJsonDocument::fromJson(json, &err);
@@ -225,9 +225,9 @@ bool ExtensionsController::isExtensionExists(const QString& extensionCode) const
     return extensionDir.exists();
 }
 
-RetVal<ExtensionHash> ExtensionsController::correctExtensionsStates(ExtensionHash& extensions) const
+RetVal<ExtensionsHash> ExtensionsController::correctExtensionsStates(ExtensionsHash& extensions) const
 {
-    RetVal<ExtensionHash> result;
+    RetVal<ExtensionsHash> result;
     bool isNeedUpdate = false;
 
     for (Extension& extension: extensions) {
@@ -254,7 +254,7 @@ RetVal<QString> ExtensionsController::downloadExtension(const QString& extension
 {
     RetVal<QString> result;
 
-    ValCh<ExtensionHash> extensions = configuration()->extensions();
+    ValCh<ExtensionsHash> extensions = configuration()->extensions();
     QString fileName = extensions.val.value(extensionCode).fileName;
 
     QDir extensionsDir(configuration()->extensionsDataPath());

@@ -16,8 +16,8 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
-#define MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
+#ifndef MU_EXTENSIONS_IEXTENSIONSCONTROLLER_H
+#define MU_EXTENSIONS_IEXTENSIONSCONTROLLER_H
 
 #include "modularity/imoduleexport.h"
 #include "retval.h"
@@ -35,7 +35,7 @@ public:
 
     virtual Ret refreshExtensions() = 0;
 
-    virtual ValCh<ExtensionHash> extensions() = 0;
+    virtual ValCh<ExtensionsHash> extensions() = 0;
     virtual Ret install(const QString& extensionCode) = 0;
     virtual Ret uninstall(const QString& extensionCode) = 0;
     virtual Ret update(const QString& extensionCode) = 0;
@@ -45,4 +45,4 @@ public:
 }
 }
 
-#endif // MU_EXTENSIONS_IEXTENSIONCONTROLLER_H
+#endif // MU_EXTENSIONS_IEXTENSIONSCONTROLLER_H

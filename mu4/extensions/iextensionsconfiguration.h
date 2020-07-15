@@ -39,8 +39,8 @@ public:
     virtual QUrl extensionsUpdateUrl() const = 0;
     virtual QUrl extensionsFileServerUrl() const = 0;
 
-    virtual ValCh<ExtensionHash> extensions() const = 0;
-    virtual Ret setExtensions(const ExtensionHash& extensions) const = 0;
+    virtual ValCh<ExtensionsHash> extensions() const = 0;
+    virtual Ret setExtensions(const ExtensionsHash& extensions) const = 0;
 
     virtual QString extensionsSharePath() const = 0;
     virtual QString extensionsDataPath() const = 0;

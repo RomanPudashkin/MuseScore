@@ -37,8 +37,8 @@ public:
     QUrl extensionsUpdateUrl() const override;
     QUrl extensionsFileServerUrl() const override;
 
-    ValCh<ExtensionHash> extensions() const override;
-    Ret setExtensions(const ExtensionHash& extensions) const override;
+    ValCh<ExtensionsHash> extensions() const override;
+    Ret setExtensions(const ExtensionsHash& extensions) const override;
 
     QString extensionsSharePath() const override;
     QString extensionsDataPath() const override;
@@ -46,9 +46,9 @@ public:
     QStringList workspacesPaths() const override;
 
 private:
-    ExtensionHash parseExtensionConfig(const QByteArray& json) const;
+    ExtensionsHash parseExtensionConfig(const QByteArray& json) const;
 
-    async::Channel<ExtensionHash> m_extensionHashChanged;
+    async::Channel<ExtensionsHash> m_extensionHashChanged;
 };
 }
 }

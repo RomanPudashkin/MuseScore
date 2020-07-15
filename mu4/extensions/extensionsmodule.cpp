@@ -43,7 +43,7 @@ void ExtensionsModule::registerExports()
 {
     framework::ioc()->registerExport<IExtensionsConfiguration>(moduleName(), m_extensionsConfiguration);
     framework::ioc()->registerExport<IExtensionsController>(moduleName(), new ExtensionsController());
-    framework::ioc()->registerExport<IExtensionsUnpacker>(moduleName(), new ExtensionUnpacker());
+    framework::ioc()->registerExport<IExtensionUnpacker>(moduleName(), new ExtensionUnpacker());
 }
 
 void ExtensionsModule::registerResources()

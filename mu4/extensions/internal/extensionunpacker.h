@@ -28,7 +28,7 @@ class QVersionNumber;
 
 namespace mu {
 namespace extensions {
-class ExtensionUnpacker : public IExtensionsUnpacker
+class ExtensionUnpacker : public IExtensionUnpacker
 {
 public:
     ExtensionUnpacker() = default;
@@ -37,7 +37,7 @@ public:
 
 private:
     Ret checkDirectoryIsWritable(const QString& directoryPath) const;
-    Ret checkFreeSpace(const QString& directoryPath, quint64 neededSpace) const;
+    Ret checkFreeSpace(const QString& directoryPath, qint64 neededSpace) const;
 
     RetVal2<QString, QVersionNumber> extensionMeta(const MQZipReader* zip) const;
 

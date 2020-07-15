@@ -30,14 +30,14 @@ namespace extensions {
 class ExtensionsController : public IExtensionsController
 {
     INJECT(extensions, IExtensionsConfiguration, configuration)
-    INJECT(extensions, IExtensionsUnpacker, extensionUnpacker)
+    INJECT(extensions, IExtensionUnpacker, extensionUnpacker)
     INJECT(extensions, framework::IGlobalConfiguration, globalConfiguration)
 
 public:
     ExtensionsController() = default;
 
     Ret refreshExtensions() override;
-    ValCh<ExtensionHash> extensions() override;
+    ValCh<ExtensionsHash> extensions() override;
     Ret install(const QString& extensionCode) override;
     Ret uninstall(const QString &extensionCode) override;
     Ret update(const QString &extensionCode) override;
@@ -45,10 +45,10 @@ public:
     RetCh<Extension> extensionChanged() override;
 
 private:
-    RetVal<ExtensionHash> parseExtensionConfig(const QByteArray& json) const;
+    RetVal<ExtensionsHash> parseExtensionConfig(const QByteArray& json) const;
     bool isExtensionExists(const QString &extensionCode) const;
 
-    RetVal<ExtensionHash> correctExtensionsStates(ExtensionHash& extensions) const;
+    RetVal<ExtensionsHash> correctExtensionsStates(ExtensionsHash& extensions) const;
 
     RetVal<QString> downloadExtension(const QString& extensionCode) const;
     Ret removeExtension(const QString& extensionCode) const;

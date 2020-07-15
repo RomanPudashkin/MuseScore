@@ -66,7 +66,7 @@ QHash<int, QByteArray> mu::extensions::ExtensionListModel::roleNames() const
 
 void ExtensionListModel::load()
 {
-    ValCh<ExtensionHash> extensions = extensionsController()->extensions();
+    ValCh<ExtensionsHash> extensions = extensionsController()->extensions();
 
     beginResetModel();
     m_list = extensions.val.values();
@@ -77,7 +77,7 @@ void ExtensionListModel::load()
         for (int i = 0; i < m_list.count(); i++) {
             if (m_list[i].code == newExtension.code) {
                 m_list[i] = newExtension;
-                QModelIndex index = createIndex(0, i);
+                QModelIndex index = createIndex(i, 0);
                 emit dataChanged(index, index);
                 return;
             }
@@ -102,7 +102,7 @@ void ExtensionListModel::install(int index)
 
     Ret ret = extensionsController()->install(m_list.at(index).code);
     if (!ret) {
-        LOGE() << "Error" << ret.code();
+        LOGE() << "Error" << ret.code() << ret.text();
         return;
     }
 }
@@ -115,7 +115,7 @@ void ExtensionListModel::uninstall(int index)
 
     Ret ret = extensionsController()->uninstall(m_list.at(index).code);
     if (!ret) {
-        LOGE() << "Error" << ret.code();
+        LOGE() << "Error" << ret.code() << ret.text();
         return;
     }
 }
@@ -128,7 +128,7 @@ void ExtensionListModel::update(int index)
 
     Ret ret = extensionsController()->update(m_list.at(index).code);
     if (!ret) {
-        LOGE() << "Error" << ret.code();
+        LOGE() << "Error" << ret.code() << ret.text();
         return;
     }
 }

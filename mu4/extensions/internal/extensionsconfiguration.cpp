@@ -20,6 +20,7 @@
 
 #include <QDir>
 #include <QVariant>
+#include <QJsonParseError>
 
 #include "log.h"
 #include "settings.h"
@@ -30,14 +31,14 @@ using namespace mu::framework;
 using namespace mu::extensions;
 
 static std::string module_name("extensions");
-static const Settings::Key EXTENSION_JSON(module_name, "extensions/extensionJson");
+static const Settings::Key EXTENSIONS_JSON(module_name, "extensions/extensionsJson");
 
 void ExtensionsConfiguration::init()
 {
-    settings()->valueChanged(EXTENSION_JSON).onReceive(nullptr, [this](const Val& val) {
+    settings()->valueChanged(EXTENSIONS_JSON).onReceive(nullptr, [this](const Val& val) {
         LOGD() << "EXTENSION_Json changed: " << val.toString();
 
-        ExtensionHash extensionHash = parseExtensionConfig(io::pathToQString(val.toString()).toLocal8Bit());
+        ExtensionsHash extensionHash = parseExtensionConfig(io::pathToQString(val.toString()).toLocal8Bit());
         m_extensionHashChanged.send(extensionHash);
     });
 }
@@ -52,16 +53,16 @@ QUrl ExtensionsConfiguration::extensionsFileServerUrl() const
     return QUrl("http://extensions.musescore.org/4.0/extensions/");
 }
 
-ValCh<ExtensionHash> ExtensionsConfiguration::extensions() const
+ValCh<ExtensionsHash> ExtensionsConfiguration::extensions() const
 {
-    ValCh<ExtensionHash> result;
-    result.val = parseExtensionConfig(io::pathToQString(settings()->value(EXTENSION_JSON).toString()).toLocal8Bit());
+    ValCh<ExtensionsHash> result;
+    result.val = parseExtensionConfig(io::pathToQString(settings()->value(EXTENSIONS_JSON).toString()).toLocal8Bit());
     result.ch = m_extensionHashChanged;
 
     return result;
 }
 
-Ret ExtensionsConfiguration::setExtensions(const ExtensionHash& extensions) const
+Ret ExtensionsConfiguration::setExtensions(const ExtensionsHash& extensions) const
 {
     QJsonArray jsonArray;
     for (const Extension& extension: extensions) {
@@ -74,19 +75,19 @@ Ret ExtensionsConfiguration::setExtensions(const ExtensionHash& extensions) cons
     QJsonDocument jsonDoc(jsonArray);
 
     Val value(jsonDoc.toJson(QJsonDocument::Compact).constData());
-    settings()->setValue(EXTENSION_JSON, value);
+    settings()->setValue(EXTENSIONS_JSON, value);
 
     return make_ret(Err::NoError);
 }
 
-ExtensionHash ExtensionsConfiguration::parseExtensionConfig(const QByteArray& json) const
+ExtensionsHash ExtensionsConfiguration::parseExtensionConfig(const QByteArray& json) const
 {
-    ExtensionHash result;
+    ExtensionsHash result;
 
     QJsonParseError err;
     QJsonDocument jsodDoc = QJsonDocument::fromJson(json, &err);
     if (err.error != QJsonParseError::NoError || !jsodDoc.isArray()) {
-        return ExtensionHash();
+        return ExtensionsHash();
     }
 
     QVariantList extensions = jsodDoc.array().toVariantList();
@@ -123,7 +124,7 @@ QStringList ExtensionsConfiguration::workspacesPaths() const
 {
     QStringList paths;
 
-    ExtensionHash extensions = this->extensions().val;
+    ExtensionsHash extensions = this->extensions().val;
 
     QString extensionsPath = extensionsSharePath();
     for (const Extension& extension: extensions.values()) {

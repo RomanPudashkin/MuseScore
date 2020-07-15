@@ -64,6 +64,7 @@ struct Extension
 };
 
 using ExtensionHash = QHash<QString /*code*/, Extension>;
+using ExtensionsHash = QHash<QString /*code*/, Extension>;
 }
 }
 

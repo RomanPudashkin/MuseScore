@@ -26,12 +26,12 @@
 
 namespace mu {
 namespace extensions {
-class IExtensionsUnpacker : MODULE_EXPORT_INTERFACE
+class IExtensionUnpacker : MODULE_EXPORT_INTERFACE
 {
-    INTERFACE_ID(IExtensionsUnpacker)
+    INTERFACE_ID(IExtensionUnpacker)
 
 public:
-    virtual ~IExtensionsUnpacker() = default;
+    virtual ~IExtensionUnpacker() = default;
 
     virtual Ret unpack(const QString& source, const QString& destination) const = 0;
 };

@@ -85,7 +85,7 @@ Ret ExtensionUnpacker::checkDirectoryIsWritable(const QString& directoryPath) co
     return make_ret(Err::NoError);
 }
 
-Ret ExtensionUnpacker::checkFreeSpace(const QString& directoryPath, quint64 neededSpace) const
+Ret ExtensionUnpacker::checkFreeSpace(const QString& directoryPath, qint64 neededSpace) const
 {
     QStorageInfo destinationStorageInfo(directoryPath);
     if (neededSpace > destinationStorageInfo.bytesAvailable()) {
