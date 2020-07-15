@@ -42,6 +42,10 @@ const std::vector<Action> InspectorsActions::m_actions = {
            QT_TRANSLATE_NOOP("action", ""),
            ShortcutContext::Any
            ),
+    Action("show-time-signature-properties",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
 };
 
 const Action& InspectorsActions::action(const ActionName& name) const
