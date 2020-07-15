@@ -29,6 +29,8 @@ void InspectorsActionController::init()
     dispatcher()->reg(this, "config-raster", [this]() {});
     dispatcher()->reg(this, "show-articulation-properties", [this]() {});
     dispatcher()->reg(this, "show-time-signature-properties", [this]() {});
+    dispatcher()->reg(this, "page-settings", [this]() {});
+    dispatcher()->reg(this, "edit-style", [this]() {});
 }
 
 bool InspectorsActionController::canReceiveAction(const ActionName& action) const

@@ -42,7 +42,11 @@ const std::vector<Action> InspectorsActions::m_actions = {
            QT_TRANSLATE_NOOP("action", ""),
            ShortcutContext::Any
            ),
-    Action("show-time-signature-properties",
+    Action("page-settings",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
+    Action("edit-style",
            QT_TRANSLATE_NOOP("action", ""),
            ShortcutContext::Any
            ),

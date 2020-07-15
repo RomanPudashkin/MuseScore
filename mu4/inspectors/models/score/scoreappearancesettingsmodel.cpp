@@ -1,10 +1,34 @@
-#include "scoreappearancesettingsmodel.h"
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
 
 #include <QPageSize>
 #include <QSize>
 
+#include "scoreappearancesettingsmodel.h"
+
+#include "internal/pagetypelistmodel.h"
+
 #include "types/scoreappearancetypes.h"
 #include "dataformatter.h"
+
+using namespace mu::inspectors;
+using namespace mu::actions;
 
 ScoreAppearanceSettingsModel::ScoreAppearanceSettingsModel(QObject* parent, IElementRepositoryService* repository) :
     AbstractInspectorModel(parent, repository)
@@ -17,12 +41,6 @@ ScoreAppearanceSettingsModel::ScoreAppearanceSettingsModel(QObject* parent, IEle
 void ScoreAppearanceSettingsModel::createProperties()
 {
     setPageTypeListModel(new PageTypeListModel(this));
-
-    /*
-     * TODO: fix
-    m_showPageSettingsAction = Ms::Shortcut::getActionByName("page-settings");
-    m_showStyleSettingsAction = Ms::Shortcut::getActionByName("edit-style");
-    */
 }
 
 void ScoreAppearanceSettingsModel::requestElements()
@@ -64,20 +82,12 @@ PageTypeListModel* ScoreAppearanceSettingsModel::pageTypeListModel() const
 
 void ScoreAppearanceSettingsModel::showPageSettings()
 {
-    if (!m_showPageSettingsAction) {
-        return;
-    }
-
-    m_showPageSettingsAction->trigger();
+    dispatcher()->dispatch("page-settings");
 }
 
 void ScoreAppearanceSettingsModel::showStyleSettings()
 {
-    if (!m_showStyleSettingsAction) {
-        return;
-    }
-
-    m_showStyleSettingsAction->trigger();
+    dispatcher()->dispatch("edit-style");
 }
 
 int ScoreAppearanceSettingsModel::orientationType() const

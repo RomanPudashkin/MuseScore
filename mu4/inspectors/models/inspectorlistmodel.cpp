@@ -8,6 +8,8 @@
 #include "score/scoredisplaysettingsmodel.h"
 #include "score/scoreappearancesettingsmodel.h"
 
+using namespace mu::inspectors;
+
 InspectorListModel::InspectorListModel(QObject *parent) : QAbstractListModel(parent)
 {
     m_roleNames.insert(InspectorDataRole, "inspectorData");
