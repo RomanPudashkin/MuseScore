@@ -1,18 +1,36 @@
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
 #include "appearancesettingsmodel.h"
 
 #include "dataformatter.h"
 
-static const int REARRANGE_ORDER_STEP = 100;
+namespace {
+constexpr int REARRANGE_ORDER_STEP = 100;
+}
+
+using namespace mu::inspectors;
+using namespace mu::actions;
 
 AppearanceSettingsModel::AppearanceSettingsModel(QObject* parent, IElementRepositoryService* repository) : AbstractInspectorModel(parent, repository)
 {
     createProperties();
-
-    // TODO: fix
-    //m_horizontallySnapToGridAction = Ms::Shortcut::getActionByName("hraster");
-    //m_verticallySnapToGridAction = Ms::Shortcut::getActionByName("vraster");
-    m_horizontallySnapToGridAction->setCheckable(true);
-    m_verticallySnapToGridAction->setCheckable(true);
 
     setTitle(tr("Appearance"));
 }
@@ -84,8 +102,7 @@ void AppearanceSettingsModel::pushFrontInOrder()
 
 void AppearanceSettingsModel::configureGrid()
 {
-    // TODO: fix
-    //Ms::Shortcut::getActionByName("config-raster")->trigger();
+    dispatcher()->dispatch("config-raster");
 }
 
 PropertyItem* AppearanceSettingsModel::leadingSpace() const
@@ -125,16 +142,18 @@ PropertyItem* AppearanceSettingsModel::verticalOffset() const
 
 bool AppearanceSettingsModel::isSnappedToGrid() const
 {
-    return m_horizontallySnapToGridAction->isChecked() &&
-           m_verticallySnapToGridAction->isChecked();
+    return m_isSnappedToGrid;
 }
 
 void AppearanceSettingsModel::setIsSnappedToGrid(bool isSnapped)
 {
-    if (isSnappedToGrid() == isSnapped)
+    if (isSnappedToGrid() == isSnapped) {
         return;
+    }
 
-    m_horizontallySnapToGridAction->setChecked(isSnapped);
-    m_verticallySnapToGridAction->setChecked(isSnapped);
-    emit isSnappedToGridChanged(isSnappedToGrid());
+    dispatcher()->dispatch("hraster", ActionData::make_arg1<bool>(isSnapped));
+    dispatcher()->dispatch("vraster", ActionData::make_arg1<bool>(isSnapped));
+
+    m_isSnappedToGrid = isSnapped;
+    emit isSnappedToGridChanged(isSnapped);
 }

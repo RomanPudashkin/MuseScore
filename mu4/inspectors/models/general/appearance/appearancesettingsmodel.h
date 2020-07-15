@@ -1,13 +1,37 @@
-#ifndef APPEARANCESETTINGSMODEL_H
-#define APPEARANCESETTINGSMODEL_H
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
+#ifndef MU_INSPECTORS_APPEARANCESETTINGSMODEL_H
+#define MU_INSPECTORS_APPEARANCESETTINGSMODEL_H
 
 #include "models/abstractinspectormodel.h"
 
-#include <QAction>
+#include "modularity/ioc.h"
+#include "actions/iactionsdispatcher.h"
 
+namespace mu {
+namespace inspectors {
 class AppearanceSettingsModel : public AbstractInspectorModel
 {
     Q_OBJECT
+
+    INJECT(inspectors, actions::IActionsDispatcher, dispatcher)
 
     Q_PROPERTY(PropertyItem* leadingSpace READ leadingSpace CONSTANT)
     Q_PROPERTY(PropertyItem* barWidth READ barWidth CONSTANT)
@@ -56,8 +80,9 @@ private:
     PropertyItem* m_horizontalOffset = nullptr;
     PropertyItem* m_verticalOffset = nullptr;
 
-    QAction* m_verticallySnapToGridAction = nullptr;
-    QAction* m_horizontallySnapToGridAction = nullptr;
+    bool m_isSnappedToGrid = false;
 };
+}
+}
 
-#endif // APPEARANCESETTINGSMODEL_H
+#endif // MU_INSPECTORS_APPEARANCESETTINGSMODEL_H

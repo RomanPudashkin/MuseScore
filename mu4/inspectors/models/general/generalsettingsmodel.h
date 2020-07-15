@@ -30,7 +30,7 @@ class GeneralSettingsModel : public AbstractInspectorModel
 
 public slots:
     void setPlaybackProxyModel(PlaybackProxyModel* playbackProxyModel);
-    void setAppearanceSettingsModel(AppearanceSettingsModel* appearanceSettingsModel);
+    void setAppearanceSettingsModel(mu::inspectors::AppearanceSettingsModel* appearanceSettingsModel);
 
 signals:
     void playbackProxyModelChanged(QObject* playbackProxyModel);
@@ -49,7 +49,7 @@ private:
     PropertyItem* m_isSmall = nullptr;
 
     PlaybackProxyModel* m_playbackProxyModel = nullptr;
-    AppearanceSettingsModel* m_appearanceSettingsModel = nullptr;
+    mu::inspectors::AppearanceSettingsModel* m_appearanceSettingsModel = nullptr;
 };
 
 #endif // GENERALSETTINGSMODEL_H
