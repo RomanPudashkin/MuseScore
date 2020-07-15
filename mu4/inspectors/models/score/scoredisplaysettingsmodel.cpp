@@ -1,4 +1,26 @@
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
 #include "scoredisplaysettingsmodel.h"
+
+using namespace mu::inspectors;
+using namespace mu::actions;
 
 ScoreSettingsModel::ScoreSettingsModel(QObject* parent, IElementRepositoryService* repository)
     : AbstractInspectorModel(parent, repository)
@@ -10,18 +32,6 @@ ScoreSettingsModel::ScoreSettingsModel(QObject* parent, IElementRepositoryServic
 
 void ScoreSettingsModel::createProperties()
 {
-    /*
-     * TODO: fix
-    m_shouldShowInvisible = Ms::Shortcut::getActionByName("show-invisible");
-    m_shouldShowUnprintable = Ms::Shortcut::getActionByName("show-unprintable");
-    m_shouldShowFrames = Ms::Shortcut::getActionByName("show-frames");
-    m_shouldShowPageMargins = Ms::Shortcut::getActionByName("show-pageborders");
-    */
-
-    connect(m_shouldShowInvisible, &QAction::toggled, this, &ScoreSettingsModel::shouldShowInvisibleChanged);
-    connect(m_shouldShowUnprintable, &QAction::toggled, this, &ScoreSettingsModel::shouldShowUnprintableChanged);
-    connect(m_shouldShowFrames, &QAction::toggled, this, &ScoreSettingsModel::shouldShowFramesChanged);
-    connect(m_shouldShowPageMargins, &QAction::toggled, this, &ScoreSettingsModel::shouldShowPageMarginsChanged);
 }
 
 void ScoreSettingsModel::requestElements()
@@ -48,60 +58,76 @@ void ScoreSettingsModel::loadProperties()
 
 void ScoreSettingsModel::resetProperties()
 {
-    m_shouldShowInvisible->setChecked(false);
-    m_shouldShowUnprintable->setChecked(false);
-    m_shouldShowFrames->setChecked(false);
-    m_shouldShowFrames->setChecked(false);
+    m_shouldShowInvisible = false;
+    m_shouldShowUnprintable = false;
+    m_shouldShowFrames = false;
+    m_shouldShowPageMargins = false;
 }
 
 bool ScoreSettingsModel::shouldShowInvisible() const
 {
-    return m_shouldShowInvisible->isChecked();
+    return m_shouldShowInvisible;
 }
 
 bool ScoreSettingsModel::shouldShowUnprintable() const
 {
-    return m_shouldShowUnprintable->isChecked();
+    return m_shouldShowUnprintable;
 }
 
 bool ScoreSettingsModel::shouldShowFrames() const
 {
-    return m_shouldShowFrames->isChecked();
+    return m_shouldShowFrames;
 }
 
 bool ScoreSettingsModel::shouldShowPageMargins() const
 {
-    return m_shouldShowPageMargins->isChecked();
+    return m_shouldShowPageMargins;
 }
 
 void ScoreSettingsModel::setShouldShowInvisible(bool shouldShowInvisible)
 {
-    if (m_shouldShowInvisible->isChecked() == shouldShowInvisible)
+    if (m_shouldShowInvisible == shouldShowInvisible) {
         return;
+    }
 
-    m_shouldShowInvisible->trigger();
+    m_shouldShowInvisible = shouldShowInvisible;
+    emit shouldShowInvisibleChanged(shouldShowInvisible);
+
+    dispatcher()->dispatch("show-invisible", ActionData::make_arg1<bool>(shouldShowInvisible));
 }
 
 void ScoreSettingsModel::setShouldShowUnprintable(bool shouldShowUnprintable)
 {
-    if (m_shouldShowUnprintable->isChecked() == shouldShowUnprintable)
+    if (m_shouldShowUnprintable == shouldShowUnprintable) {
         return;
+    }
 
-    m_shouldShowUnprintable->trigger();
+    m_shouldShowUnprintable = shouldShowUnprintable;
+    emit shouldShowUnprintableChanged(shouldShowUnprintable);
+
+    dispatcher()->dispatch("show-unprintable", ActionData::make_arg1<bool>(shouldShowUnprintable));
 }
 
 void ScoreSettingsModel::setShouldShowFrames(bool shouldShowFrames)
 {
-    if (m_shouldShowFrames->isChecked() == shouldShowFrames)
+    if (m_shouldShowFrames == shouldShowFrames) {
         return;
+    }
 
-    m_shouldShowFrames->trigger();
+    m_shouldShowFrames = shouldShowFrames;
+    emit shouldShowFramesChanged(shouldShowFrames);
+
+    dispatcher()->dispatch("show-frames", ActionData::make_arg1<bool>(shouldShowFrames));
 }
 
 void ScoreSettingsModel::setShouldShowPageMargins(bool shouldShowPageMargins)
 {
-    if (m_shouldShowPageMargins->isChecked() == shouldShowPageMargins)
+    if (m_shouldShowPageMargins == shouldShowPageMargins) {
         return;
+    }
 
-    m_shouldShowPageMargins->trigger();
+    m_shouldShowPageMargins = shouldShowPageMargins;
+    emit shouldShowPageMarginsChanged(shouldShowPageMargins);
+
+    dispatcher()->dispatch("show-pageborders", ActionData::make_arg1<bool>(shouldShowPageMargins));
 }

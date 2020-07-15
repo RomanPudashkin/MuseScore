@@ -31,6 +31,10 @@ void InspectorsActionController::init()
     dispatcher()->reg(this, "show-time-signature-properties", [this]() {});
     dispatcher()->reg(this, "page-settings", [this]() {});
     dispatcher()->reg(this, "edit-style", [this]() {});
+    dispatcher()->reg(this, "show-invisible", [this](const ActionName&, const ActionData&) {});
+    dispatcher()->reg(this, "show-unprintable", [this](const ActionName&, const ActionData&) {});
+    dispatcher()->reg(this, "show-frames", [this](const ActionName&, const ActionData&) {});
+    dispatcher()->reg(this, "show-pageborders", [this](const ActionName&, const ActionData&) {});
 }
 
 bool InspectorsActionController::canReceiveAction(const ActionName& action) const

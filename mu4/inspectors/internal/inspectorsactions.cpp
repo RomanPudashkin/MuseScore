@@ -50,6 +50,22 @@ const std::vector<Action> InspectorsActions::m_actions = {
            QT_TRANSLATE_NOOP("action", ""),
            ShortcutContext::Any
            ),
+    Action("show-invisible",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
+    Action("show-unprintable",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
+    Action("show-frames",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
+    Action("show-pageborders",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           )
 };
 
 const Action& InspectorsActions::action(const ActionName& name) const
