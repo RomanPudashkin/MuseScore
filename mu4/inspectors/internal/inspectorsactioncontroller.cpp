@@ -27,6 +27,7 @@ void InspectorsActionController::init()
     dispatcher()->reg(this, "hraster", [this](const ActionName&, const ActionData&) {});
     dispatcher()->reg(this, "vraster", [this](const ActionName&, const ActionData&) {});
     dispatcher()->reg(this, "config-raster", [this]() {});
+    dispatcher()->reg(this, "show-articulation-properties", [this]() {});
 }
 
 bool InspectorsActionController::canReceiveAction(const ActionName& action) const

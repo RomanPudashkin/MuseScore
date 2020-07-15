@@ -3,24 +3,20 @@
 #include "log.h"
 #include "articulation.h"
 
+using namespace mu::inspectors;
+using namespace mu::actions;
+
 ArticulationSettingsModel::ArticulationSettingsModel(QObject* parent, IElementRepositoryService* repository)
     : AbstractInspectorModel(parent, repository)
 {
     setModelType(TYPE_ARTICULATION);
     setTitle(tr("Articulation"));
     createProperties();
-
-    // TODO: fix
-    //m_openChannelAndMidiPropertiesAction = Ms::Shortcut::getActionByName("show-articulation-properties");
 }
 
 void ArticulationSettingsModel::openChannelAndMidiProperties()
 {
-    IF_ASSERT_FAILED(m_openChannelAndMidiPropertiesAction) {
-        return;
-    }
-
-    m_openChannelAndMidiPropertiesAction->trigger();
+    dispatcher()->dispatch("show-articulation-properties");
 }
 
 void ArticulationSettingsModel::createProperties()

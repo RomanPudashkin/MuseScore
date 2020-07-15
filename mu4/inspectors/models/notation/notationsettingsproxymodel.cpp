@@ -32,6 +32,8 @@
 #include "bends/bendsettingsmodel.h"
 #include "tremolobars/tremolobarsettingsmodel.h"
 
+using namespace mu::inspectors;
+
 NotationSettingsProxyModel::NotationSettingsProxyModel(QObject* parent, IElementRepositoryService* repository) :
     AbstractInspectorProxyModel(parent)
 {
