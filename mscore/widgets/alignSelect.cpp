@@ -12,7 +12,7 @@
 
 #include "alignSelect.h"
 #include "libmscore/types.h"
-#include "inspectoriconloader.h"
+#include "mu4/inspectors/inspectoriconloader.h"
 
 namespace Ms {
 

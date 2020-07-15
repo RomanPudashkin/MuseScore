@@ -35,6 +35,7 @@
 #include "mu4/scenes/notation/notationscenemodule.h"
 #include "mu4/scenes/palette/palettemodule.h"
 #include "mu4/domain/importexport/importexportmodule.h"
+#include "mu4/inspectors/inspectorssetup.h"
 
 #ifdef BUILD_TELEMETRY_MODULE
 #include "framework/telemetry/telemetrysetup.h"
@@ -43,8 +44,6 @@
 #ifdef AVSOMR
 #include "avsomr/avsomrsetup.h"
 #endif
-
-#include "inspectors/inspectorssetup.h"
 
 //---------------------------------------------------------
 //   ModulesSetup
@@ -64,6 +63,7 @@ ModulesSetup::ModulesSetup()
         << new mu::domain::notation::NotationDomainModule()
         << new mu::scene::common::CommonSceneModule()
         << new mu::scene::notation::NotationSceneModule()
+        << new InspectorsSetup()
 #endif
 
 #ifdef BUILD_TELEMETRY_MODULE
@@ -71,9 +71,6 @@ ModulesSetup::ModulesSetup()
 #endif
 #ifdef AVSOMR
         << new Ms::Avs::AvsOmrSetup()
-#endif
-#ifndef BUILD_UI_MU4
-        << new InspectorsSetup()
 #endif
         << new mu::framework::GlobalModule()
         << new mu::framework::UiModule()

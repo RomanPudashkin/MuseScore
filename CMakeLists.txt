@@ -789,7 +789,6 @@ if (OMR)
  endif (NOT USE_SYSTEM_POPPLER)
 endif (OMR)
 
-add_subdirectory(inspectors)
 add_subdirectory(mscore)
 add_subdirectory(main)
 
