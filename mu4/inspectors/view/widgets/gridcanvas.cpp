@@ -19,6 +19,8 @@
 
 #include "gridcanvas.h"
 
+using namespace mu::inspectors;
+
 namespace Ms {
 //---------------------------------------------------------
 //   GridCanvas
@@ -144,16 +146,14 @@ void GridCanvas::paint(QPainter* painter)
     const qreal rightPos = w - leftPos;   // right end position of graph
     const qreal bottomPos = h - topPos;   // bottom end position of graph
 
-    // TODO: fix
-    //painter->setRenderHint(QPainter::Antialiasing, preferences.getBool(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING));
+    painter->setRenderHint(QPainter::Antialiasing, inspectorsConfiguration()->antialiasedDrawing());
 
     painter->fillRect(childrenRect(), QApplication::palette().color(QPalette::Window).lighter());
     QPen pen = painter->pen();
     pen.setWidth(1);
 
-    // TODO: fix
-    //QColor primaryLinesColor(preferences.isThemeDark() ? Qt::white : Qt::black);
-    QColor primaryLinesColor;
+    bool isThemeDark = inspectorsConfiguration()->themeType() == IInspectorsConfiguration::ThemeType::Dark;
+    QColor primaryLinesColor(isThemeDark ? Qt::white : Qt::black);
 
     QColor secondaryLinesColor(Qt::gray);
     // draw vertical lines

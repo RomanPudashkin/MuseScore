@@ -17,20 +17,31 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include "inspectorssetup.h"
+#include "inspectorsmodule.h"
 
-std::string InspectorsSetup::moduleName() const
+#include "internal/inspectorsconfiguration.h"
+#include "modularity/ioc.h"
+
+using namespace mu::inspectors;
+
+static void inspectors_init_qrc()
+{
+    Q_INIT_RESOURCE(inspectors_resources);
+}
+
+std::string InspectorsModule::moduleName() const
 {
     return "inspectors";
 }
 
-void InspectorsSetup::registerExports()
+void InspectorsModule::registerExports()
 {
+    framework::ioc()->registerExport<IInspectorsConfiguration>(moduleName(), new InspectorsConfiguration());
 }
 
-void InspectorsSetup::registerResources()
+void InspectorsModule::registerResources()
 {
-    Q_INIT_RESOURCE(inspectors_resources);
+    inspectors_init_qrc();
 }
 
 #include "models/abstractinspectormodel.h"
@@ -61,7 +72,7 @@ void InspectorsSetup::registerResources()
 #include "types/bendtypes.h"
 #include "types/tremolobartypes.h"
 
-void InspectorsSetup::registerUiTypes()
+void InspectorsModule::registerUiTypes()
 {
     qmlRegisterUncreatableType<AbstractInspectorModel>("MuseScore.Inspectors", 3, 3, "Inspector",
                                                        "Not creatable as it is an enum type");

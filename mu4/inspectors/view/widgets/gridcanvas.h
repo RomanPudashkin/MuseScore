@@ -25,6 +25,9 @@
 
 #include "libmscore/pitchvalue.h"
 
+#include "modularity/ioc.h"
+#include "iinspectorsconfiguration.h"
+
 namespace Ms {
 //---------------------------------------------------------
 //   GridCanvas
@@ -33,6 +36,8 @@ namespace Ms {
 class GridCanvas : public QQuickPaintedItem
 {
     Q_OBJECT
+
+    INJECT(inspectors, mu::inspectors::IInspectorsConfiguration, inspectorsConfiguration)
 
     Q_PROPERTY(QVariant pointList READ pointList WRITE setPointList NOTIFY pointListChanged)
 

@@ -17,23 +17,29 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef INSPECTORSSETUP_H
-#define INSPECTORSSETUP_H
+#ifndef MU_INSPECTORS_IINSPECTORSCONFIGURATION_H
+#define MU_INSPECTORS_IINSPECTORSCONFIGURATION_H
 
-#include "modularity/imodulesetup.h"
+#include "modularity/imoduleexport.h"
 
-//---------------------------------------------------------
-//   InspectorsSetup
-//---------------------------------------------------------
-class InspectorsSetup : public mu::framework::IModuleSetup
+namespace mu {
+namespace inspectors {
+class IInspectorsConfiguration : MODULE_EXPORT_INTERFACE
 {
+    INTERFACE_ID(IInspectorsConfiguration)
+
 public:
-    InspectorsSetup() = default;
+    enum class ThemeType {
+        Dark = 0,
+        Light
+    };
 
-    std::string moduleName() const override;
-    void registerExports() override;
-    void registerResources() override;
-    void registerUiTypes() override;
+    virtual ~IInspectorsConfiguration() = default;
+
+    virtual ThemeType themeType() const = 0;
+    virtual bool antialiasedDrawing() const = 0;
 };
+}
+}
 
-#endif // INSPECTORSSETUP_H
+#endif // MU_INSPECTORS_IINSPECTORSCONFIGURATION_H

@@ -27,6 +27,8 @@
 #include "libmscore/segment.h"
 #include "libmscore/undo.h"
 
+using namespace mu::inspectors;
+
 namespace Ms {
 //---------------------------------------------------------
 //   FretCanvas
@@ -66,13 +68,7 @@ void FretCanvas::draw(QPainter* painter)
     int size = lrint(18.0 * mag);
     font.setPixelSize(size);
 
-    /*
-     * TODO: fix
-    QSettings preferenses;
-    painter->setRenderHint(QPainter::Antialiasing, preferenses.value(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING, 
-                                                                     false).toBool());
-    */
-
+    painter->setRenderHint(QPainter::Antialiasing, inspectorsConfiguration()->antialiasedDrawing());
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->translate(xo, yo);
 

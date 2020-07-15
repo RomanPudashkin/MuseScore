@@ -25,6 +25,9 @@
 #include <QVariant>
 #include "fret.h"
 
+#include "modularity/ioc.h"
+#include "iinspectorsconfiguration.h"
+
 namespace Ms {
 
 class Accidental;
@@ -34,8 +37,11 @@ class Clef;
 //   FretCanvas
 //---------------------------------------------------------
 
-class FretCanvas : public QQuickPaintedItem {
+class FretCanvas : public QQuickPaintedItem
+{
       Q_OBJECT
+
+      INJECT(inspectors, mu::inspectors::IInspectorsConfiguration, inspectorsConfiguration)
 
       Q_PROPERTY(QVariant diagram READ diagram WRITE setFretDiagram NOTIFY diagramChanged)
       Q_PROPERTY(bool isBarreModeOn READ isBarreModeOn WRITE setIsBarreModeOn NOTIFY isBarreModeOnChanged)
