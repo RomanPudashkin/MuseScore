@@ -10,7 +10,8 @@ ArticulationSettingsModel::ArticulationSettingsModel(QObject* parent, IElementRe
     setTitle(tr("Articulation"));
     createProperties();
 
-    m_openChannelAndMidiPropertiesAction = Ms::Shortcut::getActionByName("show-articulation-properties");
+    // TODO: fix
+    //m_openChannelAndMidiPropertiesAction = Ms::Shortcut::getActionByName("show-articulation-properties");
 }
 
 void ArticulationSettingsModel::openChannelAndMidiProperties()

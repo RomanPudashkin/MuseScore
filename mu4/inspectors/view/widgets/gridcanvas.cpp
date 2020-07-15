@@ -18,7 +18,6 @@
 //=============================================================================
 
 #include "gridcanvas.h"
-#include "preferences.h"
 
 namespace Ms {
 //---------------------------------------------------------
@@ -145,13 +144,17 @@ void GridCanvas::paint(QPainter* painter)
     const qreal rightPos = w - leftPos;   // right end position of graph
     const qreal bottomPos = h - topPos;   // bottom end position of graph
 
-    painter->setRenderHint(QPainter::Antialiasing, preferences.getBool(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING));
+    // TODO: fix
+    //painter->setRenderHint(QPainter::Antialiasing, preferences.getBool(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING));
 
     painter->fillRect(childrenRect(), QApplication::palette().color(QPalette::Window).lighter());
     QPen pen = painter->pen();
     pen.setWidth(1);
 
-    QColor primaryLinesColor(preferences.isThemeDark() ? Qt::white : Qt::black);
+    // TODO: fix
+    //QColor primaryLinesColor(preferences.isThemeDark() ? Qt::white : Qt::black);
+    QColor primaryLinesColor;
+
     QColor secondaryLinesColor(Qt::gray);
     // draw vertical lines
     for (int i = 0; i < m_columns; ++i) {

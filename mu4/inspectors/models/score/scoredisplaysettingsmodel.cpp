@@ -1,7 +1,5 @@
 #include "scoredisplaysettingsmodel.h"
 
-#include "shortcut.h"
-
 ScoreSettingsModel::ScoreSettingsModel(QObject* parent, IElementRepositoryService* repository)
     : AbstractInspectorModel(parent, repository)
 {
@@ -12,10 +10,13 @@ ScoreSettingsModel::ScoreSettingsModel(QObject* parent, IElementRepositoryServic
 
 void ScoreSettingsModel::createProperties()
 {
+    /*
+     * TODO: fix
     m_shouldShowInvisible = Ms::Shortcut::getActionByName("show-invisible");
     m_shouldShowUnprintable = Ms::Shortcut::getActionByName("show-unprintable");
     m_shouldShowFrames = Ms::Shortcut::getActionByName("show-frames");
     m_shouldShowPageMargins = Ms::Shortcut::getActionByName("show-pageborders");
+    */
 
     connect(m_shouldShowInvisible, &QAction::toggled, this, &ScoreSettingsModel::shouldShowInvisibleChanged);
     connect(m_shouldShowUnprintable, &QAction::toggled, this, &ScoreSettingsModel::shouldShowUnprintableChanged);

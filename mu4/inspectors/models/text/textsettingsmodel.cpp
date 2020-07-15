@@ -14,6 +14,8 @@ TextSettingsModel::TextSettingsModel(QObject* parent, IElementRepositoryService*
     setTitle(tr("Text"));
     createProperties();
 
+    /*
+     * TODO: fix
     m_insertSpecialCharactersAction = Ms::Shortcut::getActionByName("show-keys");
     m_insertSpecialCharactersAction->setCheckable(true);
 
@@ -23,6 +25,7 @@ TextSettingsModel::TextSettingsModel(QObject* parent, IElementRepositoryService*
             [this](const Ms::ScoreState& state) {
         updateInsertSpecialCharAvailability(state);
     });
+    */
 }
 
 void TextSettingsModel::createProperties()
@@ -284,6 +287,8 @@ void TextSettingsModel::updateFramePropertiesAvailability()
         static_cast<TextTypes::FrameType>(m_frameType->value().toInt()) == TextTypes::FrameType::FRAME_TYPE_SQUARE);
 }
 
+/*
+ * TODO: fix
 void TextSettingsModel::updateInsertSpecialCharAvailability(const Ms::ScoreState& state)
 {
     if (!m_insertSpecialCharactersAction) {
@@ -297,6 +302,7 @@ void TextSettingsModel::updateInsertSpecialCharAvailability(const Ms::ScoreState
     m_insertSpecialCharactersAction->setEnabled(isAvailable);
     setIsSpecialCharactersInsertionAvailable(isAvailable);
 }
+*/
 
 void TextSettingsModel::updateStaffPropertiesAvailability()
 {

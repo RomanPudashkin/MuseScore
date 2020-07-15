@@ -3,7 +3,6 @@
 
 #include "models/abstractinspectormodel.h"
 
-#include "shortcut.h"
 #include <QAction>
 
 class TextSettingsModel : public AbstractInspectorModel
@@ -74,7 +73,8 @@ signals:
 
 private:
     void updateFramePropertiesAvailability();
-    void updateInsertSpecialCharAvailability(const Ms::ScoreState &state);
+    // TODO: fix
+    //void updateInsertSpecialCharAvailability(const Ms::ScoreState &state);
     void updateStaffPropertiesAvailability();
 
     PropertyItem* m_fontFamily = nullptr;

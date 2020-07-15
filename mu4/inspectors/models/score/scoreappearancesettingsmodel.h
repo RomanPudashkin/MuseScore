@@ -6,7 +6,6 @@
 #include <QAction>
 
 #include "internal/pagetypelistmodel.h"
-#include "shortcut.h"
 
 class ScoreAppearanceSettingsModel : public AbstractInspectorModel
 {

@@ -22,8 +22,6 @@
 #include "libmscore/measure.h"
 #include "libmscore/system.h"
 #include "libmscore/score.h"
-//#include "libmscore/stringdata.h"
-#include "preferencekeys.h"
 #include "libmscore/chord.h"
 #include "libmscore/note.h"
 #include "libmscore/segment.h"
@@ -68,10 +66,13 @@ void FretCanvas::draw(QPainter* painter)
     int size = lrint(18.0 * mag);
     font.setPixelSize(size);
 
+    /*
+     * TODO: fix
     QSettings preferenses;
-
-    painter->setRenderHint(QPainter::Antialiasing, preferenses.value(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING,
+    painter->setRenderHint(QPainter::Antialiasing, preferenses.value(PREF_UI_CANVAS_MISC_ANTIALIASEDDRAWING, 
                                                                      false).toBool());
+    */
+
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->translate(xo, yo);
 

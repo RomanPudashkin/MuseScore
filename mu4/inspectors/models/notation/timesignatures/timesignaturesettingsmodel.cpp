@@ -1,7 +1,6 @@
 #include "timesignaturesettingsmodel.h"
 
 #include <QSizeF>
-#include "shortcut.h"
 
 #include "dataformatter.h"
 
@@ -12,7 +11,8 @@ TimeSignatureSettingsModel::TimeSignatureSettingsModel(QObject* parent, IElement
     setTitle(tr("Time signature"));
     createProperties();
 
-    m_showTimeSignaturePropertiesAction = Ms::Shortcut::getActionByName("show-time-signature-properties");
+    // TODO: fix
+    //m_showTimeSignaturePropertiesAction = Ms::Shortcut::getActionByName("show-time-signature-properties");
 }
 
 void TimeSignatureSettingsModel::createProperties()

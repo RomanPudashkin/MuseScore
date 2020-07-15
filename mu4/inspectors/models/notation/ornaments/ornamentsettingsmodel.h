@@ -3,7 +3,6 @@
 
 #include "models/abstractinspectormodel.h"
 
-#include "shortcut.h"
 #include <QAction>
 
 class OrnamentSettingsModel : public AbstractInspectorModel

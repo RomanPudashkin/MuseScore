@@ -30,13 +30,8 @@ include_directories(
       ${Qt5Core_INCLUDE_DIRS}
       ${Qt5Gui_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
-      ${PROJECT_SOURCE_DIR}/global
       ${PROJECT_SOURCE_DIR}/framework/global
-      ${PROJECT_SOURCE_DIR}/framework
       ${PROJECT_SOURCE_DIR}/libmscore
-      ${PROJECT_SOURCE_DIR}/thirdparty
-      ${PROJECT_SOURCE_DIR}/mscore
-      ${PROJECT_SOURCE_DIR}/telemetry
       ${PROJECT_BINARY_DIR}
       )
 
@@ -72,5 +67,3 @@ xcode_pch(inspectors all)
 
 # Use MSVC pre-compiled headers
 vstudio_pch( inspectors )
-
-target_link_libraries(inspectors global global_old)

@@ -8,8 +8,9 @@ AppearanceSettingsModel::AppearanceSettingsModel(QObject* parent, IElementReposi
 {
     createProperties();
 
-    m_horizontallySnapToGridAction = Ms::Shortcut::getActionByName("hraster");
-    m_verticallySnapToGridAction = Ms::Shortcut::getActionByName("vraster");
+    // TODO: fix
+    //m_horizontallySnapToGridAction = Ms::Shortcut::getActionByName("hraster");
+    //m_verticallySnapToGridAction = Ms::Shortcut::getActionByName("vraster");
     m_horizontallySnapToGridAction->setCheckable(true);
     m_verticallySnapToGridAction->setCheckable(true);
 
@@ -83,7 +84,8 @@ void AppearanceSettingsModel::pushFrontInOrder()
 
 void AppearanceSettingsModel::configureGrid()
 {
-    Ms::Shortcut::getActionByName("config-raster")->trigger();
+    // TODO: fix
+    //Ms::Shortcut::getActionByName("config-raster")->trigger();
 }
 
 PropertyItem* AppearanceSettingsModel::leadingSpace() const

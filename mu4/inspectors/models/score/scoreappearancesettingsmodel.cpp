@@ -18,8 +18,11 @@ void ScoreAppearanceSettingsModel::createProperties()
 {
     setPageTypeListModel(new PageTypeListModel(this));
 
+    /*
+     * TODO: fix
     m_showPageSettingsAction = Ms::Shortcut::getActionByName("page-settings");
     m_showStyleSettingsAction = Ms::Shortcut::getActionByName("edit-style");
+    */
 }
 
 void ScoreAppearanceSettingsModel::requestElements()
