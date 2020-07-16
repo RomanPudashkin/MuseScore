@@ -20,6 +20,7 @@
 #include "inspectorsmodule.h"
 
 #include "internal/inspectorsconfiguration.h"
+#include "internal/inspectorsactioncontroller.h"
 #include "modularity/ioc.h"
 
 using namespace mu::inspectors;
@@ -28,6 +29,8 @@ static void inspectors_init_qrc()
 {
     Q_INIT_RESOURCE(inspectors_resources);
 }
+
+static InspectorsActionController* m_inspectorsActionController = new InspectorsActionController();
 
 std::string InspectorsModule::moduleName() const
 {
@@ -42,6 +45,11 @@ void InspectorsModule::registerExports()
 void InspectorsModule::registerResources()
 {
     inspectors_init_qrc();
+}
+
+void InspectorsModule::onInit()
+{
+    m_inspectorsActionController->init();
 }
 
 #include "models/abstractinspectormodel.h"

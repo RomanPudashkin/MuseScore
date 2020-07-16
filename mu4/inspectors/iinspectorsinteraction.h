@@ -17,32 +17,24 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
-#define MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
+#ifndef MU_INSPECTORS_INSPECTORSINTERACTION_H
+#define MU_INSPECTORS_INSPECTORSINTERACTION_H
 
-#include "actions/actionable.h"
-#include "actions/iactionsdispatcher.h"
-#include "modularity/ioc.h"
+#include <string>
 
-#include "iinspectorsinteraction.h"
+#include "modularity/imoduleexport.h"
 
 namespace mu {
 namespace inspectors {
-class InspectorsActionController : public actions::Actionable
+class IInspectorsInteraction : MODULE_EXPORT_INTERFACE
 {
-    INJECT(inspectors, actions::IActionsDispatcher, dispatcher)
-    INJECT(inspectors, IInspectorsInteraction, interaction)
+    INTERFACE_ID(IInspectorsInteraction)
 
 public:
-    void init();
-
-private:
-    void triggerAction(const actions::ActionName &actionName);
-    void setChecked(const actions::ActionName &actionName, const actions::ActionData &args);
-
-    bool canReceiveAction(const actions::ActionName& actionName) const override;
+    virtual void triggerAction(const std::string &actionName) = 0;
+    virtual void setChecked(const std::string &actionName, bool checked) = 0;
 };
 }
 }
 
-#endif // MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
+#endif // MU_INSPECTORS_INSPECTORSINTERACTION_H

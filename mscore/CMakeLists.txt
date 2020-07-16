@@ -278,6 +278,9 @@ add_library(mscoreapp STATIC
       palette/palettewidget.cpp
       mu3paletteadapter.cpp
 
+      inspectorsinteraction.h
+      inspectorsinteraction.cpp
+
       ${CLOUD_SRC}
       ${IMPORTMIDIUI_SRC}
       ${INSPECTOR_SRC}

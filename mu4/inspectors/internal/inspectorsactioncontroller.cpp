@@ -24,24 +24,41 @@ using namespace mu::actions;
 
 void InspectorsActionController::init()
 {
-    dispatcher()->reg(this, "hraster", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "vraster", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "config-raster", [this]() {});
-    dispatcher()->reg(this, "show-articulation-properties", [this]() {});
-    dispatcher()->reg(this, "show-time-signature-properties", [this]() {});
-    dispatcher()->reg(this, "page-settings", [this]() {});
-    dispatcher()->reg(this, "edit-style", [this]() {});
-    dispatcher()->reg(this, "show-invisible", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "show-unprintable", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "show-frames", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "show-pageborders", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "show-keys", [this](const ActionName&, const ActionData&) {});
-    dispatcher()->reg(this, "show-staff-text-properties", [this](const ActionName&) {});
+    auto regCheckableAction = [this](const char *actionName) {
+        dispatcher()->reg(this, actionName, this, &InspectorsActionController::setChecked);
+    };
+
+    auto regTriggerableAction = [this](const char* actionName) {
+        dispatcher()->reg(this, actionName, this, &InspectorsActionController::triggerAction);
+    };
+
+    regCheckableAction("hraster");
+    regCheckableAction("vraster");
+    regCheckableAction("show-invisible");
+    regCheckableAction("show-unprintable");
+    regCheckableAction("show-frames");
+    regCheckableAction("show-pageborders");
+    regCheckableAction("show-keys");
+
+    regTriggerableAction("config-raster");
+    regTriggerableAction("show-articulation-properties");
+    regTriggerableAction("show-time-signature-properties");
+    regTriggerableAction("page-settings");
+    regTriggerableAction("edit-style");
+    regTriggerableAction("show-staff-text-properties");
 }
 
-bool InspectorsActionController::canReceiveAction(const ActionName& action) const
+void InspectorsActionController::triggerAction(const actions::ActionName& actionName)
 {
-    Q_UNUSED(action)
+    interaction()->triggerAction(actionName);
+}
 
+void InspectorsActionController::setChecked(const actions::ActionName& actionName, const actions::ActionData &args)
+{
+    interaction()->setChecked(actionName, args.arg<bool>(0));
+}
+
+bool InspectorsActionController::canReceiveAction(const ActionName&) const
+{
     return true;
 }

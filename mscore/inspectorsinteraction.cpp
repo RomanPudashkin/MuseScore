@@ -17,32 +17,28 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
-#define MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
+#include <QAction>
 
-#include "actions/actionable.h"
-#include "actions/iactionsdispatcher.h"
-#include "modularity/ioc.h"
+#include "inspectorsinteraction.h"
 
-#include "iinspectorsinteraction.h"
+#include "shortcut.h"
 
-namespace mu {
-namespace inspectors {
-class InspectorsActionController : public actions::Actionable
+using namespace Ms;
+
+void InspectorsInteraction::triggerAction(const std::string& actionName)
 {
-    INJECT(inspectors, actions::IActionsDispatcher, dispatcher)
-    INJECT(inspectors, IInspectorsInteraction, interaction)
+    QAction *action = Shortcut::getActionByName(actionName.c_str());
 
-public:
-    void init();
-
-private:
-    void triggerAction(const actions::ActionName &actionName);
-    void setChecked(const actions::ActionName &actionName, const actions::ActionData &args);
-
-    bool canReceiveAction(const actions::ActionName& actionName) const override;
-};
-}
+    if (action) {
+        action->trigger();
+    }
 }
 
-#endif // MU_INSPECTORS_INSPECTORSACTIONCONTROLLER_H
+void InspectorsInteraction::setChecked(const std::string& actionName, bool checked)
+{
+    QAction *action = Shortcut::getActionByName(actionName.c_str());
+
+    if (action) {
+        action->setChecked(checked);
+    }
+}
