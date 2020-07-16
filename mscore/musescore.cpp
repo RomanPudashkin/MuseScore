@@ -184,7 +184,7 @@ Q_LOGGING_CATEGORY(undoRedo, "undoRedo", QtCriticalMsg);
 #include "widgets/telemetrypermissiondialog.h"
 #endif
 #include "telemetrymanager.h"
-#include "global/context/scorestateobserver.h"
+#include "mu4/scores/internal/scorestateobserver.h"
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)) //???
 # define endl Qt::endl
@@ -241,6 +241,8 @@ QErrorMessage* errorMessage;
 const char* voiceActions[] = { "voice-1", "voice-2", "voice-3", "voice-4" };
 
 bool mscoreFirstStart = false;
+
+extern const char* stateName(ScoreState);
 
 const std::list<const char*> MuseScore::_allNoteInputMenuEntries {
     "note-input",

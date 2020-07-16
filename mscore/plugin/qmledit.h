@@ -15,6 +15,8 @@
 
 #include "globals.h"
 
+#include "mu4/scores/scorestypes.h"
+
 namespace Ms {
 class JSHighlighter;
 

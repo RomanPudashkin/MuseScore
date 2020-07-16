@@ -1,5 +1,7 @@
 #include "scorestateobserver.h"
 
+using namespace Ms;
+
 ScoreStateObserver::ScoreStateObserver(QObject* parent) : QObject(parent)
 {
 

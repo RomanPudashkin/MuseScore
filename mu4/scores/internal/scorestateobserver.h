@@ -3,8 +3,9 @@
 
 #include <QObject>
 
-#include "mscore/globals.h"
+#include "../scorestypes.h"
 
+namespace Ms {
 class ScoreStateObserver : public QObject
 {
     Q_OBJECT
@@ -15,19 +16,20 @@ public:
         return &obs;
     }
 
-    Ms::ScoreState currentState() const;
+    ScoreState currentState() const;
 
 public slots:
-    void setCurrentState(Ms::ScoreState currentState);
+    void setCurrentState(ScoreState currentState);
 
 signals:
-    void currentStateChanged(Ms::ScoreState currentState);
+    void currentStateChanged(ScoreState currentState);
 
 private:
     explicit ScoreStateObserver(QObject* parent = nullptr);
 
-    Ms::ScoreState m_currentState = Ms::ScoreState::STATE_ALL;
+    ScoreState m_currentState = ScoreState::STATE_ALL;
 };
+}
 
 Q_DECLARE_METATYPE(Ms::ScoreState)
 

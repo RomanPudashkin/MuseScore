@@ -22,6 +22,8 @@
 #include "libmscore/pos.h"
 #include "libmscore/harmony.h"
 
+#include "mu4/scores/scorestypes.h"
+
 namespace Ms {
 class ChordRest;
 class Rest;

@@ -35,6 +35,8 @@ void InspectorsActionController::init()
     dispatcher()->reg(this, "show-unprintable", [this](const ActionName&, const ActionData&) {});
     dispatcher()->reg(this, "show-frames", [this](const ActionName&, const ActionData&) {});
     dispatcher()->reg(this, "show-pageborders", [this](const ActionName&, const ActionData&) {});
+    dispatcher()->reg(this, "show-keys", [this](const ActionName&, const ActionData&) {});
+    dispatcher()->reg(this, "show-staff-text-properties", [this](const ActionName&) {});
 }
 
 bool InspectorsActionController::canReceiveAction(const ActionName& action) const

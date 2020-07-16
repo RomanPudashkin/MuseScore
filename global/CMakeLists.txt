@@ -37,8 +37,6 @@ add_library (${MODULE} ${LIBRARY_TYPE}
     ${_all_h_file}
     ${PCH}
     ${MODULARITY_SRC}
-    ${CMAKE_CURRENT_LIST_DIR}/context/scorestateobserver.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/context/scorestateobserver.h
     ${CMAKE_CURRENT_LIST_DIR}/gui/miconengine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/gui/miconengine.h
 )

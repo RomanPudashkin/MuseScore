@@ -65,6 +65,14 @@ const std::vector<Action> InspectorsActions::m_actions = {
     Action("show-pageborders",
            QT_TRANSLATE_NOOP("action", ""),
            ShortcutContext::Any
+           ),
+    Action("show-keys",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
+           ),
+    Action("show-staff-text-properties",
+           QT_TRANSLATE_NOOP("action", ""),
+           ShortcutContext::Any
            )
 };
 

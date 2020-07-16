@@ -33,6 +33,7 @@ include_directories(
       ${PROJECT_SOURCE_DIR}/framework/global
       ${PROJECT_SOURCE_DIR}/framework
       ${PROJECT_SOURCE_DIR}/libmscore
+      ${PROJECT_SOURCE_DIR}/mu4/scores
       ${PROJECT_BINARY_DIR}
       )
 

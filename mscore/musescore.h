@@ -30,6 +30,8 @@
 
 #include "framework/ui/imainwindow.h"
 
+#include "mu4/scores/scorestypes.h"
+
 class InspectorDockWidget;
 
 namespace Ms {

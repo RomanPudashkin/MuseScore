@@ -1,11 +1,35 @@
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
 #include "textsettingsmodel.h"
 
 #include <QFont>
 
 #include "types/texttypes.h"
 #include "libmscore/textbase.h"
-#include "context/scorestateobserver.h"
 #include "dataformatter.h"
+
+#include "scorestypes.h"
+#include "internal/scorestateobserver.h"
+
+using namespace mu::inspectors;
+using namespace mu::actions;
 
 TextSettingsModel::TextSettingsModel(QObject* parent, IElementRepositoryService* repository)
     : AbstractInspectorModel(parent, repository)
@@ -14,18 +38,13 @@ TextSettingsModel::TextSettingsModel(QObject* parent, IElementRepositoryService*
     setTitle(tr("Text"));
     createProperties();
 
-    /*
-     * TODO: fix
-    m_insertSpecialCharactersAction = Ms::Shortcut::getActionByName("show-keys");
-    m_insertSpecialCharactersAction->setCheckable(true);
+    connect(Ms::ScoreStateObserver::instance(), &Ms::ScoreStateObserver::currentStateChanged, this, [this](const Ms::ScoreState& state) {
+        bool isAvailable = state == Ms::ScoreState::STATE_TEXT_EDIT
+                           || state == Ms::ScoreState::STATE_LYRICS_EDIT
+                           || state == Ms::ScoreState::STATE_HARMONY_FIGBASS_EDIT;
 
-    m_showStaffTextPropertiesAction = Ms::Shortcut::getActionByName("show-staff-text-properties");
-
-    connect(ScoreStateObserver::instance(), &ScoreStateObserver::currentStateChanged, this,
-            [this](const Ms::ScoreState& state) {
-        updateInsertSpecialCharAvailability(state);
+        setIsSpecialCharactersInsertionAvailable(isAvailable);
     });
-    */
 }
 
 void TextSettingsModel::createProperties()
@@ -153,20 +172,14 @@ void TextSettingsModel::resetProperties()
 
 void TextSettingsModel::insertSpecialCharacters()
 {
-    if (!m_insertSpecialCharactersAction) {
-        return;
+    if (m_isSpecialCharactersInsertionAvailable) {
+        dispatcher()->dispatch("show-keys", ActionData::make_arg1<bool>(true));
     }
-
-    m_insertSpecialCharactersAction->setChecked(true);
 }
 
 void TextSettingsModel::showStaffTextProperties()
 {
-    if (!m_showStaffTextPropertiesAction) {
-        return;
-    }
-
-    m_showStaffTextPropertiesAction->trigger();
+    dispatcher()->dispatch("show-staff-text-properties");
 }
 
 PropertyItem* TextSettingsModel::fontFamily() const
@@ -286,23 +299,6 @@ void TextSettingsModel::updateFramePropertiesAvailability()
     m_frameCornerRadius->setIsEnabled(
         static_cast<TextTypes::FrameType>(m_frameType->value().toInt()) == TextTypes::FrameType::FRAME_TYPE_SQUARE);
 }
-
-/*
- * TODO: fix
-void TextSettingsModel::updateInsertSpecialCharAvailability(const Ms::ScoreState& state)
-{
-    if (!m_insertSpecialCharactersAction) {
-        return;
-    }
-
-    bool isAvailable = state == Ms::ScoreState::STATE_TEXT_EDIT
-                       || state == Ms::ScoreState::STATE_LYRICS_EDIT
-                       || state == Ms::ScoreState::STATE_HARMONY_FIGBASS_EDIT;
-
-    m_insertSpecialCharactersAction->setEnabled(isAvailable);
-    setIsSpecialCharactersInsertionAvailable(isAvailable);
-}
-*/
 
 void TextSettingsModel::updateStaffPropertiesAvailability()
 {

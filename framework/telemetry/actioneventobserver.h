@@ -29,6 +29,8 @@
 #include "modularity/ioc.h"
 #include "interfaces/itelemetryservice.h"
 
+#include "mu4/scores/scorestypes.h"
+
 //---------------------------------------------------------
 //   ActionEventObserver
 //---------------------------------------------------------

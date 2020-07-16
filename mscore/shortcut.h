@@ -63,6 +63,9 @@ Shortcuts marked with the STATE_NEVER state should NEVER used directly as shortc
 
 #include "icons.h"
 #include "globals.h"
+
+#include "mu4/scores/scorestypes.h"
+
 namespace Ms {
 class XmlWriter;
 class XmlReader;

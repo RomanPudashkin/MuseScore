@@ -1,13 +1,37 @@
-#ifndef TEXTSETTINGSMODEL_H
-#define TEXTSETTINGSMODEL_H
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2020 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
+#ifndef MU_INSPECTORS_TEXTSETTINGSMODEL_H
+#define MU_INSPECTORS_TEXTSETTINGSMODEL_H
 
 #include "models/abstractinspectormodel.h"
 
-#include <QAction>
+#include "modularity/ioc.h"
+#include "actions/iactionsdispatcher.h"
 
+namespace mu {
+namespace inspectors {
 class TextSettingsModel : public AbstractInspectorModel
 {
     Q_OBJECT
+
+    INJECT(inspectors, actions::IActionsDispatcher, dispatcher)
 
     Q_PROPERTY(PropertyItem* fontFamily READ fontFamily CONSTANT)
     Q_PROPERTY(PropertyItem* fontStyle READ fontStyle CONSTANT)
@@ -73,8 +97,6 @@ signals:
 
 private:
     void updateFramePropertiesAvailability();
-    // TODO: fix
-    //void updateInsertSpecialCharAvailability(const Ms::ScoreState &state);
     void updateStaffPropertiesAvailability();
 
     PropertyItem* m_fontFamily = nullptr;
@@ -95,10 +117,10 @@ private:
     PropertyItem* m_textPlacement = nullptr;
     PropertyItem* m_textScriptAlignment = nullptr;
 
-    QAction* m_insertSpecialCharactersAction = nullptr;
-    QAction* m_showStaffTextPropertiesAction = nullptr;
     bool m_areStaffTextPropertiesAvailable = false;
     bool m_isSpecialCharactersInsertionAvailable = false;
 };
+}
+}
 
-#endif // TEXTSETTINGSMODEL_H
+#endif // MU_INSPECOTRS_TEXTSETTINGSMODEL_H
