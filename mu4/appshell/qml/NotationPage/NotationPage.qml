@@ -4,6 +4,7 @@ import MuseScore.Ui 1.0
 import MuseScore.Dock 1.0
 import MuseScore.NotationScene 1.0
 import MuseScore.Palette 1.0
+import MuseScore.Inspectors 1.0
 
 DockPage {
     id: notationPage
@@ -34,9 +35,7 @@ DockPage {
             width: 200
             color: notationPage.color
 
-            PalettesWidget {
-
-            }
+            PalettesWidget {}
         },
 
         DockPanel {
@@ -48,17 +47,10 @@ DockPage {
             width: 200
             color: notationPage.color
 
-            //area: Qt.RightDockWidgetArea
             tabifyObjectName: "palettePanel"
 
-            Rectangle {
-
-                Text {
-                    anchors.fill: parent
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "Inspector"
-                }
+            Inspector {
+                height: parent.height
             }
         }
     ]

@@ -17,6 +17,15 @@ InspectorListModel::InspectorListModel(QObject *parent) : QAbstractListModel(par
     m_repository = new ElementRepositoryService(this);
 }
 
+void InspectorListModel::load()
+{
+    beginResetModel();
+
+    setElementList(QList<Ms::Element*>());
+
+    endResetModel();
+}
+
 void InspectorListModel::buildModelsForSelectedElements(const QSet<Ms::ElementType>& selectedElementSet)
 {
     static QList<AbstractInspectorModel::InspectorSectionType> persistentSectionList = { AbstractInspectorModel::SECTION_GENERAL };

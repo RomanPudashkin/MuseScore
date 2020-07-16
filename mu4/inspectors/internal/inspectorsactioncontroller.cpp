@@ -50,12 +50,16 @@ void InspectorsActionController::init()
 
 void InspectorsActionController::triggerAction(const actions::ActionName& actionName)
 {
-    interaction()->triggerAction(actionName);
+    if (interaction()) {
+        interaction()->triggerAction(actionName);
+    }
 }
 
 void InspectorsActionController::setChecked(const actions::ActionName& actionName, const actions::ActionData &args)
 {
-    interaction()->setChecked(actionName, args.arg<bool>(0));
+    if (interaction()) {
+        interaction()->setChecked(actionName, args.arg<bool>(0));
+    }
 }
 
 bool InspectorsActionController::canReceiveAction(const ActionName&) const

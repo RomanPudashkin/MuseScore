@@ -25,6 +25,8 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
+    Q_INVOKABLE void load();
+
 signals:
     void elementsModified();
 

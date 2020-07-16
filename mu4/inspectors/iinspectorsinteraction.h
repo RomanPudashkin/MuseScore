@@ -31,6 +31,8 @@ class IInspectorsInteraction : MODULE_EXPORT_INTERFACE
     INTERFACE_ID(IInspectorsInteraction)
 
 public:
+    virtual ~IInspectorsInteraction() = default;
+
     virtual void triggerAction(const std::string &actionName) = 0;
     virtual void setChecked(const std::string &actionName, bool checked) = 0;
 };

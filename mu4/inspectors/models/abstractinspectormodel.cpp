@@ -215,8 +215,8 @@ Ms::Sid AbstractInspectorModel::styleIdByPropertyId(const Ms::Pid pid) const
 
 void AbstractInspectorModel::updateStyleValue(const Ms::Sid& sid, const QVariant& newValue)
 {
-    Ms::Score* score  = parentScore();
-    IF_ASSERT_FAILED(score) {
+    Ms::Score* score = parentScore();
+    if (!score) {
         return;
     }
 
@@ -227,8 +227,8 @@ void AbstractInspectorModel::updateStyleValue(const Ms::Sid& sid, const QVariant
 
 QVariant AbstractInspectorModel::styleValue(const Ms::Sid& sid) const
 {
-    Ms::Score* score  = parentScore();
-    IF_ASSERT_FAILED(score) {
+    Ms::Score* score = parentScore();
+    if (!score) {
         return QVariant();
     }
 
@@ -241,8 +241,8 @@ void AbstractInspectorModel::onResetToDefaults(const QList<Ms::Pid>& pidList)
         return;
     }
 
-    Ms::Score* score  = parentScore();
-    IF_ASSERT_FAILED(score) {
+    Ms::Score* score = parentScore();
+    if (!score) {
         return;
     }
 
@@ -457,7 +457,7 @@ bool AbstractInspectorModel::hasAcceptableElements() const
 
 Ms::Score* AbstractInspectorModel::parentScore() const
 {
-    IF_ASSERT_FAILED(Ms::MuseScoreCore::mscoreCore) {
+    if (!Ms::MuseScoreCore::mscoreCore) {
         return nullptr;
     }
 
