@@ -27,51 +27,51 @@ using namespace mu::shortcuts;
 
 const std::vector<Action> InspectorsActions::m_actions = {
     Action("hraster",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Enable snap to horizontal grid"),
            ShortcutContext::Any
            ),
     Action("vraster",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Enable snap to vertical grid"),
            ShortcutContext::Any
            ),
     Action("config-raster",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Configure grid"),
            ShortcutContext::Any
            ),
     Action("show-articulation-properties",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Edit articulation properties"),
            ShortcutContext::Any
            ),
     Action("page-settings",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Page settings"),
            ShortcutContext::Any
            ),
     Action("edit-style",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Edit style"),
            ShortcutContext::Any
            ),
     Action("show-invisible",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Show invisible"),
            ShortcutContext::Any
            ),
     Action("show-unprintable",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Show unprintable"),
            ShortcutContext::Any
            ),
     Action("show-frames",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Show frames"),
            ShortcutContext::Any
            ),
     Action("show-pageborders",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Show page margins"),
            ShortcutContext::Any
            ),
     Action("show-keys",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Insert special characters"),
            ShortcutContext::Any
            ),
     Action("show-staff-text-properties",
-           QT_TRANSLATE_NOOP("action", ""),
+           QT_TRANSLATE_NOOP("action", "Show staff text properties"),
            ShortcutContext::Any
            )
 };

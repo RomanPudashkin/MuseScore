@@ -21,16 +21,20 @@
 
 #include "internal/inspectorsconfiguration.h"
 #include "internal/inspectorsactioncontroller.h"
+#include "internal/inspectorsactions.h"
+
 #include "modularity/ioc.h"
+#include "actions/iactionsregister.h"
 
 using namespace mu::inspectors;
+using namespace mu::actions;
 
 static void inspectors_init_qrc()
 {
     Q_INIT_RESOURCE(inspectors_resources);
 }
 
-static InspectorsActionController* m_inspectorsActionController = new InspectorsActionController();
+static std::shared_ptr<InspectorsActionController> m_inspectorsActionController = std::make_shared<InspectorsActionController>();
 
 std::string InspectorsModule::moduleName() const
 {
@@ -40,6 +44,14 @@ std::string InspectorsModule::moduleName() const
 void InspectorsModule::registerExports()
 {
     framework::ioc()->registerExport<IInspectorsConfiguration>(moduleName(), new InspectorsConfiguration());
+}
+
+void InspectorsModule::resolveImports()
+{
+    auto ar = framework::ioc()->resolve<IActionsRegister>(moduleName());
+    if (ar) {
+        ar->reg(std::make_shared<InspectorsActions>());
+    }
 }
 
 void InspectorsModule::registerResources()
