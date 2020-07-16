@@ -47,7 +47,7 @@ file(GLOB_RECURSE inspectors_HEADERS RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.h)
 file(GLOB_RECURSE inspectors_ui_files RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.ui)
 
 qt5_wrap_ui(inspectors_UI ${inspectors_ui_files})
-qt5_add_resources(RCC_SOURCES inspectors_resources.qrc)
+qt5_add_resources(RCC_SOURCES inspectors.qrc)
 
 add_library(inspectors ${LIBRARY_TYPE} ${inspectors_SOURCES} ${inspectors_HEADERS} ${inspectors_UI} ${RCC_SOURCES})
 

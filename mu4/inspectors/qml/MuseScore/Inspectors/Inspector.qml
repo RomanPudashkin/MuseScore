@@ -1,19 +1,17 @@
 import QtQuick 2.8
 
-import "qrc:/view/qml/" as C
-
 import MuseScore.Inspectors 3.3
+
+import "../Inspectors"
 
 Item {
     id: root
-
-    width: 360
 
     InspectorListModel {
         id: model
     }
 
-    C.InspectorForm {
+    InspectorForm {
         anchors.fill: parent
         inspectorListModel: model
     }

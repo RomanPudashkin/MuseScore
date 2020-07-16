@@ -50,7 +50,7 @@ DockPage {
             tabifyObjectName: "palettePanel"
 
             Inspector {
-                height: parent.height
+                anchors.fill: parent
             }
         }
     ]

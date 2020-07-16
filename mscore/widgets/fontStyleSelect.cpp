@@ -11,7 +11,7 @@
 //=============================================================================
 
 #include "fontStyleSelect.h"
-#include "mu4/inspectors/inspectoriconloader.h"
+#include "mu4/inspectors/internal/inspectoriconloader.h"
 
 namespace Ms {
 

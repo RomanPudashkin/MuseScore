@@ -1,13 +1,15 @@
 #ifndef INSPECTORELEMENT_H
 #define INSPECTORELEMENT_H
 
-#include "inspectordockwidget.h"
 #include <QQuickWidget>
 
-#include "models/abstractinspectormodel.h"
-#include "models/inspectorlistmodel.h"
+#include "inspectordockwidget.h"
 
-class InspectorFormWidget : public QQuickWidget {
+#include "view/abstractinspectormodel.h"
+#include "view/inspectorlistmodel.h"
+
+class InspectorFormWidget : public QQuickWidget
+{
     Q_OBJECT
 
 public:

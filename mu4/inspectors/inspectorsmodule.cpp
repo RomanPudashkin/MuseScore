@@ -31,7 +31,7 @@ using namespace mu::actions;
 
 static void inspectors_init_qrc()
 {
-    Q_INIT_RESOURCE(inspectors_resources);
+    Q_INIT_RESOURCE(inspectors);
 }
 
 static std::shared_ptr<InspectorsActionController> m_inspectorsActionController = std::make_shared<InspectorsActionController>();
@@ -64,8 +64,8 @@ void InspectorsModule::onInit()
     m_inspectorsActionController->init();
 }
 
-#include "models/abstractinspectormodel.h"
-#include "models/inspectorlistmodel.h"
+#include "view/abstractinspectormodel.h"
+#include "view/inspectorlistmodel.h"
 
 #include "view/widgets/fretcanvas.h"
 #include "view/widgets/gridcanvas.h"
