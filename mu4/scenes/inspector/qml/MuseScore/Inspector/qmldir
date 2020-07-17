@@ -1,2 +1,2 @@
 module MuseScore.Inspector
-Inspector 1.0 Inspector.qml
+InspectorView 1.0 InspectorView.qml

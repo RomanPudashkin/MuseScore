@@ -1,6 +1,6 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
-import MuseScore.Inspector 3.3
+import MuseScore.Inspector 1.0
 
 Item {
     id: root

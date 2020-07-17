@@ -1,5 +1,5 @@
 import QtQuick 2.9
-import MuseScore.Inspector 3.3
+import MuseScore.Inspector 1.0
 import MuseScore.UiComponents 1.0
 import MuseScore.Ui 1.0
 import "../../../common"

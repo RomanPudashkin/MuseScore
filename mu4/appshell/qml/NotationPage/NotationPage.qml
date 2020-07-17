@@ -49,7 +49,7 @@ DockPage {
 
             tabifyObjectName: "palettePanel"
 
-            Inspector {
+            InspectorView {
                 anchors.fill: parent
             }
         }

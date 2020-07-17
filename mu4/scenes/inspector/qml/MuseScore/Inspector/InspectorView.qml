@@ -1,6 +1,6 @@
 import QtQuick 2.8
 
-import MuseScore.Inspector 3.3
+import MuseScore.Inspector 1.0
 
 import "../Inspector"
 
