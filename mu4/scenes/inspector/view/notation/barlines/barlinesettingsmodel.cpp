@@ -1,6 +1,7 @@
 #include "barlinesettingsmodel.h"
+
 #include "types/barlinetypes.h"
-#include "barline.h"
+#include "libmscore/barline.h"
 
 BarlineSettingsModel::BarlineSettingsModel(QObject* parent, IElementRepositoryService* repository) :
     AbstractInspectorModel(parent, repository)

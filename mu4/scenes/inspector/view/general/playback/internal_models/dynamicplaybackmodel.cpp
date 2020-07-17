@@ -1,6 +1,6 @@
 #include "dynamicplaybackmodel.h"
 
-#include "dynamic.h"
+#include "libmscore/dynamic.h"
 
 DynamicPlaybackModel::DynamicPlaybackModel(QObject* parent, IElementRepositoryService* repository) : AbstractInspectorModel(parent, repository)
 {

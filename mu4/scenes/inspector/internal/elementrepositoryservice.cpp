@@ -1,14 +1,14 @@
 #include "elementrepositoryservice.h"
 
-#include "chord.h"
-#include "stem.h"
-#include "hook.h"
-#include "beam.h"
-#include "glissando.h"
-#include "hairpin.h"
-#include "staff.h"
-#include "layoutbreak.h"
-#include "pedal.h"
+#include "libmscore/chord.h"
+#include "libmscore/stem.h"
+#include "libmscore/hook.h"
+#include "libmscore/beam.h"
+#include "libmscore/glissando.h"
+#include "libmscore/hairpin.h"
+#include "libmscore/staff.h"
+#include "libmscore/layoutbreak.h"
+#include "libmscore/pedal.h"
 
 #include "log.h"
 

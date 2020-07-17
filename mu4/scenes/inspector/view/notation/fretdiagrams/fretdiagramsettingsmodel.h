@@ -3,7 +3,7 @@
 
 #include "view/abstractinspectormodel.h"
 #include "types/fretdiagramtypes.h"
-#include "fret.h"
+#include "libmscore/fret.h"
 
 class FretDiagramSettingsModel : public AbstractInspectorModel
 {

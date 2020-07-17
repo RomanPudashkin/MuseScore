@@ -946,6 +946,7 @@ else(BUILD_UI_MU4)
     add_subdirectory(mu4/domain/importexport)
     add_subdirectory(mu4/scenes/common)
     add_subdirectory(mu4/scenes/palette)
+    add_subdirectory(mu4/scenes/inspector)
 endif(BUILD_UI_MU4)
 
 define_property(TARGET PROPERTY OUTPUT_XML

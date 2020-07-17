@@ -25,8 +25,8 @@
 #include "libmscore/textbase.h"
 #include "dataformatter.h"
 
-#include "scorestypes.h"
-#include "internal/scorestateobserver.h"
+#include "mu4/scores/scorestypes.h"
+#include "mu4/scores/internal/scorestateobserver.h"
 
 using namespace mu::scene::inspector;
 using namespace mu::actions;

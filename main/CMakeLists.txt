@@ -89,6 +89,7 @@ if (BUILD_UI_MU4)
         scores
         extensions
         importexport
+        inspector
         notation
         notation_scene
         common_scene

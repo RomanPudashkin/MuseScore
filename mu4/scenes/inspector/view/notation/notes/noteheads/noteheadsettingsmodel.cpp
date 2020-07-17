@@ -1,6 +1,6 @@
 #include "noteheadsettingsmodel.h"
 
-#include "note.h"
+#include "libmscore/note.h"
 #include "dataformatter.h"
 
 NoteheadSettingsModel::NoteheadSettingsModel(QObject* parent, IElementRepositoryService* repository) : AbstractInspectorModel(parent, repository)

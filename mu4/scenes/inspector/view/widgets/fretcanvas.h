@@ -23,7 +23,8 @@
 #include <QQuickPaintedItem>
 #include <QPainter>
 #include <QVariant>
-#include "fret.h"
+
+#include "libmscore/fret.h"
 
 #include "modularity/ioc.h"
 #include "iinspectorconfiguration.h"

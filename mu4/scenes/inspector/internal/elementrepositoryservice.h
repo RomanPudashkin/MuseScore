@@ -1,7 +1,7 @@
 #ifndef ELEMENTREPOSITORYSERVICE_H
 #define ELEMENTREPOSITORYSERVICE_H
 
-#include "interfaces/ielementrepositoryservice.h"
+#include "internal/ielementrepositoryservice.h"
 
 #include <QObject>
 

@@ -3,13 +3,15 @@
 
 #include <QList>
 #include <functional>
+
 #include "libmscore/element.h"
 #include "libmscore/score.h"
 #include "libmscore/style.h"
 #include "libmscore/property.h"
 
-#include "../interfaces/ielementrepositoryservice.h"
 #include "propertyitem.h"
+
+#include "../internal/ielementrepositoryservice.h"
 
 class AbstractInspectorModel : public QObject
 {
@@ -120,7 +122,7 @@ protected:
     void updateStyleValue(const Ms::Sid& sid, const QVariant& newValue);
     QVariant styleValue(const Ms::Sid& sid) const;
 
-    IElementRepositoryService* m_repository;
+    IElementRepositoryService* m_repository = nullptr;
 
     QList<Ms::Element*> m_elementList;
 

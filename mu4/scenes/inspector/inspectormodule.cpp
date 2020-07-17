@@ -66,6 +66,7 @@ void InspectorModule::onInit()
 
 #include "view/abstractinspectormodel.h"
 #include "view/inspectorlistmodel.h"
+#include "view/score/internal/pagetypelistmodel.h"
 
 #include "view/widgets/fretcanvas.h"
 #include "view/widgets/gridcanvas.h"
@@ -96,6 +97,7 @@ void InspectorModule::onInit()
 void InspectorModule::registerUiTypes()
 {
     qmlRegisterType<InspectorListModel>("MuseScore.Inspector", 3, 3, "InspectorListModel");
+    qmlRegisterType<PageTypeListModel>("MuseScore.Inspector", 3, 3, "PageTypeListModel");
 
     qmlRegisterUncreatableType<AbstractInspectorModel>("MuseScore.Inspector", 3, 3, "Inspector",
                                                        "Not creatable as it is an enum type");

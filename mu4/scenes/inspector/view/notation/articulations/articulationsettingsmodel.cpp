@@ -20,7 +20,8 @@
 #include "articulationsettingsmodel.h"
 
 #include "log.h"
-#include "articulation.h"
+
+#include "libmscore/articulation.h"
 
 using namespace mu::scene::inspector;
 using namespace mu::actions;

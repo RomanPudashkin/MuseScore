@@ -1,6 +1,7 @@
 #include "crescendosettingsmodel.h"
 
-#include "hairpin.h"
+#include "libmscore/hairpin.h"
+
 #include "types/crescendotypes.h"
 #include "dataformatter.h"
 

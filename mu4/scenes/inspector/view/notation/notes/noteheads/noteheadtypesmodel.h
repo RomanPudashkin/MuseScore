@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "note.h"
+
+#include "libmscore/note.h"
 #include "types/noteheadtypes.h"
 
 class NoteheadTypesModel : public QAbstractListModel

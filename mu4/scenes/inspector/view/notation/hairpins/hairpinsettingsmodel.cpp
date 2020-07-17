@@ -1,9 +1,9 @@
-#include "hairpinsettingsmodel.h"
-
 #include <QPointF>
 
+#include "hairpinsettingsmodel.h"
+
 #include "types/hairpintypes.h"
-#include "hairpin.h"
+#include "libmscore/hairpin.h"
 #include "dataformatter.h"
 
 HairpinSettingsModel::HairpinSettingsModel(QObject* parent, IElementRepositoryService* repository) :
