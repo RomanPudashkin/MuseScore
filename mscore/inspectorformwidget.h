@@ -3,10 +3,10 @@
 
 #include <QQuickWidget>
 
-#include "inspectordockwidget.h"
+#include "libmscore/element.h"
 
-#include "view/abstractinspectormodel.h"
-#include "view/inspectorlistmodel.h"
+class InspectorListModel;
+class InspectorDockWidget;
 
 class InspectorFormWidget : public QQuickWidget
 {
@@ -23,7 +23,6 @@ signals:
 
 private:
     InspectorDockWidget* m_inspector = nullptr;
-
     InspectorListModel* m_inspectorListModel = nullptr;
 
 protected:

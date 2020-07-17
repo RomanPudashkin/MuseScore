@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 
 #include "libmscore/element.h"
-#include "view/abstractinspectormodel.h"
+#include "abstractinspectormodel.h"
 
 class IElementRepositoryService;
 

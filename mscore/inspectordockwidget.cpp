@@ -12,7 +12,7 @@
 
 #include "inspectordockwidget.h"
 
-#include "view/widgets/inspectorformwidget.h"
+#include "inspectorformwidget.h"
 
 InspectorDockWidget::InspectorDockWidget(QQmlEngine* engine, QWidget* parent)
     : QDockWidget(parent), m_qmlEngine(engine)

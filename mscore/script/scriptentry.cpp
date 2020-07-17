@@ -13,7 +13,7 @@
 #include "scriptentry.h"
 
 #include "musescore.h"
-#include "mu4/inspectors/view/widgets/inspectordockwidget.h"
+#include "inspectordockwidget.h"
 #include "palette/palette.h"
 #include "palette/paletteworkspace.h"
 #include "scoretab.h"

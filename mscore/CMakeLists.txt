@@ -280,6 +280,12 @@ add_library(mscoreapp STATIC
 
       inspectorsinteraction.h
       inspectorsinteraction.cpp
+      inspectoriconloader.cpp
+      inspectoriconloader.h
+      inspectordockwidget.cpp
+      inspectordockwidget.h
+      inspectorformwidget.cpp
+      inspectorformwidget.h
 
       ${CLOUD_SRC}
       ${IMPORTMIDIUI_SRC}

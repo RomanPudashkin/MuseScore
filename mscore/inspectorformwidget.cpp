@@ -1,5 +1,8 @@
 #include "inspectorformwidget.h"
 
+#include "mu4/inspectors/view/inspectorlistmodel.h"
+#include "inspectordockwidget.h"
+
 InspectorFormWidget::InspectorFormWidget(QQmlEngine* qmlEngine, QWidget* parent) : QQuickWidget(qmlEngine, parent)
 {
     setMinimumWidth(360);
@@ -9,8 +12,7 @@ InspectorFormWidget::InspectorFormWidget(QQmlEngine* qmlEngine, QWidget* parent)
         m_inspector = qobject_cast<InspectorDockWidget*>(parent);
     }
 
-    QUrl url = QUrl(QStringLiteral("qrc:/view/qml/InspectorForm.qml"));
-
+    QUrl url = QUrl(QStringLiteral("qrc:/qml/MuseScore/Inspectors/InspectorForm.qml"));
     setSource(url);
 
     setResizeMode(QQuickWidget::SizeRootObjectToView);

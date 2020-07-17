@@ -6,10 +6,10 @@
 #include "libmscore/element.h"
 #include "libmscore/score.h"
 #include "libmscore/style.h"
-#include "property.h"
+#include "libmscore/property.h"
 
-#include "interfaces/ielementrepositoryservice.h"
-#include "view/propertyitem.h"
+#include "../interfaces/ielementrepositoryservice.h"
+#include "propertyitem.h"
 
 class AbstractInspectorModel : public QObject
 {

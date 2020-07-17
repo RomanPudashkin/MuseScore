@@ -11,13 +11,13 @@
 #include "libmscore/staff.h"
 #include "libmscore/part.h"
 #include "libmscore/sym.h"
-#include "mu4/inspectors/view/widgets/inspectordockwidget.h"
 #include "selectionwindow.h"
 #include "playpanel.h"
 #include "synthcontrol.h"
 #include "mixer/mixer.h"
 #include "drumroll.h"
 #include "pianoroll/pianoroll.h"
+#include "inspectordockwidget.h"
 
 namespace Ms {
 //---------------------------------------------------------
