@@ -17,18 +17,34 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef INSPECTORSINTERACTION_H
-#define INSPECTORSINTERACTION_H
+#ifndef MU_INSPECTOR_INSPECTORSACTIONCONTROLLER_H
+#define MU_INSPECTOR_INSPECTORSACTIONCONTROLLER_H
 
-#include "mu4/scenes/inspector/iinspectorinteraction.h"
+#include "actions/actionable.h"
+#include "actions/iactionsdispatcher.h"
+#include "modularity/ioc.h"
 
-namespace Ms {
-class InspectorInteraction : public mu::scene::inspector::IInspectorInteraction
+#include "iinspectorinteraction.h"
+
+namespace mu {
+namespace scene {
+namespace inspector {
+class InspectorActionController : public actions::Actionable
 {
+    INJECT(inspector, actions::IActionsDispatcher, dispatcher)
+    INJECT(inspector, IInspectorInteraction, interaction)
+
 public:
-    void triggerAction(const std::string &actionName) override;
-    void setChecked(const std::string &actionName, bool checked) override;
+    void init();
+
+private:
+    void triggerAction(const actions::ActionName &actionName);
+    void setChecked(const actions::ActionName &actionName, const actions::ActionData &args);
+
+    bool canReceiveAction(const actions::ActionName& actionName) const override;
 };
 }
+}
+}
 
-#endif // INSPECTORSINTERACTION_H
+#endif // MU_INSPECTOR_INSPECTORSACTIONCONTROLLER_H

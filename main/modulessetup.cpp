@@ -34,8 +34,8 @@
 #include "mu4/scenes/common/commonscenemodule.h"
 #include "mu4/scenes/notation/notationscenemodule.h"
 #include "mu4/scenes/palette/palettemodule.h"
+#include "mu4/scenes/inspector/inspectormodule.h"
 #include "mu4/domain/importexport/importexportmodule.h"
-#include "mu4/inspector/inspectormodule.h"
 
 #ifdef BUILD_TELEMETRY_MODULE
 #include "framework/telemetry/telemetrysetup.h"
@@ -63,7 +63,7 @@ ModulesSetup::ModulesSetup()
         << new mu::domain::notation::NotationDomainModule()
         << new mu::scene::common::CommonSceneModule()
         << new mu::scene::notation::NotationSceneModule()
-        << new mu::inspector::InspectorModule()
+        << new mu::scene::inspector::InspectorModule()
 #endif
 
 #ifdef BUILD_TELEMETRY_MODULE

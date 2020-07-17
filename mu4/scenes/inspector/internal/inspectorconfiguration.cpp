@@ -17,18 +17,25 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef INSPECTORSINTERACTION_H
-#define INSPECTORSINTERACTION_H
+#include "inspectorconfiguration.h"
 
-#include "mu4/scenes/inspector/iinspectorinteraction.h"
+#include "settings.h"
 
-namespace Ms {
-class InspectorInteraction : public mu::scene::inspector::IInspectorInteraction
-{
-public:
-    void triggerAction(const std::string &actionName) override;
-    void setChecked(const std::string &actionName, bool checked) override;
-};
+using namespace mu::scene::inspector;
+using namespace mu::framework;
+
+namespace {
+const std::string moduleName("inspector");
+const Settings::Key THEME_TYPE_KEY(moduleName, "ui/application/globalStyle");
+const Settings::Key ANTIALIASED_DRAWING_KEY(moduleName, "ui/canvas/misc/antialiasedDrawing");
 }
 
-#endif // INSPECTORSINTERACTION_H
+InspectorConfiguration::ThemeType InspectorConfiguration::themeType() const
+{
+    return static_cast<ThemeType>(settings()->value(THEME_TYPE_KEY).toInt());
+}
+
+bool InspectorConfiguration::antialiasedDrawing() const
+{
+    return settings()->value(ANTIALIASED_DRAWING_KEY).toBool();
+}

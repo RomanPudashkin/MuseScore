@@ -17,18 +17,26 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef INSPECTORSINTERACTION_H
-#define INSPECTORSINTERACTION_H
+#ifndef MU_INSPECTOR_INSPECTORSMODULE_H
+#define MU_INSPECTOR_INSPECTORSMODULE_H
 
-#include "mu4/scenes/inspector/iinspectorinteraction.h"
+#include "modularity/imodulesetup.h"
 
-namespace Ms {
-class InspectorInteraction : public mu::scene::inspector::IInspectorInteraction
+namespace mu {
+namespace scene {
+namespace inspector {
+class InspectorModule : public mu::framework::IModuleSetup
 {
 public:
-    void triggerAction(const std::string &actionName) override;
-    void setChecked(const std::string &actionName, bool checked) override;
+    std::string moduleName() const override;
+    void registerExports() override;
+    void resolveImports() override;
+    void registerResources() override;
+    void registerUiTypes() override;
+    void onInit() override;
 };
 }
+}
+}
 
-#endif // INSPECTORSINTERACTION_H
+#endif // MU_INSPECTOR_INSPECTORSMODULE_H

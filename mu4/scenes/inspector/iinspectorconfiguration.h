@@ -17,18 +17,31 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#ifndef INSPECTORSINTERACTION_H
-#define INSPECTORSINTERACTION_H
+#ifndef MU_INSPECTOR_IINSPECTORSCONFIGURATION_H
+#define MU_INSPECTOR_IINSPECTORSCONFIGURATION_H
 
-#include "mu4/scenes/inspector/iinspectorinteraction.h"
+#include "modularity/imoduleexport.h"
 
-namespace Ms {
-class InspectorInteraction : public mu::scene::inspector::IInspectorInteraction
+namespace mu {
+namespace scene {
+namespace inspector {
+class IInspectorConfiguration : MODULE_EXPORT_INTERFACE
 {
+    INTERFACE_ID(IInspectorConfiguration)
+
 public:
-    void triggerAction(const std::string &actionName) override;
-    void setChecked(const std::string &actionName, bool checked) override;
+    enum class ThemeType {
+        Dark = 0,
+        Light
+    };
+
+    virtual ~IInspectorConfiguration() = default;
+
+    virtual ThemeType themeType() const = 0;
+    virtual bool antialiasedDrawing() const = 0;
 };
 }
+}
+}
 
-#endif // INSPECTORSINTERACTION_H
+#endif // MU_INSPECTOR_IINSPECTORSCONFIGURATION_H

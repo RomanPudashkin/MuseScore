@@ -16,19 +16,22 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
+#ifndef MU_INSPECTOR_INSPECTORSCONFIGURATION_H
+#define MU_INSPECTOR_INSPECTORSCONFIGURATION_H
 
-#ifndef INSPECTORSINTERACTION_H
-#define INSPECTORSINTERACTION_H
+#include "iinspectorconfiguration.h"
 
-#include "mu4/scenes/inspector/iinspectorinteraction.h"
-
-namespace Ms {
-class InspectorInteraction : public mu::scene::inspector::IInspectorInteraction
+namespace mu {
+namespace scene {
+namespace inspector {
+class InspectorConfiguration : public IInspectorConfiguration
 {
 public:
-    void triggerAction(const std::string &actionName) override;
-    void setChecked(const std::string &actionName, bool checked) override;
+    ThemeType themeType() const override;
+    bool antialiasedDrawing() const override;
 };
 }
+}
+}
 
-#endif // INSPECTORSINTERACTION_H
+#endif // MU_INSPECTOR_INSPECTORSCONFIGURATION_H
