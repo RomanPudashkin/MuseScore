@@ -4,7 +4,7 @@ import MuseScore.Ui 1.0
 import MuseScore.Dock 1.0
 import MuseScore.NotationScene 1.0
 import MuseScore.Palette 1.0
-import MuseScore.Inspectors 1.0
+import MuseScore.Inspector 1.0
 
 DockPage {
     id: notationPage

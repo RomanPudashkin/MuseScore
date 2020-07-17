@@ -2,7 +2,7 @@
 
 add_subdirectory(appshell)
 add_subdirectory(context)
-add_subdirectory(inspectors)
+add_subdirectory(inspector)
 
 # Domain
 add_subdirectory(domain/notation)

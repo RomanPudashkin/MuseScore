@@ -47,7 +47,7 @@ include_directories(
       ${PROJECT_SOURCE_DIR}/thirdparty
       ${PROJECT_SOURCE_DIR}/framework/global
       ${PROJECT_SOURCE_DIR}/importexport
-      ${PROJECT_SOURCE_DIR}/inspectors
+      ${PROJECT_SOURCE_DIR}/inspector
       ${PROJECT_BINARY_DIR}
       ${QTSINGLEAPPLICATION_INCLUDE_DIRS}
       ${PROJECT_SOURCE_DIR}/mu4/scenes/palette/internal
@@ -278,8 +278,8 @@ add_library(mscoreapp STATIC
       palette/palettewidget.cpp
       mu3paletteadapter.cpp
 
-      inspectorsinteraction.h
-      inspectorsinteraction.cpp
+      inspectorinteraction.h
+      inspectorinteraction.cpp
       inspectoriconloader.cpp
       inspectoriconloader.h
       inspectordockwidget.cpp
@@ -311,7 +311,7 @@ else (MSVC OR MINGW)
 endif (MSVC OR MINGW)
 
 target_link_libraries(mscoreapp
-      inspectors
+      inspector
       global
       global_old
       awl

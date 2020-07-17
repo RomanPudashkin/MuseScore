@@ -22,7 +22,7 @@
 #include "mu4/scenes/palette/internal/palette/palettecreator.h"
 #include "mu4/scenes/palette/internal/palette/masterpalette.h"
 #include "mu3paletteadapter.h"
-#include "inspectorsinteraction.h"
+#include "inspectorinteraction.h"
 
 #include "config.h"
 
@@ -94,7 +94,7 @@
 #include "transposedialog.h"
 #include "metaedit.h"
 #include "inspectordockwidget.h"
-#include "mu4/inspectors/iinspectorsinteraction.h"
+#include "mu4/inspector/iinspectorinteraction.h"
 #ifdef OMR
 #include "omrpanel.h"
 #endif
@@ -1074,7 +1074,7 @@ MuseScore::MuseScore()
 {
     mu::framework::ioc()->registerExportNoDelete<mu::framework::IMainWindow>("mscore", this);
     mu::framework::ioc()->registerExport<mu::scene::palette::IPaletteAdapter>("mscore", new MU3PaletteAdapter());
-    mu::framework::ioc()->registerExport<mu::inspectors::IInspectorsInteraction>("mscore", new InspectorsInteraction());
+    mu::framework::ioc()->registerExport<mu::inspector::IInspectorInteraction>("mscore", new InspectorInteraction());
 
     _tourHandler = new TourHandler(this);
     qApp->installEventFilter(_tourHandler);
@@ -2090,7 +2090,7 @@ MuseScore::~MuseScore()
 
     mu::framework::ioc()->unregisterExport<mu::framework::IMainWindow>();
     mu::framework::ioc()->unregisterExport<mu::scene::palette::IPaletteAdapter>();
-    mu::framework::ioc()->unregisterExport<mu::inspectors::IInspectorsInteraction>();
+    mu::framework::ioc()->unregisterExport<mu::inspector::IInspectorInteraction>();
 }
 
 //---------------------------------------------------------
