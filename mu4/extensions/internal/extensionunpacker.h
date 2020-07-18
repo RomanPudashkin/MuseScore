@@ -19,9 +19,11 @@
 #ifndef MU_EXTENSIONS_EXTENSIONUNPACKER_H
 #define MU_EXTENSIONS_EXTENSIONUNPACKER_H
 
+#include "modularity/ioc.h"
 #include "retval.h"
 
 #include "iextensionunpacker.h"
+#include "framework/system/ifsoperations.h"
 
 class MQZipReader;
 class QVersionNumber;
@@ -30,6 +32,8 @@ namespace mu {
 namespace extensions {
 class ExtensionUnpacker : public IExtensionUnpacker
 {
+    INJECT(extensions, framework::IFsOperations, fsOperation)
+
 public:
 
     Ret unpack(const QString& source, const QString& destination) const override;

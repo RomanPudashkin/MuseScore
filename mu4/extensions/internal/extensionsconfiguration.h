@@ -22,12 +22,14 @@
 #include "modularity/ioc.h"
 #include "iextensionsconfiguration.h"
 #include "iglobalconfiguration.h"
+#include "framework/system/ifsoperations.h"
 
 namespace mu {
 namespace extensions {
 class ExtensionsConfiguration : public IExtensionsConfiguration
 {
     INJECT(extensions, framework::IGlobalConfiguration, globalConfiguration)
+    INJECT(extensions, framework::IFsOperations, fsOperation)
 
 public:
     ExtensionsConfiguration() = default;

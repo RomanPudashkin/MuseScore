@@ -23,6 +23,7 @@
 #include "iextensionscontroller.h"
 #include "iextensionsconfiguration.h"
 #include "iextensionunpacker.h"
+#include "framework/system/ifsoperations.h"
 
 namespace mu {
 namespace extensions {
@@ -30,6 +31,7 @@ class ExtensionsController : public IExtensionsController
 {
     INJECT(extensions, IExtensionsConfiguration, configuration)
     INJECT(extensions, IExtensionUnpacker, extensionUnpacker)
+    INJECT(extensions, framework::IFsOperations, fsOperation)
 
 public:
 

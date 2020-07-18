@@ -18,7 +18,6 @@
 //=============================================================================
 #include "extensionsconfiguration.h"
 
-#include <QDir>
 #include <QVariant>
 #include <QJsonParseError>
 
@@ -128,9 +127,10 @@ QStringList ExtensionsConfiguration::workspacesPaths() const
 
     QString extensionsPath = extensionsSharePath();
     for (const Extension& extension: extensions.values()) {
-        QDir extensionWorkspaceDir(extensionsPath + "/" + extension.code + "/workspaces");
-        if (extensionWorkspaceDir.exists()) {
-            paths << extensionWorkspaceDir.absolutePath();
+        QString extensionWorkspacePath(extensionsPath + "/" + extension.code + "/workspaces");
+        RetVal<QStringList> files = fsOperation()->directoryFileList(extensionWorkspacePath, { QString("*.workspace") }, QDir::Files);
+        if (files.ret && !files.val.isEmpty()) {
+            paths << extensionWorkspacePath;
         }
     }
 

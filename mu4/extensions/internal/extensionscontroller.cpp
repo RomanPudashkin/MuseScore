@@ -18,8 +18,6 @@
 //=============================================================================
 #include "extensionscontroller.h"
 
-#include <QDir>
-
 #include "log.h"
 #include "mscore/downloadUtils.h"
 #include "extensionserrors.h"
@@ -29,15 +27,8 @@ using namespace mu::extensions;
 
 void ExtensionsController::init()
 {
-    QDir extensionsShareDir(configuration()->extensionsSharePath());
-    if (!extensionsShareDir.exists()) {
-        extensionsShareDir.mkpath(extensionsShareDir.absolutePath());
-    }
-
-    QDir extensionsDataDir(configuration()->extensionsDataPath());
-    if (!extensionsDataDir.exists()) {
-        extensionsDataDir.mkpath(extensionsDataDir.absolutePath());
-    }
+    fsOperation()->makePath(configuration()->extensionsSharePath());
+    fsOperation()->makePath(configuration()->extensionsDataPath());
 }
 
 Ret ExtensionsController::refreshExtensions()
@@ -105,8 +96,7 @@ Ret ExtensionsController::install(const QString& extensionCode)
         return unpack;
     }
 
-    QFile extensionArchive(extensionArchivePath);
-    extensionArchive.remove();
+    fsOperation()->remove(extensionArchivePath);
 
     ExtensionsHash extensionHash = this->extensions().val;
 
@@ -167,8 +157,7 @@ Ret ExtensionsController::update(const QString& extensionCode)
         return unpack;
     }
 
-    QFile extensionArchive(extensionArchivePath);
-    extensionArchive.remove();
+    fsOperation()->remove(extensionArchivePath);
 
     ExtensionsHash extensionHash = extensions().val;
 
@@ -230,8 +219,7 @@ RetVal<ExtensionsHash> ExtensionsController::parseExtensionConfig(const QByteArr
 
 bool ExtensionsController::isExtensionExists(const QString& extensionCode) const
 {
-    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
-    return extensionDir.exists();
+    return fsOperation()->exists(configuration()->extensionsSharePath() + "/" + extensionCode);
 }
 
 RetVal<ExtensionsHash> ExtensionsController::correctExtensionsStates(ExtensionsHash& extensions) const
@@ -288,8 +276,9 @@ RetVal<QString> ExtensionsController::downloadExtension(const QString& extension
 
 Ret ExtensionsController::removeExtension(const QString& extensionCode) const
 {
-    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
-    if (!extensionDir.removeRecursively()) {
+    QString extensionPath = configuration()->extensionsSharePath() + "/" + extensionCode;
+    Ret ret = fsOperation()->remove(extensionPath);
+    if (!ret) {
         return make_ret(Err::ErrorRemoveExtensionDirectory);
     }
 
@@ -299,14 +288,10 @@ Ret ExtensionsController::removeExtension(const QString& extensionCode) const
 Extension::ExtensionTypes ExtensionsController::extensionTypes(const QString& extensionCode) const
 {
     Extension::ExtensionTypes result;
-    QDir extensionDir(configuration()->extensionsSharePath() + "/" + extensionCode);
-
-    QDir workspacesDir(extensionDir.absolutePath() + "/workspaces");
-    if (workspacesDir.exists()) {
-        QStringList files = workspacesDir.entryList({ QString("*.workspace") }, QDir::Files);
-        if (!files.empty()) {
-            result.setFlag(Extension::Workspaces);
-        }
+    QString workspacesPath(configuration()->extensionsSharePath() + "/" + extensionCode + "/workspaces");
+    RetVal<QStringList> files = fsOperation()->directoryFileList(workspacesPath, { QString("*.workspace") }, QDir::Files);
+    if (files.ret && !files.val.empty()) {
+        result.setFlag(Extension::Workspaces);
     }
 
     return result;

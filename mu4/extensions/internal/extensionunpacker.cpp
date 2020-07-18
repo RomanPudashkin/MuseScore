@@ -55,14 +55,14 @@ Ret ExtensionUnpacker::unpack(const QString& source, const QString& destination)
     }
 
     QString extensionId = meta.val1;
-    QDir extensionDir(destination + "/" + extensionId);
+    QString extensionDirPath(destination + "/" + extensionId);
     QVersionNumber version = meta.val2;
 
     Ret actualVersion = checkActualVersion(destination, extensionId, version);
     if (!actualVersion) {
         bool previousVersionError = actualVersion.code() == static_cast<int>(Err::UnpackPreviousVersionExists);
         if (previousVersionError) {
-            Ret remove = removePreviousVersion(extensionDir.absolutePath());
+            Ret remove = removePreviousVersion(extensionDirPath);
             if (!remove) {
                 return remove;
             }
@@ -71,7 +71,7 @@ Ret ExtensionUnpacker::unpack(const QString& source, const QString& destination)
         }
     }
 
-    Ret unzipExtension = unzip(&zipFile, extensionDir.absolutePath());
+    Ret unzipExtension = unzip(&zipFile, extensionDirPath);
     return unzipExtension;
 }
 
@@ -128,14 +128,14 @@ Ret ExtensionUnpacker::checkActualVersion(const QString& destination, const QStr
     }
 
     QString actualExtensionMetaFilePath = destination + "/" + extensionId + "/" + "metadata.json";
-    QFile actualExtensionMetaFile(actualExtensionMetaFilePath);
-    if (!actualExtensionMetaFile.open(QFile::ReadOnly)) {
-        LOGE() << "Error open old extension meta file" << actualExtensionMetaFilePath
-               << actualExtensionMetaFile.errorString();
+
+    RetVal<QByteArray> fileBytes = fsOperation()->readFile(actualExtensionMetaFilePath);
+    if (!fileBytes.ret) {
+        LOGE() << "Error open old extension meta file" << actualExtensionMetaFilePath;
         return make_ret(Err::UnpackInvalidOldExtension);
     }
 
-    QJsonDocument loadDoc = QJsonDocument::fromJson(actualExtensionMetaFile.readAll());
+    QJsonDocument loadDoc = QJsonDocument::fromJson(fileBytes.val);
     QJsonObject mdObject = loadDoc.object();
     QVersionNumber actualVersion = QVersionNumber::fromString(mdObject["version"].toString());
 
