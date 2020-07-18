@@ -49,6 +49,9 @@ public:
         AudioFirst      = 300,
         AudioLast       = 399,
 
+        SystemFirst     = 400,
+        SystemLast      = 499,
+
         NotationFirst   = 1000,
         NotationLast    = 1299
     };
