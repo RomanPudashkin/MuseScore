@@ -19,9 +19,6 @@
 #ifndef MU_EXTENSIONS_IEXTENSIONSCONFIGURATION_H
 #define MU_EXTENSIONS_IEXTENSIONSCONFIGURATION_H
 
-#include <vector>
-
-#include "io/path.h"
 #include "retval.h"
 #include "modularity/imoduleexport.h"
 

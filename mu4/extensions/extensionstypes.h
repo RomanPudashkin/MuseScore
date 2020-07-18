@@ -23,7 +23,6 @@
 #include <QVersionNumber>
 #include <QJsonObject>
 #include <QObject>
-#include <QMetaObject>
 
 namespace mu {
 namespace extensions {
@@ -43,11 +42,12 @@ public:
 struct Extension
 {
     enum ExtensionType {
-        Workspaces = 0x0000,
-        SFZS = 0x0001,
-        Soundfonts = 0x0002,
-        Templates = 0x0003,
-        Instruments = 0x0004
+        Undefined = 0x0000,
+        Workspaces = 0x0001,
+        SFZS = 0x0002,
+        Soundfonts = 0x0003,
+        Templates = 0x0004,
+        Instruments = 0x0005
     };
     Q_DECLARE_FLAGS(ExtensionTypes, ExtensionType)
 

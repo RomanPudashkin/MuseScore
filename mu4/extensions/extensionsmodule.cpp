@@ -28,6 +28,7 @@
 using namespace mu::extensions;
 
 static ExtensionsConfiguration* m_extensionsConfiguration = new ExtensionsConfiguration();
+static ExtensionsController* m_extensionsController = new ExtensionsController();
 
 static void extensions_init_qrc()
 {
@@ -42,7 +43,7 @@ std::string ExtensionsModule::moduleName() const
 void ExtensionsModule::registerExports()
 {
     framework::ioc()->registerExport<IExtensionsConfiguration>(moduleName(), m_extensionsConfiguration);
-    framework::ioc()->registerExport<IExtensionsController>(moduleName(), new ExtensionsController());
+    framework::ioc()->registerExport<IExtensionsController>(moduleName(), m_extensionsController);
     framework::ioc()->registerExport<IExtensionUnpacker>(moduleName(), new ExtensionUnpacker());
 }
 
@@ -59,5 +60,6 @@ void ExtensionsModule::registerUiTypes()
 
 void ExtensionsModule::onInit()
 {
+    m_extensionsController->init();
     m_extensionsConfiguration->init();
 }

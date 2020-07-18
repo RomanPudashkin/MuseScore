@@ -20,7 +20,7 @@
 #define MU_EXTENSIONS_EXTENSIONSCONFIGURATION_H
 
 #include "modularity/ioc.h"
-#include "../iextensionsconfiguration.h"
+#include "iextensionsconfiguration.h"
 #include "iglobalconfiguration.h"
 
 namespace mu {

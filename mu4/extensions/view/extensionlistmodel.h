@@ -22,7 +22,7 @@
 #include <QAbstractListModel>
 
 #include "modularity/ioc.h"
-#include "../iextensionscontroller.h"
+#include "iextensionscontroller.h"
 #include "async/asyncable.h"
 
 namespace mu {
@@ -46,7 +46,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QHash<int,QByteArray> roleNames() const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void load();
     Q_INVOKABLE void updateList();

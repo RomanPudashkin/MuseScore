@@ -20,10 +20,9 @@
 #define MU_EXTENSIONS_EXTENSIONSCONTROLLER_H
 
 #include "modularity/ioc.h"
-#include "../iextensionscontroller.h"
-#include "../iextensionsconfiguration.h"
-#include "../iextensionunpacker.h"
-#include "iglobalconfiguration.h"
+#include "iextensionscontroller.h"
+#include "iextensionsconfiguration.h"
+#include "iextensionunpacker.h"
 
 namespace mu {
 namespace extensions {
@@ -31,22 +30,22 @@ class ExtensionsController : public IExtensionsController
 {
     INJECT(extensions, IExtensionsConfiguration, configuration)
     INJECT(extensions, IExtensionUnpacker, extensionUnpacker)
-    INJECT(extensions, framework::IGlobalConfiguration, globalConfiguration)
 
 public:
-    ExtensionsController() = default;
+
+    void init();
 
     Ret refreshExtensions() override;
-    ValCh<ExtensionsHash> extensions() override;
+    ValCh<ExtensionsHash> extensions() const override;
     Ret install(const QString& extensionCode) override;
-    Ret uninstall(const QString &extensionCode) override;
-    Ret update(const QString &extensionCode) override;
+    Ret uninstall(const QString& extensionCode) override;
+    Ret update(const QString& extensionCode) override;
 
-    RetCh<Extension> extensionChanged() override;
+    RetCh<Extension> extensionChanged() const override;
 
 private:
     RetVal<ExtensionsHash> parseExtensionConfig(const QByteArray& json) const;
-    bool isExtensionExists(const QString &extensionCode) const;
+    bool isExtensionExists(const QString& extensionCode) const;
 
     RetVal<ExtensionsHash> correctExtensionsStates(ExtensionsHash& extensions) const;
 

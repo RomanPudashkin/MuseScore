@@ -36,7 +36,6 @@ class WorkspaceManager : public IWorkspaceManager, async::Asyncable
     INJECT(workspace, extensions::IExtensionsController, extensionsController)
 
 public:
-    WorkspaceManager() = default;
 
     RetValCh<std::shared_ptr<IWorkspace> > currentWorkspace() const override;
 

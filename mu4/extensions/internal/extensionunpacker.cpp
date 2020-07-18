@@ -32,7 +32,7 @@ using namespace mu::extensions;
 
 Ret ExtensionUnpacker::unpack(const QString& source, const QString& destination) const
 {
-    Ret destinationWritable = checkDirectoryIsWritable(destination);
+    Ret destinationWritable = isDirectoryWritable(destination);
     if (!destinationWritable) {
         return destinationWritable;
     }
@@ -44,7 +44,7 @@ Ret ExtensionUnpacker::unpack(const QString& source, const QString& destination)
         totalZipSize += fileInfo.size;
     }
 
-    Ret freeSpace = checkFreeSpace(destination, totalZipSize);
+    Ret freeSpace = hasFreeSpace(destination, totalZipSize);
     if (!freeSpace) {
         return freeSpace;
     }
@@ -75,7 +75,7 @@ Ret ExtensionUnpacker::unpack(const QString& source, const QString& destination)
     return unzipExtension;
 }
 
-Ret ExtensionUnpacker::checkDirectoryIsWritable(const QString& directoryPath) const
+Ret ExtensionUnpacker::isDirectoryWritable(const QString& directoryPath) const
 {
     QFileInfo destinationDirInfo(directoryPath);
     if (!destinationDirInfo.isWritable()) {
@@ -85,7 +85,7 @@ Ret ExtensionUnpacker::checkDirectoryIsWritable(const QString& directoryPath) co
     return make_ret(Err::NoError);
 }
 
-Ret ExtensionUnpacker::checkFreeSpace(const QString& directoryPath, qint64 neededSpace) const
+Ret ExtensionUnpacker::hasFreeSpace(const QString& directoryPath, qint64 neededSpace) const
 {
     QStorageInfo destinationStorageInfo(directoryPath);
     if (neededSpace > destinationStorageInfo.bytesAvailable()) {
@@ -118,7 +118,7 @@ RetVal2<QString, QVersionNumber> ExtensionUnpacker::extensionMeta(const MQZipRea
 }
 
 Ret ExtensionUnpacker::checkActualVersion(const QString& destination, const QString& extensionId,
-                                              const QVersionNumber& version) const
+                                          const QVersionNumber& version) const
 {
     QDir destinationDir(destination);
     QStringList dirList = destinationDir.entryList(QStringList(extensionId), QDir::Dirs | QDir::NoDotAndDotDot);

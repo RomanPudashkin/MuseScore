@@ -21,7 +21,7 @@
 
 #include "retval.h"
 
-#include "../iextensionunpacker.h"
+#include "iextensionunpacker.h"
 
 class MQZipReader;
 class QVersionNumber;
@@ -31,13 +31,12 @@ namespace extensions {
 class ExtensionUnpacker : public IExtensionUnpacker
 {
 public:
-    ExtensionUnpacker() = default;
 
     Ret unpack(const QString& source, const QString& destination) const override;
 
 private:
-    Ret checkDirectoryIsWritable(const QString& directoryPath) const;
-    Ret checkFreeSpace(const QString& directoryPath, qint64 neededSpace) const;
+    Ret isDirectoryWritable(const QString& directoryPath) const;
+    Ret hasFreeSpace(const QString& directoryPath, qint64 neededSpace) const;
 
     RetVal2<QString, QVersionNumber> extensionMeta(const MQZipReader* zip) const;
 

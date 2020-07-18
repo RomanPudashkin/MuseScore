@@ -35,12 +35,12 @@ public:
 
     virtual Ret refreshExtensions() = 0;
 
-    virtual ValCh<ExtensionsHash> extensions() = 0;
+    virtual ValCh<ExtensionsHash> extensions() const = 0;
     virtual Ret install(const QString& extensionCode) = 0;
     virtual Ret uninstall(const QString& extensionCode) = 0;
     virtual Ret update(const QString& extensionCode) = 0;
 
-    virtual RetCh<Extension> extensionChanged() = 0;
+    virtual RetCh<Extension> extensionChanged() const = 0;
 };
 }
 }

@@ -14,7 +14,6 @@ Rectangle {
         id: extensiomListModel
     }
 
-    // TODO
     FlatButton {
         text: qsTrc("extensions", "Update")
 
