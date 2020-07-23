@@ -25,6 +25,7 @@ using namespace mu::extensions;
 ExtensionListModel::ExtensionListModel(QObject* parent)
     : QAbstractListModel(parent)
 {
+    m_roles.insert(rCode, "code");
     m_roles.insert(rName, "name");
     m_roles.insert(rVersion, "version");
     m_roles.insert(rFileSize, "fileSize");
@@ -40,6 +41,8 @@ QVariant ExtensionListModel::data(const QModelIndex& index, int role) const
     Extension item = m_list[index.row()];
 
     switch (role) {
+    case rCode:
+        return QVariant::fromValue(item.code);
     case rName:
         return QVariant::fromValue(item.name);
     case rVersion:
@@ -94,8 +97,10 @@ void ExtensionListModel::updateList()
     endResetModel();
 }
 
-void ExtensionListModel::install(int index)
+void ExtensionListModel::install(QString code)
 {
+    int index = itemIndexByCode(code);
+
     if (index < 0 || index > m_list.count()) {
         return;
     }
@@ -107,8 +112,10 @@ void ExtensionListModel::install(int index)
     }
 }
 
-void ExtensionListModel::uninstall(int index)
+void ExtensionListModel::uninstall(QString code)
 {
+    int index = itemIndexByCode(code);
+
     if (index < 0 || index > m_list.count()) {
         return;
     }
@@ -120,8 +127,10 @@ void ExtensionListModel::uninstall(int index)
     }
 }
 
-void ExtensionListModel::update(int index)
+void ExtensionListModel::update(QString code)
 {
+    int index = itemIndexByCode(code);
+
     if (index < 0 || index > m_list.count()) {
         return;
     }
@@ -131,4 +140,15 @@ void ExtensionListModel::update(int index)
         LOGE() << "Error" << ret.code() << ret.text();
         return;
     }
+}
+
+int ExtensionListModel::itemIndexByCode(const QString &code) const
+{
+    for (int i = 0; i < m_list.count(); i++) {
+        if (m_list[i].code == code) {
+            return i;
+        }
+    }
+
+    return -1;
 }

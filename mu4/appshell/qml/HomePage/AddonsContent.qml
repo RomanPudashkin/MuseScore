@@ -23,6 +23,19 @@ Rectangle {
         text: qsTrc("appshell", "Add-ons")
     }
 
+    TextInputField {
+        id: search
+
+        anchors.verticalCenter: addonsLabel.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        width: 100
+
+        onCurrentTextEdited: {
+            loader.item.search = newTextValue
+        }
+    }
+
     Row {
         id: buttons
         anchors.top: addonsLabel.bottom

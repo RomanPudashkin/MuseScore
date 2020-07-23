@@ -4,7 +4,11 @@ import MuseScore.UiComponents 1.0
 import MuseScore.Extensions 1.0
 
 Rectangle {
+    id: root
+
     color: ui.theme.backgroundColor
+
+    property string search: ""
 
     Component.onCompleted: {
         extensiomListModel.load()
@@ -22,77 +26,98 @@ Rectangle {
         }
     }
 
-    GridView {
-        id: view
+    Rectangle {
 
         anchors.fill: parent
-        anchors.topMargin: 50
+        anchors.topMargin: 60
 
-        model: extensiomListModel
+        color: ui.theme.backgroundColor
 
-        clip: true
-
-        cellHeight: 150
-        cellWidth: 200
-
-        boundsBehavior: Flickable.StopAtBounds
-
-        delegate: Item {
-            height: view.cellHeight
-            width: view.cellWidth
+        Column {
+            spacing: 8
+            anchors.fill: parent
 
             Rectangle {
+                height: label.height + view.height + 6
+                width: parent.width
 
-                anchors.centerIn: parent
+                color: ui.theme.backgroundColor
 
-                height: 130
-                width: 180
-                color: ui.theme.popupBackgroundColor
+                visible: view.count > 0
 
-                Column {
-                    anchors.fill: parent
-                    spacing: 10
+                StyledTextLabel {
+                    id: label
+                    height: 20
+                    text: qsTrc("extensions", "Installed")
+                }
 
-                    StyledTextLabel {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        text: name
+                ExtensionsListView {
+                    id: view
+                    anchors.top: label.bottom
+                    anchors.topMargin: 6
+                    width: parent.width
+
+                    model: extensiomListModel
+
+                    search: root.search
+                    searchRoles: ["name"]
+
+                    filterRoles: ["status"]
+                    filtersValues: [ExtensionStatus.Installed]
+
+                    onInstall: {
+                        extensiomListModel.install(code)
                     }
 
-                    Row {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                    onUpdate: {
+                        extensiomListModel.update(code)
+                    }
 
-                        FlatButton {
-                            text: qsTrc("extensions", "Install")
-                            width: 60
+                    onUninstall: {
+                        extensiomListModel.uninstall(code)
+                    }
 
-                            visible: status === ExtensionStatus.NoInstalled
+                }
+            }
 
-                            onClicked: {
-                                extensiomListModel.install(index)
-                            }
-                        }
-                        FlatButton {
-                            text: qsTrc("extensions", "Update")
-                            width: 60
+            Rectangle {
+                height: label2.height + view2.height + 6
+                width: parent.width
 
-                            visible: status === ExtensionStatus.NeedUpdate
+                color: ui.theme.backgroundColor
 
-                            onClicked: {
-                                extensiomListModel.update(index)
-                            }
-                        }
-                        FlatButton {
-                            text: qsTrc("extensions", "Uninstall")
-                            width: 60
+                visible: view2.count > 0
 
-                            visible: status === ExtensionStatus.Installed || status === ExtensionStatus.NeedUpdate
+                StyledTextLabel {
+                    id: label2
+                    height: 20
+                    text: qsTrc("extensions", "Not Installed")
+                }
 
-                            onClicked: {
-                                extensiomListModel.uninstall(index)
-                            }
-                        }
+                ExtensionsListView {
+                    id: view2
+                    anchors.top: label2.bottom
+                    anchors.topMargin: 6
+                    width: parent.width
+
+                    model: extensiomListModel
+
+                    search: root.search
+                    searchRoles: ["name"]
+
+                    filterRoles: ["status"]
+                    filtersValues: [ExtensionStatus.NoInstalled]
+
+                    onInstall: {
+                        extensiomListModel.install(code)
+                    }
+
+                    onUpdate: {
+                        extensiomListModel.update(code)
+                    }
+
+                    onUninstall: {
+                        extensiomListModel.uninstall(code)
                     }
                 }
             }
