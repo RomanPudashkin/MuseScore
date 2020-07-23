@@ -6,6 +6,7 @@ add_subdirectory(actions)
 add_subdirectory(shortcuts)
 add_subdirectory(workspace)
 add_subdirectory(system)
+add_subdirectory(network)
 
 add_subdirectory(audio/engine)
 add_subdirectory(audio/midi)

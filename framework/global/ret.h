@@ -52,6 +52,9 @@ public:
         SystemFirst     = 400,
         SystemLast      = 499,
 
+        NetworkFirst    = 500,
+        NetworkLast     = 599,
+
         NotationFirst   = 1000,
         NotationLast    = 1299
     };
