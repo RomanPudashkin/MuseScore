@@ -45,9 +45,9 @@ QStringList FilterProxyModel::filterRoles() const
     return m_filterRoles;
 }
 
-QVariantList FilterProxyModel::filtersValues() const
+QVariantList FilterProxyModel::filterValues() const
 {
-    return m_filtersValues;
+    return m_filterValues;
 }
 
 void FilterProxyModel::setSourceModel_property(QObject* source)
@@ -88,8 +88,12 @@ void FilterProxyModel::setSearchString(const QString& filter)
     emit searchStringChanged();
 }
 
-void FilterProxyModel::setFilterRoles(QStringList filterRoles)
+void FilterProxyModel::setFilterRoles(const QStringList& filterRoles)
 {
+    if (m_filterRoles == filterRoles) {
+        return;
+    }
+
     m_filterRoleIds.clear();
     m_filterRoles = filterRoles;
     emit filterRolesChanged(filterRoles);
@@ -99,14 +103,14 @@ void FilterProxyModel::setFilterRoles(QStringList filterRoles)
     }
 }
 
-void FilterProxyModel::setFiltersValues(QVariantList filtersValues)
+void FilterProxyModel::setFilterValues(const QVariantList& filterValues)
 {
-    if (m_filtersValues == filtersValues) {
+    if (m_filterValues == filterValues) {
         return;
     }
 
-    m_filtersValues = filtersValues;
-    emit filtersValuesChanged(m_filtersValues);
+    m_filterValues = filterValues;
+    emit filterValuesChanged(m_filterValues);
 }
 
 bool FilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
@@ -175,7 +179,7 @@ bool FilterProxyModel::allowedByFilters(const QModelIndex& index) const
     for (int i = 0; i < m_filterRoleIds.count(); ++i) {
         QVariant data = sourceModel()->data(index, m_filterRoleIds.at(i));
 
-        if (data != m_filtersValues[i]) {
+        if (data != m_filterValues[i]) {
             return false;
         }
     }
