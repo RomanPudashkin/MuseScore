@@ -3,10 +3,8 @@ import QtQuick 2.7
 import MuseScore.UiComponents 1.0
 import MuseScore.Extensions 1.0
 
-Rectangle {
+Item {
     id: root
-
-    color: ui.theme.backgroundColor
 
     property string search: ""
 
@@ -19,6 +17,8 @@ Rectangle {
     }
 
     FlatButton {
+        anchors.right: parent.right
+
         text: qsTrc("extensions", "Update")
 
         onClicked: {
@@ -26,16 +26,26 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Flickable {
 
         anchors.fill: parent
-        anchors.topMargin: 60
+        anchors.topMargin: 5
+        anchors.leftMargin: 133
+        anchors.rightMargin: 133
 
-        color: ui.theme.backgroundColor
+        clip: true
+
+        contentWidth: width
+        contentHeight: extensionsColumn.height
+        interactive: height < contentHeight
 
         Column {
+            id: extensionsColumn
+
             spacing: 8
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             Rectangle {
                 height: label.height + view.height + 6
