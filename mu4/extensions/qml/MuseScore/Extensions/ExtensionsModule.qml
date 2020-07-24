@@ -7,6 +7,8 @@ Item {
     id: root
 
     property string search: ""
+    property string selectedExtensionViewType: "undefined" // "installed" "notinstalled"
+    property int selectedExtensionIndex: -1
 
     Component.onCompleted: {
         extensiomListModel.load()
@@ -26,7 +28,28 @@ Item {
         }
     }
 
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: flickable.top
+
+        height: 8
+        z: 1
+
+        gradient: Gradient {
+            GradientStop {
+                position: 0.0
+                color: ui.theme.backgroundColor
+            }
+            GradientStop {
+                position: 1.0
+                color: "transparent"
+            }
+        }
+    }
+
     Flickable {
+        id: flickable
 
         anchors.fill: parent
         anchors.topMargin: 5
@@ -42,32 +65,43 @@ Item {
         Column {
             id: extensionsColumn
 
-            spacing: 8
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
 
+            spacing: 20
+
             Rectangle {
-                height: label.height + view.height + 6
+                height: installedLabel.height + installedView.height + 6
                 width: parent.width
 
                 color: ui.theme.backgroundColor
 
-                visible: view.count > 0
+                visible: installedView.count > 0
 
                 StyledTextLabel {
-                    id: label
-                    height: 20
+                    id: installedLabel
+                    height: 18
+                    font.bold: true
                     text: qsTrc("extensions", "Installed")
                 }
 
                 ExtensionsListView {
-                    id: view
-                    anchors.top: label.bottom
-                    anchors.topMargin: 6
-                    width: parent.width
+                    id: installedView
+
+                    anchors.top: installedLabel.bottom
+                    anchors.topMargin: 12
+
+                    anchors.left: parent.left
+                    anchors.leftMargin: -24
+                    anchors.right: parent.right
+                    anchors.rightMargin: -24
 
                     model: extensiomListModel
+
+                    selectedIndex: {
+                        return selectedExtensionViewType === "installed" ? selectedExtensionIndex : -1
+                    }
 
                     search: root.search
                     searchRoles: ["name"]
@@ -75,42 +109,44 @@ Item {
                     filterRoles: ["status"]
                     filtersValues: [ExtensionStatus.Installed]
 
-                    onInstall: {
-                        extensiomListModel.install(code)
+                    onClicked: {
+                        selectedExtensionViewType = "installed"
+                        selectedExtensionIndex = index
                     }
-
-                    onUpdate: {
-                        extensiomListModel.update(code)
-                    }
-
-                    onUninstall: {
-                        extensiomListModel.uninstall(code)
-                    }
-
                 }
             }
 
             Rectangle {
-                height: label2.height + view2.height + 6
+                height: notInstalledLabel.height + notInstalledView.height + 6
                 width: parent.width
 
                 color: ui.theme.backgroundColor
 
-                visible: view2.count > 0
+                visible: notInstalledView.count > 0
 
                 StyledTextLabel {
-                    id: label2
-                    height: 20
+                    id: notInstalledLabel
+                    height: 18
+                    font.bold: true
                     text: qsTrc("extensions", "Not Installed")
                 }
 
                 ExtensionsListView {
-                    id: view2
-                    anchors.top: label2.bottom
-                    anchors.topMargin: 6
-                    width: parent.width
+                    id: notInstalledView
+
+                    anchors.top: notInstalledLabel.bottom
+                    anchors.topMargin: 12
+
+                    anchors.left: parent.left
+                    anchors.leftMargin: -24
+                    anchors.right: parent.right
+                    anchors.rightMargin: -24
 
                     model: extensiomListModel
+
+                    selectedIndex: {
+                        return selectedExtensionViewType === "notinstalled" ? selectedExtensionIndex : -1
+                    }
 
                     search: root.search
                     searchRoles: ["name"]
@@ -118,18 +154,31 @@ Item {
                     filterRoles: ["status"]
                     filtersValues: [ExtensionStatus.NoInstalled]
 
-                    onInstall: {
-                        extensiomListModel.install(code)
-                    }
-
-                    onUpdate: {
-                        extensiomListModel.update(code)
-                    }
-
-                    onUninstall: {
-                        extensiomListModel.uninstall(code)
+                    onClicked: {
+                        selectedExtensionViewType = "notinstalled"
+                        selectedExtensionIndex = index
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: flickable.bottom
+
+        height: 8
+        z:1
+
+        gradient: Gradient {
+            GradientStop {
+                position: 0.0
+                color: "transparent"
+            }
+            GradientStop {
+                position: 1.0
+                color: ui.theme.backgroundColor
             }
         }
     }

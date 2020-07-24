@@ -3,10 +3,8 @@ import QtQuick 2.7
 import MuseScore.UiComponents 1.0
 import MuseScore.Extensions 1.0
 
-Rectangle {
+Item {
     id: root
-
-    color: ui.theme.backgroundColor
 
     height: view.height
 
@@ -18,11 +16,11 @@ Rectangle {
     property alias filterRoles: filterModel.filterRoles
     property alias filtersValues: filterModel.filtersValues
 
+    property int selectedIndex: -1
+
     property int count: view.count
 
-    signal install(string code)
-    signal update(string code)
-    signal uninstall(string code)
+    signal clicked(int index, string code)
 
     FilterProxyModel {
         id: filterModel
@@ -41,8 +39,8 @@ Rectangle {
 
         clip: true
 
-        cellHeight: 150
-        cellWidth: 200
+        cellHeight: 272
+        cellWidth: 704
 
         boundsBehavior: Flickable.StopAtBounds
 
@@ -55,23 +53,19 @@ Rectangle {
             ExtensionItem {
                 anchors.centerIn: parent
 
-                height: 130
-                width: 180
+                height: 224
+                width: 656
 
-                name: model.name
-                status: model.status
                 code: model.code
+                name: model.name
+                description: model.description
+                status: model.status
 
-                onInstall: {
-                    root.install(code)
-                }
+                selected: selectedIndex === index
 
-                onUpdate: {
-                    root.update(code)
-                }
-
-                onUninstall: {
-                    root.uninstall(code)
+                onClicked: {
+                    view.positionViewAtIndex(index, GridView.Visible)
+                    root.clicked(index, code)
                 }
             }
         }
