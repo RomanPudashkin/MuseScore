@@ -1,4 +1,6 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.7
+import QtQuick.Layouts 1.12
 
 import MuseScore.UiComponents 1.0
 import MuseScore.Extensions 1.0
@@ -14,11 +16,12 @@ Rectangle {
         id: addonsLabel
 
         anchors.top: parent.top
-        anchors.topMargin: 30
+        anchors.topMargin: 66
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 133
 
-        font.pixelSize: 30
+        font.pixelSize: 32
+        font.bold: true
 
         text: qsTrc("appshell", "Add-ons")
     }
@@ -26,60 +29,49 @@ Rectangle {
     TextInputField {
         id: search
 
+        anchors.right: parent.horizontalCenter
+        anchors.rightMargin: 2
         anchors.verticalCenter: addonsLabel.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
 
-        width: 100
-
-        onCurrentTextEdited: {
-            loader.item.search = newTextValue
-        }
+        width: 184
+        height: 30
     }
 
-    Row {
-        id: buttons
+    TabBar {
+        id: bar
+
         anchors.top: addonsLabel.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 54
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: 100
-        spacing: 10
-
-        FlatButton {
+        StyledTabButton {
             text: qsTrc("appshell", "Plugins")
-            onClicked: {
-                load("plugins")
-            }
+            sideMargin: 22
+            isCurrent: bar.currentIndex === 0
         }
-        FlatButton {
+        StyledTabButton {
             text: qsTrc("appshell", "Extensions")
-            onClicked: {
-                load("extensions")
-            }
+            sideMargin: 22
+            isCurrent: bar.currentIndex === 1
         }
-        FlatButton {
+        StyledTabButton {
             text: qsTrc("appshell", "Languages")
-            onClicked: {
-                load("languages")
-            }
+            sideMargin: 22
+            isCurrent: bar.currentIndex === 2
         }
     }
 
-    Loader {
-        id: loader
-
-        anchors.top: buttons.bottom
-        anchors.topMargin: 30
+    StackLayout {
+        anchors.top: bar.bottom
+        anchors.topMargin: 24
         anchors.left: parent.left
-        anchors.leftMargin: 50
         anchors.right: parent.right
-        anchors.rightMargin: 15
         anchors.bottom: parent.bottom
-    }
 
-    Component {
-        id: pluginsComp
+        currentIndex: bar.currentIndex
+
         Rectangle {
+            id: pluginsComp
             color: ui.theme.backgroundColor
             StyledTextLabel {
                 anchors.fill: parent
@@ -88,16 +80,21 @@ Rectangle {
                 text: "Plugins Module"
             }
         }
-    }
 
-    Component {
-        id: extensionsComp
-        ExtensionsModule {}
-    }
+        ExtensionsModule {
+            id: extensionsComp
 
-    Component {
-        id: languagesComp
+            Connections {
+                target: search
+
+                onCurrentTextEdited: {
+                    extensionsComp.search = newTextValue
+                }
+            }
+        }
+
         Rectangle {
+            id: languagesComp
             color: ui.theme.backgroundColor
             StyledTextLabel {
                 anchors.fill: parent
@@ -105,14 +102,6 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 text: "Languages Module"
             }
-        }
-    }
-
-    function load(name) {
-        switch (name) {
-        case "plugins": loader.sourceComponent = pluginsComp; break;
-        case "extensions": loader.sourceComponent = extensionsComp; break;
-        case "languages": loader.sourceComponent = languagesComp; break;
         }
     }
 }
