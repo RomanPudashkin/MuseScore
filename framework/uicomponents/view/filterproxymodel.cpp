@@ -67,6 +67,10 @@ void FilterProxyModel::setSourceModel_property(QObject* source)
 
 void FilterProxyModel::setSearchRoles(const QStringList& names)
 {
+    if (m_searchRoles == names) {
+        return;
+    }
+
     m_searchRoleIds.clear();
     m_searchRoles = names;
     emit searchRolesChanged();
@@ -117,8 +121,8 @@ bool FilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& source
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
-    bool ok = allowedByFilters(index)
-              && allowedBySearch(index);
+    bool ok = allowedByFilters(index);
+    ok &= allowedBySearch(index);
 
     return ok;
 }

@@ -5,6 +5,8 @@ import MuseScore.Ui 1.0
 Rectangle {
     id: root
 
+    property alias text: textField.text
+
     signal searchRequested(var text)
 
     width: 184
