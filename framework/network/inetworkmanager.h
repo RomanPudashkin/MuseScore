@@ -41,7 +41,7 @@ public:
     virtual void abort() = 0;
 };
 
-typedef QSharedPointer<INetworkManager> INetworkManagerPtr;
+using INetworkManagerPtr = std::shared_ptr<INetworkManager>;
 }
 }
 
