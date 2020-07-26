@@ -57,6 +57,10 @@ public:
     Q_INVOKABLE void uninstall(QString code);
     Q_INVOKABLE void update(QString code);
 
+signals:
+    void progress(const QString& status, bool indeterminate, qint64 current, qint64 total);
+    void finish();
+
 private:
     int itemIndexByCode(const QString& code) const;
 

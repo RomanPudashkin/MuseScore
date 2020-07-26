@@ -11,11 +11,11 @@ Item {
     property int selectedExtensionIndex: -1
 
     Component.onCompleted: {
-        extensiomListModel.load()
+        extensionListModel.load()
     }
 
     ExtensionListModel {
-        id: extensiomListModel
+        id: extensionListModel
     }
 
     FlatButton {
@@ -23,8 +23,10 @@ Item {
 
         text: qsTrc("extensions", "Update")
 
+        visible: false
+
         onClicked: {
-            extensiomListModel.updateList()
+            extensionListModel.updateList()
         }
     }
 
@@ -100,7 +102,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: -24
 
-                    model: extensiomListModel
+                    model: extensionListModel
 
                     selectedIndex: {
                         return selectedExtensionViewType === "installed" ? selectedExtensionIndex : -1
@@ -147,7 +149,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: -24
 
-                    model: extensiomListModel
+                    model: extensionListModel
 
                     selectedIndex: {
                         return selectedExtensionViewType === "notinstalled" ? selectedExtensionIndex : -1
@@ -199,12 +201,38 @@ Item {
 
         visible: false
 
-        onClose: {
-            visible = false
-        }
-
         content: ExtensionInfo {
             id: extensionInfo
+
+            onInstall: {
+                extensionListModel.install(code)
+            }
+
+            onUpdate: {
+                extensionListModel.update(code)
+            }
+
+            onUninstall: {
+                extensionListModel.uninstall(code)
+            }
+
+            onOpenFullDescription: {
+//                extensionListModel.openFullDescription(code)
+            }
+
+            Connections {
+                target: extensionListModel
+                function onProgress(status, indeterminate, current, total) {
+                    extensionInfo.setProgress(status, indeterminate, current, total)
+                }
+                function onFinish() {
+                    extensionInfo.resetProgress()
+                }
+            }
+        }
+
+        onClose: {
+            visible = false
         }
 
         function show(extension) {

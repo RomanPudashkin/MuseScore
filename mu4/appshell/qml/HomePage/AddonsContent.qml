@@ -87,7 +87,7 @@ Rectangle {
             Connections {
                 target: search
 
-                onCurrentTextEdited: {
+                function onCurrentTextEdited(newTextValue) {
                     extensionsComp.search = newTextValue
                 }
             }

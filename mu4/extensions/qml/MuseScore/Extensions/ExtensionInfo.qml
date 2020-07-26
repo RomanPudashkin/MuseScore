@@ -11,9 +11,47 @@ Item {
 
     height: contentColumn.height
 
+    QtObject {
+        id: prop
+
+        property string _currentOperation: "undefined" // "install" "update" "uninstall" "openFullDescription"
+
+        function _currentOperationButton() {
+            var currentButton
+            if (prop._currentOperation === "install") {
+                currentButton = installButton
+            } else if (prop._currentOperation === "update") {
+                currentButton = updateButton
+            }
+
+             return currentButton
+        }
+    }
+
     function setData(data) {
         extension = data
     }
+
+    function setProgress(status, indeterminate, current, total) {
+        var currentButton = prop._currentOperationButton()
+
+        currentButton.progressTitle = status
+        currentButton.indeterminate = indeterminate
+        if (!indeterminate) {
+            currentButton.value = current
+            currentButton.to = total
+        }
+    }
+
+    function resetProgress() {
+        var currentButton = prop._currentOperationButton()
+        currentButton.indeterminate = false
+    }
+
+    signal install(string code)
+    signal update(string code)
+    signal uninstall(string code)
+    signal openFullDescription(string code)
 
     Column {
         id: contentColumn
@@ -91,6 +129,11 @@ Item {
             FlatButton {
                 Layout.alignment: Qt.AlignLeft
                 text: qsTrc("extensions", "View full description")
+
+                onClicked: {
+                    prop._currentOperation = "openFullDescription"
+                    root.openFullDescription(extension.code)
+                }
             }
 
             Row {
@@ -98,27 +141,51 @@ Item {
 
                 spacing: 19
 
-                FlatButton {
+                ProgressButton {
+                    id: updateButton
+
                     visible: Boolean(extension) ? (extension.status === ExtensionStatus.NeedUpdate) : false
 
                     text: qsTrc("extensions", "Update available")
+
+                    onClicked: {
+                        prop._currentOperation = "update"
+                        root.update(extension.code)
+                    }
                 }
                 FlatButton {
                     visible: Boolean(extension) ? (extension.status === ExtensionStatus.Installed ||
                                                    extension.status === ExtensionStatus.NeedUpdate) : false
 
                     text: qsTrc("extensions", "Restart extension")
+
+                    onClicked: {
+                        prop._currentOperation = "update"
+//                        root.restart(extension.code) // TODO: restart
+                    }
                 }
-                FlatButton {
+                ProgressButton {
+                    id: installButton
+
                     visible: Boolean(extension) ? (extension.status === ExtensionStatus.NoInstalled) : false
 
                     text: qsTrc("extensions", "Install")
+
+                    onClicked: {
+                        prop._currentOperation = "install"
+                        root.install(extension.code)
+                    }
                 }
                 FlatButton {
                     visible: Boolean(extension) ? (extension.status === ExtensionStatus.Installed ||
                                                    extension.status === ExtensionStatus.NeedUpdate) : false
 
                     text: qsTrc("extensions", "Uninstall")
+
+                    onClicked: {
+                        prop._currentOperation = "uninstall"
+                        root.uninstall(extension.code)
+                    }
                 }
             }
         }
