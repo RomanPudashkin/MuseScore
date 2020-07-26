@@ -108,11 +108,19 @@ void ExtensionListModel::install(QString code)
         return;
     }
 
-    Ret ret = extensionsController()->install(m_list.at(index).code);
-    if (!ret) {
-        LOGE() << "Error" << ret.code() << ret.text();
+    RetCh<ExtensionProgressStatus> installRet = extensionsController()->install(m_list.at(index).code);
+    if (!installRet.ret) {
+        LOGE() << "Error" << installRet.ret.code() << installRet.ret.text();
         return;
     }
+
+    installRet.ch.onReceive(this, [this](const ExtensionProgressStatus& progress) {
+        emit this->progress(progress.status, progress.indeterminate, progress.current, progress.total);
+    });
+
+    installRet.ch.onClose(this, [this]() {
+        emit finish();
+    });
 }
 
 void ExtensionListModel::uninstall(QString code)
@@ -123,11 +131,13 @@ void ExtensionListModel::uninstall(QString code)
         return;
     }
 
-    Ret ret = extensionsController()->uninstall(m_list.at(index).code);
-    if (!ret) {
-        LOGE() << "Error" << ret.code() << ret.text();
+    Ret uninstallRet = extensionsController()->uninstall(m_list.at(index).code);
+    if (!uninstallRet) {
+        LOGE() << "Error" << uninstallRet.code() << uninstallRet.text();
         return;
     }
+
+    emit finish();
 }
 
 void ExtensionListModel::update(QString code)
@@ -138,11 +148,19 @@ void ExtensionListModel::update(QString code)
         return;
     }
 
-    Ret ret = extensionsController()->update(m_list.at(index).code);
-    if (!ret) {
-        LOGE() << "Error" << ret.code() << ret.text();
+    RetCh<ExtensionProgressStatus> updateRet = extensionsController()->update(m_list.at(index).code);
+    if (!updateRet.ret) {
+        LOGE() << "Error" << updateRet.ret.code() << updateRet.ret.text();
         return;
     }
+
+    updateRet.ch.onReceive(this, [this](const ExtensionProgressStatus& progress) {
+        emit this->progress(progress.status, progress.indeterminate, progress.current, progress.total);
+    });
+
+    updateRet.ch.onClose(this, [this]() {
+        emit finish();
+    });
 }
 
 int ExtensionListModel::itemIndexByCode(const QString &code) const
