@@ -39,6 +39,7 @@ public:
     enum Roles {
         rCode = Qt::UserRole + 1,
         rName,
+        rDescription,
         rVersion,
         rFileSize,
         rStatus,

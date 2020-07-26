@@ -51,10 +51,13 @@ Item {
     Flickable {
         id: flickable
 
-        anchors.fill: parent
+        anchors.top: parent.top
         anchors.topMargin: 5
+        anchors.left: parent.left
         anchors.leftMargin: 133
+        anchors.right: parent.right
         anchors.rightMargin: 133
+        anchors.bottom: extensionPanel.visible ? extensionPanel.top : parent.bottom
 
         clip: true
 
@@ -112,6 +115,8 @@ Item {
                     onClicked: {
                         selectedExtensionViewType = "installed"
                         selectedExtensionIndex = index
+
+                        extensionPanel.show(extension)
                     }
                 }
             }
@@ -157,6 +162,8 @@ Item {
                     onClicked: {
                         selectedExtensionViewType = "notinstalled"
                         selectedExtensionIndex = index
+
+                        extensionPanel.show(extension)
                     }
                 }
             }
@@ -180,6 +187,30 @@ Item {
                 position: 1.0
                 color: ui.theme.backgroundColor
             }
+        }
+    }
+
+    PopupPanel {
+        id: extensionPanel
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+
+        visible: false
+
+        onClose: {
+            visible = false
+        }
+
+        content: ExtensionInfo {
+            id: extensionInfo
+        }
+
+        function show(extension) {
+            setContentData(extension)
+
+            visible = true
         }
     }
 }

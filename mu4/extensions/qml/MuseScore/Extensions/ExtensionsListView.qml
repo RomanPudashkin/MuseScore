@@ -20,7 +20,7 @@ Item {
 
     property int count: view.count
 
-    signal clicked(int index, string code)
+    signal clicked(int index, var extension)
 
     FilterProxyModel {
         id: filterModel
@@ -65,7 +65,7 @@ Item {
 
                 onClicked: {
                     view.positionViewAtIndex(index, GridView.Visible)
-                    root.clicked(index, code)
+                    root.clicked(index, model)
                 }
             }
         }

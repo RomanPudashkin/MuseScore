@@ -27,6 +27,7 @@ ExtensionListModel::ExtensionListModel(QObject* parent)
 {
     m_roles.insert(rCode, "code");
     m_roles.insert(rName, "name");
+    m_roles.insert(rDescription, "description");
     m_roles.insert(rVersion, "version");
     m_roles.insert(rFileSize, "fileSize");
     m_roles.insert(rStatus, "status");
@@ -45,6 +46,8 @@ QVariant ExtensionListModel::data(const QModelIndex& index, int role) const
         return QVariant::fromValue(item.code);
     case rName:
         return QVariant::fromValue(item.name);
+    case rDescription:
+        return QVariant::fromValue(item.description);
     case rVersion:
         return QVariant::fromValue(item.version);
     case rFileSize:
