@@ -16,50 +16,60 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_SCORES_OPENSCORECONTROLLER_H
-#define MU_SCORES_OPENSCORECONTROLLER_H
+#ifndef MU_USERSCORES_NEWSCOREMODEL_H
+#define MU_USERSCORES_NEWSCOREMODEL_H
 
-#include <vector>
+#include <QObject>
 
-#include "../iopenscorecontroller.h"
-#include "../iscoresconfiguration.h"
 #include "modularity/ioc.h"
-#include "iinteractive.h"
 #include "actions/iactionsdispatcher.h"
-#include "actions/actionable.h"
-#include "domain/notation/inotation.h"
+#include "iglobalconfiguration.h"
 #include "domain/notation/inotationcreator.h"
 #include "context/iglobalcontext.h"
 #include "ilauncher.h"
 
+#include "domain/notation/notationtypes.h"
+
 namespace mu {
-namespace scores {
-class OpenScoreController : public IOpenScoreController, public actions::Actionable
+namespace userscores {
+class NewScoreModel : public QObject
 {
+    Q_OBJECT
+
     INJECT(scores, actions::IActionsDispatcher, dispatcher)
-    INJECT(scores, framework::IInteractive, interactive)
-    INJECT(scores, framework::ILauncher, launcher)
+    INJECT(scores, framework::IGlobalConfiguration, globalConfiguration)
     INJECT(scores, domain::notation::INotationCreator, notationCreator)
     INJECT(scores, context::IGlobalContext, globalContext)
-    INJECT(scores, IScoresConfiguration, scoresConfiguration)
+    INJECT(scores, framework::ILauncher, launcher)
+
+    Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+    Q_PROPERTY(QString composer READ composer WRITE setComposer NOTIFY composerChanged)
 
 public:
-    OpenScoreController() = default;
+    explicit NewScoreModel(QObject* parent = nullptr);
 
-    void init();
+    Q_INVOKABLE bool create();
 
-    void openScore(const actions::ActionData& args) override;
-    void importScore() override;
-    void newScore() override;
+    QString title() const;
+    QString composer() const;
+
+public slots:
+    void setTitle(QString title);
+    void setComposer(QString composer);
+
+signals:
+    void titleChanged(QString title);
+    void composerChanged(QString composer);
+
+    void close();
 
 private:
+    void fillDefault(domain::notation::ScoreCreateOptions& scoreOptions);
 
-    io::path selectScoreFile(const QStringList& filter);
-    void doOpenScore(const io::path &filePath);
-
-    void prependToRecentScoreList(io::path filePath);
+    QString m_title;
+    QString m_composer;
 };
 }
 }
 
-#endif // MU_SCORES_OPENSCORECONTROLLER_H
+#endif // MU_USERSCORES_NEWSCOREMODEL_H
