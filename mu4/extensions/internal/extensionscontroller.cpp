@@ -91,9 +91,9 @@ ValCh<ExtensionsHash> ExtensionsController::extensions() const
     return extensionHash;
 }
 
-RetCh<ExtensionProgressStatus> ExtensionsController::install(const QString& extensionCode)
+RetCh<ExtensionProgress> ExtensionsController::install(const QString& extensionCode)
 {
-    RetCh<ExtensionProgressStatus> result;
+    RetCh<ExtensionProgress> result;
     result.ret = make_ret(Err::NoError);
     result.ch = m_extensionProgressStatus;
 
@@ -121,9 +121,9 @@ RetCh<ExtensionProgressStatus> ExtensionsController::install(const QString& exte
     return result;
 }
 
-RetCh<ExtensionProgressStatus> ExtensionsController::update(const QString& extensionCode)
+RetCh<ExtensionProgress> ExtensionsController::update(const QString& extensionCode)
 {
-    RetCh<ExtensionProgressStatus> result;
+    RetCh<ExtensionProgress> result;
     result.ret = make_ret(Err::NoError);
     result.ch = m_extensionProgressStatus;
 
@@ -251,7 +251,7 @@ RetVal<ExtensionsHash> ExtensionsController::correctExtensionsStates(ExtensionsH
 }
 
 RetVal<QString> ExtensionsController::downloadExtension(const QString& extensionCode,
-                                                        async::Channel<ExtensionProgressStatus>& progressChannel) const
+                                                        async::Channel<ExtensionProgress>& progressChannel) const
 {
     RetVal<QString> result;
 
@@ -265,7 +265,7 @@ RetVal<QString> ExtensionsController::downloadExtension(const QString& extension
 
     async::Channel<Progress> downloadChannel = networkManagerPtr->downloadProgressChannel();
     downloadChannel.onReceive(new deto::async::Asyncable(), [&progressChannel](const Progress& progress) {
-        progressChannel.send(ExtensionProgressStatus(qtrc("extensions", "Downloading..."), progress.current,
+        progressChannel.send(ExtensionProgress(qtrc("extensions", "Downloading..."), progress.current,
                                                      progress.total));
     });
 
@@ -312,10 +312,10 @@ Extension::ExtensionTypes ExtensionsController::extensionTypes(const QString& ex
 }
 
 void ExtensionsController::th_install(const QString& extensionCode,
-                                      async::Channel<ExtensionProgressStatus> progressChannel,
+                                      async::Channel<ExtensionProgress> progressChannel,
                                       std::function<void(const QString&, const Ret&)> callback)
 {
-    progressChannel.send(ExtensionProgressStatus(qtrc("extensions", "Analysing..."), true));
+    progressChannel.send(ExtensionProgress(qtrc("extensions", "Analysing..."), true));
 
     RetVal<QString> download = downloadExtension(extensionCode, progressChannel);
     if (!download.ret) {
@@ -323,7 +323,7 @@ void ExtensionsController::th_install(const QString& extensionCode,
         return;
     }
 
-    progressChannel.send(ExtensionProgressStatus(qtrc("extensions", "Analysing..."), true));
+    progressChannel.send(ExtensionProgress(qtrc("extensions", "Analysing..."), true));
 
     QString extensionArchivePath = download.val;
 
@@ -339,17 +339,17 @@ void ExtensionsController::th_install(const QString& extensionCode,
     callback(extensionCode, make_ret(Err::NoError));
 }
 
-void ExtensionsController::th_update(const QString& extensionCode, async::Channel<ExtensionProgressStatus> progressChannel,
+void ExtensionsController::th_update(const QString& extensionCode, async::Channel<ExtensionProgress> progressChannel,
                                      std::function<void(const QString&, const Ret&)> callback)
 {
-    progressChannel.send(ExtensionProgressStatus(qtrc("extensions", "Analysing..."), true));
+    progressChannel.send(ExtensionProgress(qtrc("extensions", "Analysing..."), true));
 
     RetVal<QString> download = downloadExtension(extensionCode, progressChannel);
     if (!download.ret) {
         callback(extensionCode, download.ret);
     }
 
-    progressChannel.send(ExtensionProgressStatus(qtrc("extensions", "Analysing..."), true));
+    progressChannel.send(ExtensionProgress(qtrc("extensions", "Analysing..."), true));
 
     QString extensionArchivePath = download.val;
 

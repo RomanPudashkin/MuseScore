@@ -37,8 +37,8 @@ public:
     virtual Ret refreshExtensions() = 0;
 
     virtual ValCh<ExtensionsHash> extensions() const = 0;
-    virtual RetCh<ExtensionProgressStatus> install(const QString& extensionCode) = 0;
-    virtual RetCh<ExtensionProgressStatus> update(const QString& extensionCode) = 0;
+    virtual RetCh<ExtensionProgress> install(const QString& extensionCode) = 0;
+    virtual RetCh<ExtensionProgress> update(const QString& extensionCode) = 0;
     virtual Ret uninstall(const QString& extensionCode) = 0;
 
     virtual RetCh<Extension> extensionChanged() const = 0;

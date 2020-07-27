@@ -39,7 +39,7 @@ public:
     Q_ENUM(Status)
 };
 
-struct ExtensionProgressStatus
+struct ExtensionProgress
 {
     QString status;
     bool indeterminate = true;
@@ -47,10 +47,10 @@ struct ExtensionProgressStatus
     qint64 current = 0;
     quint64 total = 0;
 
-    ExtensionProgressStatus() = default;
-    ExtensionProgressStatus(const QString& status, bool indeterminate)
+    ExtensionProgress() = default;
+    ExtensionProgress(const QString& status, bool indeterminate)
         : status(status), indeterminate(indeterminate) {}
-    ExtensionProgressStatus(const QString& status, qint64 current, qint64 total)
+    ExtensionProgress(const QString& status, qint64 current, qint64 total)
         : status(status), indeterminate(false), current(current), total(total) {}
 };
 

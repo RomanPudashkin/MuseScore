@@ -108,13 +108,13 @@ void ExtensionListModel::install(QString code)
         return;
     }
 
-    RetCh<ExtensionProgressStatus> installRet = extensionsController()->install(m_list.at(index).code);
+    RetCh<ExtensionProgress> installRet = extensionsController()->install(m_list.at(index).code);
     if (!installRet.ret) {
         LOGE() << "Error" << installRet.ret.code() << installRet.ret.text();
         return;
     }
 
-    installRet.ch.onReceive(this, [this](const ExtensionProgressStatus& progress) {
+    installRet.ch.onReceive(this, [this](const ExtensionProgress& progress) {
         emit this->progress(progress.status, progress.indeterminate, progress.current, progress.total);
     });
 
@@ -148,13 +148,13 @@ void ExtensionListModel::update(QString code)
         return;
     }
 
-    RetCh<ExtensionProgressStatus> updateRet = extensionsController()->update(m_list.at(index).code);
+    RetCh<ExtensionProgress> updateRet = extensionsController()->update(m_list.at(index).code);
     if (!updateRet.ret) {
         LOGE() << "Error" << updateRet.ret.code() << updateRet.ret.text();
         return;
     }
 
-    updateRet.ch.onReceive(this, [this](const ExtensionProgressStatus& progress) {
+    updateRet.ch.onReceive(this, [this](const ExtensionProgress& progress) {
         emit this->progress(progress.status, progress.indeterminate, progress.current, progress.total);
     });
 
