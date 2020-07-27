@@ -52,7 +52,6 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void load();
-    Q_INVOKABLE void updateList();
     Q_INVOKABLE void install(QString code);
     Q_INVOKABLE void uninstall(QString code);
     Q_INVOKABLE void update(QString code);

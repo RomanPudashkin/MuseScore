@@ -91,15 +91,6 @@ void ExtensionListModel::load()
     });
 }
 
-void ExtensionListModel::updateList()
-{
-    extensionsController()->refreshExtensions();
-
-    beginResetModel();
-    m_list = extensionsController()->extensions().val.values();
-    endResetModel();
-}
-
 void ExtensionListModel::install(QString code)
 {
     int index = itemIndexByCode(code);

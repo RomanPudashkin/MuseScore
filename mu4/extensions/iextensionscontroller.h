@@ -34,8 +34,6 @@ class IExtensionsController : MODULE_EXPORT_INTERFACE
 public:
     virtual ~IExtensionsController() = default;
 
-    virtual Ret refreshExtensions() = 0;
-
     virtual ValCh<ExtensionsHash> extensions() const = 0;
     virtual RetCh<ExtensionProgress> install(const QString& extensionCode) = 0;
     virtual RetCh<ExtensionProgress> update(const QString& extensionCode) = 0;

@@ -24,6 +24,10 @@ Rectangle {
         }
     }
 
+    function hide() {
+        visible = false
+    }
+
     Loader {
         id: loader
 
@@ -48,7 +52,7 @@ Rectangle {
 
         font.pixelSize: 32
 
-        iconCode: IconCode.EXIT
+        iconCode: IconCode.CLOSE_X_ROUNDED
 
         MouseArea {
             anchors.fill: parent

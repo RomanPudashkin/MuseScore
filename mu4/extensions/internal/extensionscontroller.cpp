@@ -33,6 +33,8 @@ void ExtensionsController::init()
 {
     fsOperation()->makePath(configuration()->extensionsSharePath());
     fsOperation()->makePath(configuration()->extensionsDataPath());
+
+    refreshExtensions();
 }
 
 Ret ExtensionsController::refreshExtensions()

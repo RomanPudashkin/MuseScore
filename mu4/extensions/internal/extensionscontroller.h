@@ -36,10 +36,8 @@ class ExtensionsController : public IExtensionsController
     INJECT(extensions, framework::INetworkManagerCreator, networkManagerCreator)
 
 public:
-
     void init();
 
-    Ret refreshExtensions() override;
     ValCh<ExtensionsHash> extensions() const override;
     RetCh<ExtensionProgress> install(const QString& extensionCode) override;
     RetCh<ExtensionProgress> update(const QString& extensionCode) override;
@@ -48,6 +46,8 @@ public:
     RetCh<Extension> extensionChanged() const override;
 
 private:
+    Ret refreshExtensions();
+
     using Callback = std::function<void()>;
 
     RetVal<ExtensionsHash> parseExtensionConfig(const QByteArray& json) const;

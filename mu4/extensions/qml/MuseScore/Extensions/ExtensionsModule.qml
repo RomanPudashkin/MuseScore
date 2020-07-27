@@ -18,18 +18,6 @@ Item {
         id: extensionListModel
     }
 
-    FlatButton {
-        anchors.right: parent.right
-
-        text: qsTrc("extensions", "Update")
-
-        visible: false
-
-        onClicked: {
-            extensionListModel.updateList()
-        }
-    }
-
     Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
@@ -227,12 +215,13 @@ Item {
                 }
                 function onFinish() {
                     extensionInfo.resetProgress()
+                    extensionPanel.hide()
                 }
             }
         }
 
         onClose: {
-            visible = false
+            hide()
         }
 
         function show(extension) {
