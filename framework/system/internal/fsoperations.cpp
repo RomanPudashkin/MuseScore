@@ -39,9 +39,9 @@ QString FsOperations::baseName(const QString& filePath) const
     return QFileInfo(filePath).baseName();
 }
 
-QString FsOperations::dirName(const QString& dirPath) const
+QString FsOperations::dirName(const QString& path) const
 {
-    return QDir(dirPath).dirName();
+    return QFileInfo(path).dir().dirName();
 }
 
 RetVal<QByteArray> FsOperations::readFile(const QString& filePath) const

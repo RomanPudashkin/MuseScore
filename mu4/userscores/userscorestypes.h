@@ -22,14 +22,19 @@
 
 #include <QList>
 
+#include "domain/notation/notationtypes.h"
+
 namespace mu {
 namespace userscores {
-struct TemplateCategory {
-    QString codeKey;
-    QString title;
+struct Template : public domain::notation::Meta {
+    QString categoryTitle;
+
+    Template() = default;
+    Template(const domain::notation::Meta& meta) : Meta(meta) {}
+
 };
 
-using TemplateCategoryList = QList<TemplateCategory>;
+using Templates = QList<Template>;
 }
 }
 
