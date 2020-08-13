@@ -215,22 +215,34 @@ void Notation::setViewSize(const QSizeF& vs)
     m_viewSize = vs;
 }
 
-void Notation::paint(QPainter* p, const QRect&)
+QRectF Notation::previewRect() const
 {
     const QList<Ms::Page*>& mspages = m_masterScore->pages();
 
     if (mspages.isEmpty()) {
-        p->drawText(10, 10, "no pages");
+        return QRect();
+    }
+
+    return mspages.first()->bbox();
+}
+
+void Notation::paint(QPainter* painter)
+{
+    const QList<Ms::Page*>& mspages = m_masterScore->pages();
+
+    if (mspages.isEmpty()) {
+        painter->drawText(10, 10, "no pages");
         return;
     }
 
     Ms::Page* page = mspages.first();
-    page->draw(p);
 
-    p->fillRect(page->bbox(), QColor("#ffffff"));
+    page->draw(painter);
+
+    painter->fillRect(page->bbox(), QColor("#ffffff"));
 
     QList<Ms::Element*> ell = page->elements();
-    for (const Ms::Element* e : ell) {
+    for (Ms::Element* e : ell) {
         if (!e->visible()) {
             continue;
         }
@@ -239,14 +251,14 @@ void Notation::paint(QPainter* p, const QRect&)
         QPointF pos(e->pagePos());
         //LOGI() << e->name() << ", x: " << pos.x() << ", y: " << pos.y() << "\n";
 
-        p->translate(pos);
+        painter->translate(pos);
 
-        e->draw(p);
+        e->draw(painter);
 
-        p->translate(-pos);
+        painter->translate(-pos);
     }
 
-    m_interaction->paint(p);
+    m_interaction->paint(painter);
 }
 
 void Notation::notifyAboutNotationChanged()
