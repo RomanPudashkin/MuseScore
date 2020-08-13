@@ -6,8 +6,14 @@ import MuseScore.Ui 1.0
 import MuseScore.UserScores 1.0
 
 Item {
+    property alias selectedTemplatePath: model.currentTemplatePath
+
     TemplatesModel {
         id: model
+
+        onCurrentTemplateChanged: {
+            templatePreview.load(model.currentTemplatePath)
+        }
     }
 
     Component.onCompleted: {
@@ -27,7 +33,7 @@ Item {
             listTitle: qsTrc("userscores", "Category")
             model: model.categoriesTitles
             searchEnabled: false
-            booldFont: true
+            boldFont: true
 
             onTitleClicked: {
                 model.setCurrentCategory(index)
@@ -59,24 +65,34 @@ Item {
         SeparatorLine { orientation: Qt.Vertical }
 
         TemplatePreview {
+            id: templatePreview
+
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width / 3
+            Layout.fillWidth: true
         }
 
         SeparatorLine { orientation: Qt.Vertical }
 
         Column {
-            Layout.minimumWidth: 30
+            Layout.preferredWidth: 30
             Layout.alignment: Qt.AlignVCenter
 
             spacing: 16
 
             FlatButton {
                 icon: IconCode.ZOOM_IN
+
+                onClicked: {
+                    templatePreview.zoomIn()
+                }
             }
 
             FlatButton {
                 icon: IconCode.ZOOM_OUT
+
+                onClicked: {
+                    templatePreview.zoomOut()
+                }
             }
         }
     }
