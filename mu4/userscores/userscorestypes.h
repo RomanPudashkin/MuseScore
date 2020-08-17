@@ -22,8 +22,15 @@
 
 #include <QList>
 
+#include "libmscore/key.h"
+#include "libmscore/timesig.h"
+
 namespace mu {
 namespace userscores {
+using Key = Ms::Key;
+using KeyMode = Ms::KeyMode;
+using TimeSigType = Ms::TimeSigType;
+
 struct TemplateCategory {
     QString codeKey;
     QString title;
