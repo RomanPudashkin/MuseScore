@@ -26,48 +26,43 @@ using namespace mu::domain::notation;
 using namespace mu::userscores;
 using namespace mu::framework;
 
-RetVal<TemplateCategoryList> TemplatesRepository::categories() const
+RetVal<Templates> TemplatesRepository::templates() const
 {
-    TemplateCategoryList result;
+    Templates result;
 
     for (const QString& dirPath: configuration()->templatesDirPaths()) {
-        if (isEmpty(dirPath)) {
-            continue;
+        QStringList filters { "*.mscz", "*.mscx" };
+        RetVal<QStringList> files = fsOperations()->scanFiles(dirPath, filters, IFsOperations::ScanMode::IncludeSubdirs);
+
+        if (!files.ret) {
+            LOGE() << files.ret.toString();
         }
 
-        TemplateCategory category;
-
-        category.codeKey = dirPath;
-        category.title = correctedTitle(fsOperations()->dirName(dirPath));
-
-        result << category;
+        result << loadTemplates(files.val);
     }
 
-    return RetVal<TemplateCategoryList>::make_ok(result);
+    return RetVal<Templates>::make_ok(result);
 }
 
-RetVal<MetaList> TemplatesRepository::templatesMeta(const QString& categoryCode) const
+Templates TemplatesRepository::loadTemplates(const QStringList& filePaths) const
 {
-    MetaList result;
-    QStringList templates = templatesPaths(categoryCode);
+    Templates result;
 
-    for (const QString& path: templates) {
-        RetVal<Meta> meta = msczReader()->readMeta(io::pathFromQString(path));
+    for (const QString& pathToFile: filePaths) {
+        RetVal<Meta> meta = msczReader()->readMeta(io::pathFromQString(pathToFile));
 
         if (!meta.ret) {
             LOGE() << meta.ret.toString();
             continue;
         }
 
-        result << meta.val;
+        Template templ(meta.val);
+        templ.categoryTitle = correctedTitle(fsOperations()->dirName(pathToFile));
+
+        result << templ;
     }
 
-    return RetVal<MetaList>::make_ok(result);
-}
-
-bool TemplatesRepository::isEmpty(const QString& dirPath) const
-{
-    return templatesPaths(dirPath).isEmpty();
+    return result;
 }
 
 QString TemplatesRepository::correctedTitle(const QString& title) const
@@ -80,16 +75,4 @@ QString TemplatesRepository::correctedTitle(const QString& title) const
     }
 
     return corrected.replace('_', ' ');
-}
-
-QStringList TemplatesRepository::templatesPaths(const QString& dirPath) const
-{
-    QStringList filters { "*.mscz", "*.mscx" };
-    RetVal<QStringList> result = fsOperations()->scanFiles(dirPath, filters, IFsOperations::ScanMode::IncludeSubdirs);
-
-    if (!result.ret) {
-        LOGE() << result.ret.toString();
-    }
-
-    return result.val;
 }

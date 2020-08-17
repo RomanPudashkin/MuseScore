@@ -22,7 +22,6 @@
 
 #include "modularity/imoduleexport.h"
 #include "userscores/userscorestypes.h"
-#include "domain/notation/notationtypes.h"
 
 #include "retval.h"
 
@@ -35,8 +34,7 @@ class ITemplatesRepository : MODULE_EXPORT_INTERFACE
 public:
     virtual ~ITemplatesRepository() = default;
 
-    virtual RetVal<TemplateCategoryList> categories() const = 0;
-    virtual RetVal<domain::notation::MetaList> templatesMeta(const QString& categoryCode) const = 0;
+    virtual RetVal<Templates> templates() const = 0;
 };
 }
 }

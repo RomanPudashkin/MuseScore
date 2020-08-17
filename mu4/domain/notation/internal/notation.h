@@ -56,7 +56,8 @@ public:
     Ret createNew(const ScoreCreateOptions& scoreOptions) override;
 
     void setViewSize(const QSizeF& vs) override;
-    void paint(QPainter* p, const QRect& r) override;
+    void paint(QPainter* painter) override;
+    QRectF previewRect() const override;
 
     // Input (mouse)
     INotationInteraction* interaction() const override;

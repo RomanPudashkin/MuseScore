@@ -52,7 +52,8 @@ public:
     virtual Ret createNew(const ScoreCreateOptions& scoreInfo) = 0;
 
     virtual void setViewSize(const QSizeF& vs) = 0;
-    virtual void paint(QPainter* p, const QRect& r) = 0;
+    virtual void paint(QPainter* painter) = 0;
+    virtual QRectF previewRect() const = 0;
 
     // input (mouse)
     virtual INotationInteraction* interaction() const = 0;
@@ -72,6 +73,9 @@ public:
     // accessibility
     virtual INotationAccessibility* accessibility() const = 0;
 };
+
+using INotationPtr = std::shared_ptr<INotation>;
+
 }
 }
 }

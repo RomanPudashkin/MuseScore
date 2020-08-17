@@ -24,6 +24,7 @@
 using namespace mu;
 using namespace mu::framework;
 using namespace mu::userscores;
+using namespace mu::scene::notation;
 
 static std::string module_name("userscores");
 
@@ -73,4 +74,14 @@ QStringList UserScoresConfiguration::templatesDirPaths() const
     dirs << extensionsConfiguration()->templatesPaths();
 
     return dirs;
+}
+
+QColor UserScoresConfiguration::templatePreviewBackgroundColor() const
+{
+    return notationConfiguration()->backgroundColor();
+}
+
+async::Channel<QColor> UserScoresConfiguration::templatePreviewBackgroundColorChanged() const
+{
+    return notationConfiguration()->backgroundColorChanged();
 }
