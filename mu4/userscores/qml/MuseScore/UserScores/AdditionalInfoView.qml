@@ -9,8 +9,6 @@ import MuseScore.UserScores 1.0
 Row {
     id: row
 
-    property real childWidth: (width / 4) - 15
-
     property alias keySignature: infoModel.keySignature
     property alias timeSignature: infoModel.timeSignature
 
@@ -22,6 +20,12 @@ Row {
     property alias measureCount: infoModel.measureCount
 
     spacing: 20
+
+    QtObject {
+        id: privatesProperties
+
+        property real childWidth: (width / 4) - 15
+    }
 
     Component.onCompleted: {
         infoModel.init()
@@ -36,7 +40,7 @@ Row {
 
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.childWidth
+        width: privatesProperties.childWidth
 
         spacing: 10
 
@@ -64,7 +68,7 @@ Row {
     Column {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.childWidth
+        width: privatesProperties.childWidth
 
         spacing: 10
 
@@ -92,7 +96,7 @@ Row {
     Column {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.childWidth
+        width: privatesProperties.childWidth
 
         spacing: 10
 
@@ -120,7 +124,7 @@ Row {
     Column {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.childWidth
+        width: privatesProperties.childWidth
 
         spacing: 10
 
