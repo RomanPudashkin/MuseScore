@@ -23,6 +23,7 @@
 
 using namespace mu::userscores;
 using namespace mu::framework;
+using namespace mu::domain::notation;
 
 AdditionalInfoModel::AdditionalInfoModel(QObject* parent)
     : QObject(parent)
@@ -102,6 +103,17 @@ QVariantMap AdditionalInfoModel::timeSignature() const
     return m_timeSignature.toMap();
 }
 
+int AdditionalInfoModel::timeSignatureType() const
+{
+    if (timeFraction()) {
+        return static_cast<int>(TimeSigType::NORMAL);
+    }
+    if (timeCommon()) {
+        return static_cast<int>(TimeSigType::FOUR_FOUR);
+    }
+    return static_cast<int>(TimeSigType::ALLA_BREVE);
+}
+
 void AdditionalInfoModel::setTimeSignatureNumerator(int numerator)
 {
     m_timeSignature.numerator = numerator;
@@ -112,17 +124,6 @@ void AdditionalInfoModel::setTimeSignatureDenominator(int denominator)
 {
     m_timeSignature.denominator = denominator;
     setTimeSignature(m_timeSignature.toMap());
-}
-
-int AdditionalInfoModel::timeSignatureType() const
-{
-    if (timeFraction()) {
-        return static_cast<int>(TimeSigType::NORMAL);
-    }
-    if (timeCommon()) {
-        return static_cast<int>(TimeSigType::FOUR_FOUR);
-    }
-    return static_cast<int>(TimeSigType::ALLA_BREVE);
 }
 
 bool AdditionalInfoModel::timeCommon() const

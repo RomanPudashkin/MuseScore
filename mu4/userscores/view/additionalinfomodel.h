@@ -22,7 +22,7 @@
 #include <QObject>
 
 #include "ui/view/iconcodes.h"
-#include "userscorestypes.h"
+#include "domain/notation/notationtypes.h"
 
 namespace mu {
 namespace userscores {
@@ -56,9 +56,9 @@ public:
     QVariantMap keySignature() const;
 
     QVariantMap timeSignature() const;
+    int timeSignatureType() const;
     Q_INVOKABLE void setTimeSignatureNumerator(int numerator);
     Q_INVOKABLE void setTimeSignatureDenominator(int denominator);
-    Q_INVOKABLE int timeSignatureType() const;
 
     bool timeFraction() const;
     Q_INVOKABLE QVariantMap timeSignatureNumeratorRange();
@@ -114,8 +114,8 @@ private:
     struct KeySignature {
         QString title;
         framework::IconCode::Code icon = framework::IconCode::Code::NONE;
-        Key key = Key::C;
-        KeyMode mode = KeyMode::UNKNOWN;
+        domain::notation::Key key = domain::notation::Key::C;
+        domain::notation::KeyMode mode = domain::notation::KeyMode::UNKNOWN;
 
         QVariantMap toMap() const
         {
@@ -129,10 +129,12 @@ private:
 
         KeySignature() = default;
 
-        KeySignature(const QString& title, const framework::IconCode::Code& icon, const Ms::Key& key, const Ms::KeyMode& mode)
+        KeySignature(const QString& title, const framework::IconCode::Code& icon, const domain::notation::Key& key,
+                     const domain::notation::KeyMode& mode)
             : title(title), icon(icon), key(key), mode(mode) {}
 
-        KeySignature(const QVariantMap& map) {
+        KeySignature(const QVariantMap& map)
+        {
             title = map["title"].toString();
             icon = static_cast<framework::IconCode::Code>(map["icon"].toInt());
             key = static_cast<Ms::Key>(map["key"].toInt());
@@ -147,8 +149,8 @@ private:
         QVariantMap toMap() const
         {
             return {
-                { "numerator", numerator },
-                { "denominator", denominator }
+                       { "numerator", numerator },
+                       { "denominator", denominator }
             };
         }
 
@@ -157,7 +159,8 @@ private:
         TimeSignature(int numetator, int denominator)
             : numerator(numetator), denominator(denominator) {}
 
-        TimeSignature(const QVariantMap& map) {
+        TimeSignature(const QVariantMap& map)
+        {
             numerator = map["numerator"].toInt();
             denominator = map["denominator"].toInt();
         }

@@ -109,6 +109,7 @@ Row {
             horizontalAlignment: Text.AlignLeft
             text: qsTrc("instruments", "Tempo")
         }
+
         TempoSettings {
             anchors.left: parent.left
             anchors.right: parent.right
