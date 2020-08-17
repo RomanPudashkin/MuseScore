@@ -10,21 +10,20 @@ Item {
     id: root
 
     function info() {
-        var result = []
-
-        result.push("title", generalInfo.title)
-        result.push("subtitle", generalInfo.subtitle)
-        result.push("composer", generalInfo.composer)
-        result.push("lyricist", generalInfo.lyricist)
-        result.push("copiright", generalInfo.copiright)
-
-        result.push("keySignature", additionalInfo.keySignature)
-        result.push("timeSignature", additionalInfo.timeSignature)
-        result.push("withTempo", additionalInfo.withTempo)
-        result.push("tempo", additionalInfo.tempo)
-        result.push("withPickupMeasure", additionalInfo.withPickupMeasure)
-        result.push("pickupTimeSignature", additionalInfo.pickupTimeSignature)
-        result.push("measureCount", additionalInfo.measureCount)
+        var result = {
+            title: generalInfo.title,
+            subtitle: generalInfo.subtitle,
+            composer: generalInfo.composer,
+            lyricist: generalInfo.lyricist,
+            copiright: generalInfo.copiright,
+            keySignature: additionalInfo.keySignature,
+            timeSignature: additionalInfo.timeSignature,
+            withTempo: additionalInfo.withTempo,
+            tempo: additionalInfo.tempo,
+            withPickupMeasure: additionalInfo.withPickupMeasure,
+            pickupTimeSignature: additionalInfo.pickupTimeSignature,
+            measureCount: additionalInfo.measureCount
+        }
 
         return result
     }

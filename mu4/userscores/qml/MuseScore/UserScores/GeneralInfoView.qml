@@ -7,12 +7,13 @@ import MuseScore.UiComponents 1.0
 import MuseScore.UserScores 1.0
 
 Column {
+    id: root
 
-    property alias title: title.currentText
-    property alias subtitle: subtitle.currentText
-    property alias composer: composer.currentText
-    property alias lyricist: lyricist.currentText
-    property alias copiright: copiright.currentText
+    property string title: ""
+    property string subtitle: ""
+    property string composer: ""
+    property string lyricist: ""
+    property string copiright: ""
 
     spacing: 20
 
@@ -44,6 +45,10 @@ Column {
             TextInputField {
                 id: title
                 hint: qsTrc("instruments", "Optional")
+
+                onCurrentTextEdited: {
+                    root.title = newTextValue
+                }
             }
         }
 
@@ -66,6 +71,10 @@ Column {
             TextInputField {
                 id: composer
                 hint: qsTrc("instruments", "Optional")
+
+                onCurrentTextEdited: {
+                    root.composer = newTextValue
+                }
             }
         }
     }
@@ -99,6 +108,10 @@ Column {
             TextInputField {
                 id: subtitle
                 hint: qsTrc("instruments", "Optional")
+
+                onCurrentTextEdited: {
+                    root.subtitle = newTextValue
+                }
             }
         }
 
@@ -122,6 +135,10 @@ Column {
             TextInputField {
                 id: lyricist
                 hint: qsTrc("instruments", "Optional")
+
+                onCurrentTextEdited: {
+                    root.lyricist = newTextValue
+                }
             }
         }
 
@@ -145,6 +162,10 @@ Column {
             TextInputField {
                 id: copiright
                 hint: qsTrc("instruments", "Optional")
+
+                onCurrentTextEdited: {
+                    root.copiright = newTextValue
+                }
             }
         }
     }
