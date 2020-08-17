@@ -32,10 +32,8 @@ QmlDialog {
                 anchors.fill: parent
             }
 
-            Rectangle {
+            ScoreInfoPage {
                 anchors.fill: parent
-
-                color: "red"
             }
         }
 
