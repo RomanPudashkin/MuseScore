@@ -9,3 +9,11 @@ CategoriesView 1.0 CategoriesView.qml
 TemplatesView 1.0 TemplatesView.qml
 TemplatePreview 1.0 TemplatePreview.qml
 TitleListView 1.0 TitleListView.qml
+ScoreInfoPage 1.0 ScoreInfoPage.qml
+AdditionalInfoView 1.0 AdditionalInfoView.qml
+GeneralInfoView 1.0 GeneralInfoView.qml
+KeySignatureSettings 1.0 KeySignatureSettings.qml
+KeySignatureListView 1.0 KeySignatureListView.qml
+TimeSignatureSettings 1.0 TimeSignatureSettings.qml
+TempoSettings 1.0 TempoSettings.qml
+MeasuresSettings 1.0 MeasuresSettings.qml

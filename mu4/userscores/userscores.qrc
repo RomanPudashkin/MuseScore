@@ -9,5 +9,13 @@
         <file>qml/MuseScore/UserScores/ChooseTemplatePage.qml</file>
         <file>qml/MuseScore/UserScores/TemplatePreview.qml</file>
         <file>qml/MuseScore/UserScores/TitleListView.qml</file>
+        <file>qml/MuseScore/UserScores/ScoreInfoPage.qml</file>
+        <file>qml/MuseScore/UserScores/AdditionalInfoView.qml</file>
+        <file>qml/MuseScore/UserScores/GeneralInfoView.qml</file>
+        <file>qml/MuseScore/UserScores/KeySignatureSettings.qml</file>
+        <file>qml/MuseScore/UserScores/TimeSignatureSettings.qml</file>
+        <file>qml/MuseScore/UserScores/KeySignatureListView.qml</file>
+        <file>qml/MuseScore/UserScores/TempoSettings.qml</file>
+        <file>qml/MuseScore/UserScores/MeasuresSettings.qml</file>
     </qresource>
 </RCC>
