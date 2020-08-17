@@ -24,8 +24,15 @@
 
 #include "domain/notation/notationtypes.h"
 
+#include "libmscore/key.h"
+#include "libmscore/timesig.h"
+
 namespace mu {
 namespace userscores {
+using Key = Ms::Key;
+using KeyMode = Ms::KeyMode;
+using TimeSigType = Ms::TimeSigType;
+
 struct Template : public domain::notation::Meta {
     QString categoryTitle;
 

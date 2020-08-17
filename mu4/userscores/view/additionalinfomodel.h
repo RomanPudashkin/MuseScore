@@ -57,6 +57,7 @@ public:
     QVariantMap timeSignature() const;
     Q_INVOKABLE void setTimeSignatureNumerator(int numerator);
     Q_INVOKABLE void setTimeSignatureDenominator(int denominator);
+    Q_INVOKABLE int timeSignatureType() const;
 
     bool timeFraction() const;
     Q_INVOKABLE QVariantMap timeSignatureNumeratorRange();

@@ -11,6 +11,7 @@ Row {
 
     property alias keySignature: infoModel.keySignature
     property alias timeSignature: infoModel.timeSignature
+    property int timeSignatureType: infoModel.timeSignatureType()
 
     property alias withTempo: infoModel.withTempo
     property alias tempo: infoModel.tempo
