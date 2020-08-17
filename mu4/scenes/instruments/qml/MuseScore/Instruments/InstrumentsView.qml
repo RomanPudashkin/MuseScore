@@ -51,7 +51,7 @@ Item {
         id: searchField
 
         anchors.top: instrumentsLabel.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: 20
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -64,7 +64,7 @@ Item {
         id: instrumentsView
 
         anchors.top: searchField.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: 20
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

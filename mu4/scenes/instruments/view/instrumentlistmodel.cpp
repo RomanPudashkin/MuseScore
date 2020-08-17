@@ -216,9 +216,14 @@ void InstrumentListModel::setSearchText(const QString& text)
     updateFamilyStateBySearch();
 }
 
-QList<InstrumentTemplate> InstrumentListModel::selectedInstrumentList()
+QStringList InstrumentListModel::selectedInstrumentIds()
 {
-    return m_selectedInstruments;
+    QStringList result;
+    for (const InstrumentTemplate& instrument: m_selectedInstruments) {
+        result << instrument.id;
+    }
+
+    return result;
 }
 
 QVariantList InstrumentListModel::selectedInstruments() const

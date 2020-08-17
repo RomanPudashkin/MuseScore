@@ -59,7 +59,7 @@ public:
 
     Q_INVOKABLE void setSearchText(const QString& text);
 
-    Q_INVOKABLE QList<InstrumentTemplate> selectedInstrumentList();
+    Q_INVOKABLE QStringList selectedInstrumentIds();
 
 signals:
     void dataChanged();

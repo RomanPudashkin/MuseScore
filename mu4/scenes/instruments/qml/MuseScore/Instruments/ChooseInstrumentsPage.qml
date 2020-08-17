@@ -10,8 +10,8 @@ Rectangle {
 
     color: ui.theme.backgroundColor
 
-    function selectedInstruments() {
-        return instrumentsModel.selectedInstrumentList()
+    function selectedInstrumentIds() {
+        return instrumentsModel.selectedInstrumentIds()
     }
 
     InstrumentListModel {

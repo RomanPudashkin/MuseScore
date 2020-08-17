@@ -48,7 +48,7 @@ Item {
         id: familiesBox
 
         anchors.top: familyLabel.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: 20
         anchors.left: parent.left
         anchors.right: parent.right
 
