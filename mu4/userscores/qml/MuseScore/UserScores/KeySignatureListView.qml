@@ -1,0 +1,65 @@
+import QtQuick 2.9
+
+import MuseScore.Ui 1.0
+import MuseScore.UiComponents 1.0
+import MuseScore.UserScores 1.0
+
+GridView {
+    id: root
+    
+    anchors.fill: parent
+    
+    property var currentSignature: null
+
+    clip: true
+    
+    cellWidth: 82
+    cellHeight: 90
+    
+    interactive: false
+    
+    signal signatureSelected(var signature)
+
+    delegate: Item {
+        height: root.cellHeight
+        width: root.cellWidth
+        
+        property bool isCurrent: modelData.title === currentSignature.title
+        
+        Rectangle {
+            anchors.fill: parent
+            
+            color: isCurrent ? ui.theme.accentColor : ui.theme.backgroundColor
+            opacity: isCurrent ? 0.7 : 1
+            radius: 3
+        }
+        
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 10
+            
+            FontIcon {
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 50
+                
+                pixelSize: 65
+                iconCode: modelData.icon
+            }
+            
+            StyledTextLabel {
+                anchors.horizontalCenter: parent.horizontalCenter
+                
+                text: modelData.title
+            }
+        }
+        
+        MouseArea {
+            anchors.fill: parent
+            
+            onClicked: {
+                signatureSelected(modelData)
+            }
+        }
+    }
+}
