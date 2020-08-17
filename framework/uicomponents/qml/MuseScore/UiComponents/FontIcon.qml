@@ -7,6 +7,7 @@ Item {
 
     property var iconCode
     property bool isEmpty: iconCode === undefined
+    property var pixelSize: 16
 
 
     height: isEmpty ? 0 : label.implicitHeight
@@ -21,7 +22,7 @@ Item {
 
         font {
             family: "MusescoreIcon"
-            pixelSize: 16
+            pixelSize: root.pixelSize
         }
         color: ui.theme.fontColor
 
