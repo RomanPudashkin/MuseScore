@@ -20,7 +20,6 @@
 
 #include "translation.h"
 #include "ui/view/iconcodes.h"
-#include "userscorestypes.h"
 
 using namespace mu::userscores;
 using namespace mu::framework;
@@ -37,10 +36,10 @@ void AdditionalInfoModel::init()
     setTimeFraction(true);
     setTimeSignature(TimeSignature(4, 4).toMap());
 
-    setWithTempo(true);
+    setWithTempo(false);
     setTempo(120);
 
-    setWithPickupMeasure(true);
+    setWithPickupMeasure(false);
     setMeasureCount(32);
     setPickupTimeSignature(TimeSignature(4, 4).toMap());
 }
@@ -227,6 +226,17 @@ void AdditionalInfoModel::setTimeSignature(QVariantMap timeSignature)
     emit timeSignatureChanged(timeSignature);
 }
 
+void AdditionalInfoModel::setTimeFraction(bool timeFraction)
+{
+    if (m_timeFraction == timeFraction) {
+        return;
+    }
+
+    m_timeFraction = timeFraction;
+    emit timeFractionChanged(m_timeFraction);
+    emit timeSignatureTypeChanged();
+}
+
 void AdditionalInfoModel::setTimeCommon(bool timeCommon)
 {
     if (m_timeCommon == timeCommon) {
@@ -235,6 +245,7 @@ void AdditionalInfoModel::setTimeCommon(bool timeCommon)
 
     m_timeCommon = timeCommon;
     emit timeCommonChanged(m_timeCommon);
+    emit timeSignatureTypeChanged();
 
     if (timeCommon) {
         setTimeSignature(TimeSignature(4, 4).toMap());
@@ -249,6 +260,7 @@ void AdditionalInfoModel::setTimeCut(bool timeCut)
 
     m_timeCut = timeCut;
     emit timeCutChanged(m_timeCut);
+    emit timeSignatureTypeChanged();
 
     if (timeCut) {
         setTimeSignature(TimeSignature(2, 2).toMap());
@@ -299,14 +311,4 @@ void AdditionalInfoModel::setMeasureCount(int measureCount)
 
     m_measureCount = measureCount;
     emit measureCountChanged(m_measureCount);
-}
-
-void AdditionalInfoModel::setTimeFraction(bool timeFraction)
-{
-    if (m_timeFraction == timeFraction) {
-        return;
-    }
-
-    m_timeFraction = timeFraction;
-    emit timeFractionChanged(m_timeFraction);
 }

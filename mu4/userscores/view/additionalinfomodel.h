@@ -22,7 +22,7 @@
 #include <QObject>
 
 #include "ui/view/iconcodes.h"
-#include "libmscore/key.h"
+#include "userscorestypes.h"
 
 namespace mu {
 namespace userscores {
@@ -33,6 +33,7 @@ class AdditionalInfoModel : public QObject
     Q_PROPERTY(QVariantMap keySignature READ keySignature WRITE setKeySignature NOTIFY keySignatureChanged)
 
     Q_PROPERTY(QVariantMap timeSignature READ timeSignature WRITE setTimeSignature NOTIFY timeSignatureChanged)
+    Q_PROPERTY(int timeSignatureType READ timeSignatureType NOTIFY timeSignatureTypeChanged)
     Q_PROPERTY(bool timeFraction READ timeFraction WRITE setTimeFraction NOTIFY timeFractionChanged)
     Q_PROPERTY(bool timeCommon READ timeCommon WRITE setTimeCommon NOTIFY timeCommonChanged)
     Q_PROPERTY(bool timeCut READ timeCut WRITE setTimeCut NOTIFY timeCutChanged)
@@ -97,6 +98,7 @@ signals:
     void keySignatureChanged(QVariantMap keySignature);
 
     void timeSignatureChanged(QVariantMap timeSignature);
+    void timeSignatureTypeChanged();
     void timeFractionChanged(bool timeFraction);
     void timeCommonChanged(bool timeCommon);
     void timeCutChanged(bool timeCut);
@@ -111,9 +113,9 @@ signals:
 private:
     struct KeySignature {
         QString title;
-        framework::IconCode::Code icon;
-        Ms::Key key;
-        Ms::KeyMode mode;
+        framework::IconCode::Code icon = framework::IconCode::Code::NONE;
+        Key key = Key::C;
+        KeyMode mode = KeyMode::UNKNOWN;
 
         QVariantMap toMap() const
         {
@@ -168,12 +170,12 @@ private:
     bool m_timeCut = false;
     bool m_timeFraction = false;
 
-    int m_tempo = 120;
-    bool m_withTempo;
+    int m_tempo = 0;
+    bool m_withTempo = false;
 
     TimeSignature m_pickupTimeSignature;
-    bool m_withPickupMeasure;
-    int m_measureCount;
+    bool m_withPickupMeasure = false;
+    int m_measureCount = 0;
 };
 }
 }

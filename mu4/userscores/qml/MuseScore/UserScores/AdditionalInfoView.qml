@@ -11,7 +11,7 @@ Row {
 
     property alias keySignature: infoModel.keySignature
     property alias timeSignature: infoModel.timeSignature
-    property int timeSignatureType: infoModel.timeSignatureType()
+    property alias timeSignatureType: infoModel.timeSignatureType
 
     property alias withTempo: infoModel.withTempo
     property alias tempo: infoModel.tempo
@@ -109,7 +109,6 @@ Row {
             horizontalAlignment: Text.AlignLeft
             text: qsTrc("instruments", "Tempo")
         }
-
         TempoSettings {
             anchors.left: parent.left
             anchors.right: parent.right
