@@ -5,6 +5,7 @@ import MuseScore.Dock 1.0
 import MuseScore.NotationScene 1.0
 import MuseScore.Palette 1.0
 import MuseScore.Inspector 1.0
+import MuseScore.Instruments 1.0
 
 DockPage {
     id: notationPage
@@ -27,28 +28,40 @@ DockPage {
 
     panels: [
         DockPanel {
-
             id: palettePanel
             objectName: "palettePanel"
 
             title: "Palette"
-            width: 200
+            width: 250
             color: notationPage.color
 
             PalettesWidget {}
         },
 
         DockPanel {
+            id: instrumentsPanel
+            objectName: "instrumentsPanel"
 
+            title: "Instruments"
+            width: 250
+            color: notationPage.color
+
+            tabifyObjectName: "palettePanel"
+
+            InstrumentsPanel {
+                anchors.fill: parent
+            }
+        },
+
+        DockPanel {
             id: inspectorPanel
             objectName: "inspectorPanel"
 
             title: "Inspector"
-            width: 200
+            width: 250
             color: notationPage.color
 
-            //area: Qt.RightDockWidgetArea
-            tabifyObjectName: "palettePanel"
+            tabifyObjectName: "instrumentsPanel"
 
             InspectorForm {
                 anchors.fill: parent
@@ -66,7 +79,6 @@ DockPage {
     }
 
     statusbar: DockStatusBar {
-
         id: notationStatusBar
         objectName: "notationStatusBar"
 
