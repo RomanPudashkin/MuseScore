@@ -25,7 +25,7 @@ Item {
             text: qsTrc("instruments", "Add")
 
             onClicked: {
-
+                api.launcher.open("musescore://instruments/change")
             }
         }
 

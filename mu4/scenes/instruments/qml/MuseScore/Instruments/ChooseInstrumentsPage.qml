@@ -58,7 +58,7 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
@@ -79,7 +79,7 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
@@ -99,7 +99,7 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
@@ -124,7 +124,7 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
