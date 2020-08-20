@@ -13,6 +13,8 @@ ComboBox {
     property var value
     property var maxVisibleItemCount: 6
 
+    font: ui.theme.font
+
     function valueFromModel(index, roleName) {
 
         // Simple models (like JS array) with single predefined role name - modelData

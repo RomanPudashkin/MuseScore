@@ -31,6 +31,9 @@
 namespace mu {
 namespace domain {
 namespace notation {
+
+constexpr int VOICES_COUNT = VOICES;
+
 using Element = Ms::Element;
 using ElementType = Ms::ElementType;
 using DurationType = Ms::TDuration::DurationType;

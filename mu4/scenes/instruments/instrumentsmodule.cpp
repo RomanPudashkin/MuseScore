@@ -27,6 +27,7 @@
 #include "internal/instrumentsconfiguration.h"
 
 #include "view/instrumentlistmodel.h"
+#include "view/staffsettingsmodel.h"
 #include "ui/iinteractiveuriregister.h"
 
 using namespace mu::scene::instruments;
@@ -63,6 +64,7 @@ void InstrumentsModule::registerResources()
 void InstrumentsModule::registerUiTypes()
 {
     qmlRegisterType<InstrumentListModel>("MuseScore.Instruments", 1, 0, "InstrumentListModel");
+    qmlRegisterType<StaffSettingsModel>("MuseScore.Instruments", 1, 0, "StaffSettingsModel");
 }
 
 void InstrumentsModule::onInit()
