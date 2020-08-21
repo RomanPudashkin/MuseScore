@@ -28,6 +28,8 @@
 #include "inotationinteraction.h"
 #include "inotationaccessibility.h"
 #include "inotationmidiinput.h"
+#include "inotationinstruments.h"
+#include "notationtypes.h"
 
 class QString;
 class QPainter;
@@ -68,6 +70,9 @@ public:
 
     // accessibility
     virtual INotationAccessibility* accessibility() const = 0;
+
+    // instruments
+    virtual INotationInstruments* instruments() const = 0;
 };
 
 using INotationPtr = std::shared_ptr<INotation>;

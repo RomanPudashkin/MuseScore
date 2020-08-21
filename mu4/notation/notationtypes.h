@@ -29,6 +29,10 @@
 #include "libmscore/score.h"
 #include "libmscore/timesig.h"
 #include "libmscore/key.h"
+#include "libmscore/part.h"
+#include "libmscore/instrument.h"
+#include "libmscore/staff.h"
+#include "libmscore/excerpt.h"
 
 namespace mu {
 namespace notation {
@@ -39,6 +43,15 @@ using SelectType = Ms::SelectType;
 using Pad = Ms::Pad;
 using PitchMode = Ms::UpDownMode;
 using StyleId = Ms::Sid;
+using Instrument = Ms::Instrument;
+using Excerpt = Ms::Excerpt;
+using Part = Ms::Part;
+using Staff = Ms::Staff;
+
+using ExcerptList = QList<Excerpt*>;
+using InstrumentList = QList<Instrument*>;
+using StaffList = QList<Staff>;
+using PartList = QList<Part*>;
 
 enum class DragMode {
     BothXY = 0,
@@ -98,6 +111,7 @@ struct ScoreCreateOptions {
 
     io::path templatePath;
 };
+
 }
 }
 
