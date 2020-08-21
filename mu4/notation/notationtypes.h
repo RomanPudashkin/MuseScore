@@ -44,11 +44,10 @@ using Pad = Ms::Pad;
 using PitchMode = Ms::UpDownMode;
 using StyleId = Ms::Sid;
 using Instrument = Ms::Instrument;
-using Excerpt = Ms::Excerpt;
 using Part = Ms::Part;
 using Staff = Ms::Staff;
+using StaffType = Ms::StaffTypes;
 
-using ExcerptList = QList<Excerpt*>;
 using InstrumentList = QList<Instrument*>;
 using StaffList = QList<Staff>;
 using PartList = QList<Part*>;
@@ -111,7 +110,6 @@ struct ScoreCreateOptions {
 
     io::path templatePath;
 };
-
 }
 }
 
