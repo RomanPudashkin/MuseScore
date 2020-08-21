@@ -32,7 +32,6 @@
 #include "libmscore/part.h"
 #include "libmscore/instrument.h"
 #include "libmscore/staff.h"
-#include "libmscore/excerpt.h"
 
 namespace mu {
 namespace notation {
@@ -49,7 +48,7 @@ using Staff = Ms::Staff;
 using StaffType = Ms::StaffTypes;
 
 using InstrumentList = QList<Instrument*>;
-using StaffList = QList<Staff>;
+using StaffList = QList<Staff*>;
 using PartList = QList<Part*>;
 
 enum class DragMode {
