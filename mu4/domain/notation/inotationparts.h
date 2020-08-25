@@ -57,6 +57,8 @@ public:
     virtual Staff* appendStaff(const QString& partId, const QString& instrumentId) = 0;
     virtual Staff* appendLinkedStaff(int staffIndex) = 0;
 
+    virtual void replaceInstrument(const QString& partId, const QString& instrumentId,const QString& instrumentTemplateId) = 0;
+
     virtual async::Channel<Part*> partChanged() const = 0;
     virtual async::Channel<Instrument*> instrumentChanged() const = 0;
     virtual async::Channel<Staff*> staffChanged() const = 0;

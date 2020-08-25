@@ -361,26 +361,45 @@ Staff* NotationParts::appendLinkedStaff(int staffIndex)
     score()->undoInsertStaff(linkedStaff, linkedStaffIndex);
     apply();
 
-    Instrument* instrument = this->instrument(linkedStaff);
+    Instrument* instrument = this->instrumentInfo(linkedStaff).instrument;
     m_instrumentChanged.send(instrument);
     m_partsChanged.notify();
 
     return linkedStaff;
 }
 
-mu::async::Channel<Part*> NotationParts::partChanged() const
+void NotationParts::replaceInstrument(const QString& partId, const QString& instrumentId, const QString& instrumentTemplateId)
 {
-    return m_partChanged;
-}
+    Part* part = this->part(partId);
+    if (!part) {
+        return;
+    }
 
-mu::async::Channel<Instrument*> NotationParts::instrumentChanged() const
-{
-    return m_instrumentChanged;
-}
+    InstrumentInfo oldInstrumentInfo = this->instrumentInfo(part, instrumentId);
+    if (!oldInstrumentInfo.isValid()) {
+        return;
+    }
 
-mu::async::Channel<Staff*> NotationParts::staffChanged() const
-{
-    return m_staffChanged;
+    InstrumentTemplateHash instrumentTemplates = instrumentsRepository()->instrumentsMeta().val.instrumentTemplates;
+    if (!instrumentTemplates.contains(instrumentTemplateId)) {
+        return;
+    }
+
+    InstrumentTemplate newInstrumentTemplate = instrumentTemplates[instrumentTemplateId];
+
+    startEdit();
+    StaffList oldInstrumentStaves = staffList(partId, instrumentId);
+    int oldInstrumentFirstStaffIndex = oldInstrumentStaves.first()->idx();
+    for (Staff* staff: oldInstrumentStaves) {
+        score()->cmdRemoveStaff(staff->idx());
+    }
+
+    part->setInstrument(instrumentFromTemplate(newInstrumentTemplate), Ms::Fraction::fromTicks(oldInstrumentInfo.tick));
+    addStaves(part, newInstrumentTemplate, oldInstrumentFirstStaffIndex);
+    apply();
+
+    m_partChanged.send(part);
+    m_partsChanged.notify();
 }
 
 void NotationParts::removeParts(const std::vector<QString>& partsIds)
@@ -448,7 +467,7 @@ void NotationParts::removeStaves(const std::vector<int>& stavesIndexes)
 
     for (int staffIndex: stavesIndexes) {
         Staff* staff = this->staff(staffIndex);
-        Instrument* instrument = this->instrument(staff);
+        Instrument* instrument = this->instrumentInfo(staff).instrument;
 
         score()->cmdRemoveStaff(staffIndex);
         m_instrumentChanged.send(instrument);
@@ -505,7 +524,7 @@ void NotationParts::moveInstrument(const QString& instrumentId, const QString& f
         return;
     }
 
-    Instrument* instrument = this->instrument(fromPart, instrumentId);
+    Instrument* instrument = this->instrumentInfo(fromPart, instrumentId).instrument;
     Instrument* newInstrument = new Instrument(*instrument);
     StaffList staves = staffList(fromPartId, instrument->instrumentId());
 
@@ -526,18 +545,33 @@ void NotationParts::moveStaff(int staffIndex, int beforeStaffIndex)
         return;
     }
 
-    Instrument* fromInstrument = this->instrument(staff);
+    Instrument* fromInstrument = this->instrumentInfo(staff).instrument;
 
     startEdit();
     score()->undoRemoveStaff(staff);
     score()->undoInsertStaff(staff, beforeStaffIndex - 1);
     apply();
 
-    Instrument* toInstrument = this->instrument(staff);
+    Instrument* toInstrument = this->instrumentInfo(staff).instrument;
 
     m_instrumentChanged.send(fromInstrument);
     m_instrumentChanged.send(toInstrument);
     m_partsChanged.notify();
+}
+
+mu::async::Channel<Part*> NotationParts::partChanged() const
+{
+    return m_partChanged;
+}
+
+mu::async::Channel<Instrument*> NotationParts::instrumentChanged() const
+{
+    return m_instrumentChanged;
+}
+
+mu::async::Channel<Staff*> NotationParts::staffChanged() const
+{
+    return m_staffChanged;
 }
 
 mu::async::Notification NotationParts::partsChanged() const
@@ -590,27 +624,27 @@ Part* NotationParts::part(const QString& partId, const Ms::Score* score) const
     return nullptr;
 }
 
-Instrument* NotationParts::instrument(const Part* part, const QString& instrumentId) const
+NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Part* part, const QString& instrumentId) const
 {
     auto instrumentList = part->instruments();
     for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
         if (it->second->instrumentId() == instrumentId) {
-            return it->second;
+            return InstrumentInfo { it->first, it->second };
         }
     }
 
-    return nullptr;
+    return InstrumentInfo();
 }
 
-Instrument* NotationParts::instrument(const Staff* staff) const
+NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Staff* staff) const
 {
     if (!staff) {
-        return nullptr;
+        return InstrumentInfo();
     }
 
     Part* part = staff->part();
     if (!part) {
-        return nullptr;
+        return InstrumentInfo();
     }
 
     auto instrumentList = part->instruments();
@@ -618,13 +652,13 @@ Instrument* NotationParts::instrument(const Staff* staff) const
     for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
         for (int staffLocalIndex = 0; staffLocalIndex < it->second->nstaves(); staffLocalIndex++) {
             if (part->staff(staffGlobalIndex + staffLocalIndex)->idx() == staff->idx()) {
-                return it->second;
+                return InstrumentInfo { it->first, it->second };
             }
         }
         staffGlobalIndex += it->second->nstaves();
     }
 
-    return nullptr;
+    return InstrumentInfo();
 }
 
 Staff* NotationParts::staff(int staffIndex) const
