@@ -59,12 +59,22 @@ public:
     Staff* appendStaff(const QString& partId, const QString& instrumentId) override;
     Staff* appendLinkedStaff(int staffIndex) override;
 
+    void replaceInstrument(const QString& partId, const QString& instrumentId, const QString& instrumentTemplateId) override;
+
     async::Channel<Part*> partChanged() const override;
     async::Channel<Instrument*> instrumentChanged() const override;
     async::Channel<Staff*> staffChanged() const override;
     async::Notification partsChanged() const override;
 
 private:
+    struct InstrumentInfo
+    {
+        int tick;
+        Instrument* instrument;
+
+        bool isValid() const { return instrument != nullptr; }
+    };
+
     Ms::Score* score() const;
     Ms::MasterScore* masterScore() const;
 
@@ -72,8 +82,8 @@ private:
     void apply();
 
     Part* part(const QString& partId, const Ms::Score* score = nullptr) const;
-    Instrument* instrument(const Part* part, const QString& instrumentId) const;
-    Instrument* instrument(const Staff* staff) const;
+    InstrumentInfo instrumentInfo(const Part* part, const QString& instrumentId) const;
+    InstrumentInfo instrumentInfo(const Staff* staff) const;
     Staff* staff(int staffIndex) const;
 
     scene::instruments::InstrumentTemplateList instrumentTemplates(const std::vector<QString>& instrumentTemplateIds) const;
@@ -84,7 +94,7 @@ private:
     void appendPart(Part* part);
     void addStaves(Part* part, const scene::instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
 
-    void insertInstrument(Part* part, Instrument* instrument, const StaffList& staves, const QString& beforeInstrumentId);
+    void insertInstrument(Part* part, Instrument* instrumentInfo, const StaffList& staves, const QString& beforeInstrumentId);
 
     void removeUnselectedInstruments(const scene::instruments::InstrumentTemplateList& instrumentTemplates);
     bool templatesContainsInstrument(const scene::instruments::InstrumentTemplateList& instrumentTemplates,
