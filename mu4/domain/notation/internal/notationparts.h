@@ -56,14 +56,14 @@ public:
                         const QString& beforeInstrumentId) override;
     void moveStaff(int staffIndex, int beforeStaffIndex) override;
 
-    Staff* appendStaff(const QString& partId, const QString& instrumentId) override;
-    Staff* appendLinkedStaff(int staffIndex) override;
+    const Staff* appendStaff(const QString& partId, const QString& instrumentId) override;
+    const Staff* appendLinkedStaff(int staffIndex) override;
 
     void replaceInstrument(const QString& partId, const QString& instrumentId, const QString& instrumentTemplateId) override;
 
-    async::Channel<Part*> partChanged() const override;
-    async::Channel<Instrument*> instrumentChanged() const override;
-    async::Channel<Staff*> staffChanged() const override;
+    async::Channel<const Part*> partChanged() const override;
+    async::Channel<const Instrument*> instrumentChanged() const override;
+    async::Channel<const Staff*> staffChanged() const override;
     async::Notification partsChanged() const override;
 
 private:
@@ -81,6 +81,11 @@ private:
     void startEdit();
     void apply();
 
+    void doSetStaffVisible(Staff* staff, bool visible);
+    void doRemoveParts(const std::vector<QString>& partsIds);
+    void doRemoveInstruments(Part* part, const std::vector<QString>& instrumentIds);
+    void doRemoveStaves(const std::vector<int>& stavesIndexes);
+
     Part* part(const QString& partId, const Ms::Score* score = nullptr) const;
     InstrumentInfo instrumentInfo(const Part* part, const QString& instrumentId) const;
     InstrumentInfo instrumentInfo(const Staff* staff) const;
@@ -88,8 +93,8 @@ private:
 
     scene::instruments::InstrumentTemplateList instrumentTemplates(const std::vector<QString>& instrumentTemplateIds) const;
 
-    PartList scoreParts(const Ms::Score* score) const;
-    PartList excerptParts(const Ms::Score* score) const;
+    QList<Part*> scoreParts(const Ms::Score* score) const;
+    QList<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
     void addStaves(Part* part, const scene::instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
@@ -110,9 +115,9 @@ private:
 
     IGetScore* m_getScore = nullptr;
 
-    async::Channel<Part*> m_partChanged;
-    async::Channel<Instrument*> m_instrumentChanged;
-    async::Channel<Staff*> m_staffChanged;
+    async::Channel<const Part*> m_partChanged;
+    async::Channel<const Instrument*> m_instrumentChanged;
+    async::Channel<const Staff*> m_staffChanged;
     async::Notification m_partsChanged;
 };
 }
