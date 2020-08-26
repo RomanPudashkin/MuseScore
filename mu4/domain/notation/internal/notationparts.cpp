@@ -479,7 +479,7 @@ void NotationParts::doRemoveStaves(const std::vector<int>& stavesIndexes)
     }
 }
 
-void NotationParts::movePart(const QString& partId, const QString& beforePartId)
+void NotationParts::movePart(const QString& partId, const QString& toPartId, InsertMode mode)
 {
     Part* part = this->part(partId);
     if (!part) {
@@ -495,12 +495,14 @@ void NotationParts::movePart(const QString& partId, const QString& beforePartId)
 
     score()->cmdRemovePart(part);
 
-    Part* beforePart = this->part(beforePartId);
-    if (!beforePart) {
+    Part* toPart = this->part(toPartId);
+    if (!toPart) {
         return;
     }
 
-    int newFirstStaffIndex = score()->staffIdx(beforePart);
+    int firstStaffIndex = score()->staffIdx(toPart);
+    int newFirstStaffIndex = (mode == Before ? firstStaffIndex : firstStaffIndex + toPart->nstaves());
+
     score()->undoInsertPart(part, newFirstStaffIndex);
 
     for (size_t staffIndex = 0; staffIndex < staves.size(); ++staffIndex) {
@@ -514,7 +516,7 @@ void NotationParts::movePart(const QString& partId, const QString& beforePartId)
 }
 
 void NotationParts::moveInstrument(const QString& instrumentId, const QString& fromPartId, const QString& toPartId,
-                                   const QString& beforeInstrumentId)
+                                   const QString& toInstrumentId, InsertMode mode)
 {
     Part* fromPart = part(fromPartId);
     Part* toPart = part(toPartId);
@@ -529,7 +531,7 @@ void NotationParts::moveInstrument(const QString& instrumentId, const QString& f
 
     startEdit();
     doRemoveInstruments(fromPart, { instrument->instrumentId() });
-    insertInstrument(toPart, newInstrument, staves, beforeInstrumentId);
+    insertInstrument(toPart, newInstrument, staves, toInstrumentId);
     apply();
 
     m_partChanged.send(fromPart);
@@ -537,21 +539,22 @@ void NotationParts::moveInstrument(const QString& instrumentId, const QString& f
     m_partsChanged.notify();
 }
 
-void NotationParts::moveStaff(int staffIndex, int beforeStaffIndex)
+void NotationParts::moveStaff(int staffIndex, int toStaffIndex, InsertMode mode)
 {
     Staff* staff = this->staff(staffIndex);
     if (!staff) {
         return;
     }
 
-    Instrument* fromInstrument = this->instrumentInfo(staff).instrument;
+    const Instrument* fromInstrument = instrumentInfo(staff).instrument;
+    int newStaffIndex = (mode == Before ? toStaffIndex - 1 : toStaffIndex);
 
     startEdit();
     score()->undoRemoveStaff(staff);
-    score()->undoInsertStaff(staff, beforeStaffIndex - 1);
+    score()->undoInsertStaff(staff, newStaffIndex);
     apply();
 
-    Instrument* toInstrument = this->instrumentInfo(staff).instrument;
+    const Instrument* toInstrument = instrumentInfo(staff).instrument;
 
     m_instrumentChanged.send(fromInstrument);
     m_instrumentChanged.send(toInstrument);
@@ -629,7 +632,7 @@ NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Part* part, co
     auto instrumentList = part->instruments();
     for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
         if (it->second->instrumentId() == instrumentId) {
-            return InstrumentInfo { it->first, it->second };
+            return InstrumentInfo(it->first, it->second);
         }
     }
 
@@ -652,7 +655,7 @@ NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Staff* staff) 
     for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
         for (int staffLocalIndex = 0; staffLocalIndex < it->second->nstaves(); staffLocalIndex++) {
             if (part->staff(staffGlobalIndex + staffLocalIndex)->idx() == staff->idx()) {
-                return InstrumentInfo { it->first, it->second };
+                return InstrumentInfo(it->first, it->second);
             }
         }
         staffGlobalIndex += it->second->nstaves();
@@ -741,7 +744,7 @@ void NotationParts::addStaves(Part* part, const InstrumentTemplate& instrumentTe
     }
 }
 
-void NotationParts::insertInstrument(Part* part, Instrument* instrument, const StaffList& staves, const QString& beforeInstrumentId)
+void NotationParts::insertInstrument(Part* part, Instrument* instrument, const StaffList& staves, const QString& toInstrumentId)
 {
     part->setInstrument(instrument); // todo: insert by index
 
