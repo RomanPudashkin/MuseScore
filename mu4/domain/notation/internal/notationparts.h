@@ -106,7 +106,7 @@ private:
     void appendPart(Part* part);
     void addStaves(Part* part, const scene::instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
 
-    void insertInstrument(Part* part, Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId);
+    void insertInstrument(Part* part, Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId, InsertMode mode);
 
     void removeUnselectedInstruments(const scene::instruments::InstrumentTemplateList& instrumentTemplates);
     bool templatesContainsInstrument(const scene::instruments::InstrumentTemplateList& instrumentTemplates,
