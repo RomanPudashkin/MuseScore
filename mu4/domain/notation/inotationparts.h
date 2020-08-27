@@ -38,7 +38,10 @@ public:
 
     virtual void setInstruments(const std::vector<QString>& instrumentTemplateIds) = 0;
     virtual void setPartVisible(const QString& partId, bool visible) = 0;
+    virtual void setPartName(const QString& partId, const QString& name) = 0;
     virtual void setInstrumentVisible(const QString& partId, const QString& instrumentId, bool visible) = 0;
+    virtual void setInstrumentName(const QString& partId, const QString& instrumentId, const QString& name) = 0;
+    virtual void setInstrumentAbbreviature(const QString& partId, const QString& instrumentId, const QString& abbreviature) = 0;
     virtual void setStaffVisible(int staffIndex, bool visible) = 0;
     virtual void setVoiceVisible(int staffIndex, int voiceIndex, bool visible) = 0;
     virtual void setStaffType(int staffIndex, StaffType type) = 0;

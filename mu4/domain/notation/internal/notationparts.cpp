@@ -167,6 +167,22 @@ void NotationParts::setPartVisible(const QString& partId, bool visible)
     m_partsChanged.notify();
 }
 
+void NotationParts::setPartName(const QString &partId, const QString &name)
+{
+    Part* part = this->part(partId);
+    if (!part) {
+        LOGW() << "Part not found" << partId;
+        return;
+    }
+
+    startEdit();
+    score()->undo(new Ms::ChangePart(part, new Instrument(*part->instrument()), name));
+    apply();
+
+    m_partChanged.send(part);
+    m_partsChanged.notify();
+}
+
 void NotationParts::setInstrumentVisible(const QString& partId, const QString& instrumentId, bool visible)
 {
     Part* part = this->part(partId);
@@ -191,6 +207,50 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
     apply();
 
     m_instrumentChanged.send(instrumentInfo.instrument);
+    m_partsChanged.notify();
+}
+
+void NotationParts::setInstrumentName(const QString& partId, const QString& instrumentId, const QString& name)
+{
+    Part* part = this->part(partId);
+    if (!part) {
+        LOGW() << "Part not found" << partId;
+        return;
+    }
+
+    InstrumentInfo instrumentInfo = this->instrumentInfo(part, instrumentId);
+    if (!instrumentInfo.isValid()) {
+        return;
+    }
+
+    startEdit();
+    score()->undo(new Ms::ChangeInstrumentLong(Ms::Fraction::fromTicks(instrumentInfo.tick), part, { StaffName(name, 0) }));
+    apply();
+
+    InstrumentInfo newInstrumentInfo = this->instrumentInfo(part, instrumentId);
+    m_instrumentChanged.send(newInstrumentInfo.instrument);
+    m_partsChanged.notify();
+}
+
+void NotationParts::setInstrumentAbbreviature(const QString &partId, const QString &instrumentId, const QString &abbreviature)
+{
+    Part* part = this->part(partId);
+    if (!part) {
+        LOGW() << "Part not found" << partId;
+        return;
+    }
+
+    InstrumentInfo instrumentInfo = this->instrumentInfo(part, instrumentId);
+    if (!instrumentInfo.isValid()) {
+        return;
+    }
+
+    startEdit();
+    score()->undo(new Ms::ChangeInstrumentShort(Ms::Fraction::fromTicks(instrumentInfo.tick), part, { StaffName(abbreviature, 0) }));
+    apply();
+
+    InstrumentInfo newInstrumentInfo = this->instrumentInfo(part, instrumentId);
+    m_instrumentChanged.send(newInstrumentInfo.instrument);
     m_partsChanged.notify();
 }
 
