@@ -40,7 +40,10 @@ public:
 
     void setInstruments(const std::vector<QString>& instrumentTemplateIds) override;
     void setPartVisible(const QString& partId, bool visible) override;
+    void setPartName(const QString& partId, const QString& name) override;
     void setInstrumentVisible(const QString& partId, const QString& instrumentId, bool visible) override;
+    void setInstrumentName(const QString& partId, const QString& instrumentId, const QString& name) override;
+    void setInstrumentAbbreviature(const QString& partId, const QString& instrumentId, const QString& abbreviature) override;
     void setStaffVisible(int staffIndex, bool visible) override;
     void setVoiceVisible(int staffIndex, int voiceIndex, bool visible) override;
     void setStaffType(int staffIndex, StaffType type) override;
