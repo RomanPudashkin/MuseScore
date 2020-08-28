@@ -21,7 +21,7 @@
 
 #include "userscores/internal/templatesrepository.h"
 
-#include "domain/notation/tests/mocks/msczreadermock.h"
+#include "notation/tests/mocks/msczreadermock.h"
 #include "mocks/userscoresconfigurationmock.h"
 #include "system/tests/mocks/fsoperationsmock.h"
 
@@ -29,7 +29,7 @@ using ::testing::_;
 using ::testing::Return;
 
 using namespace mu;
-using namespace mu::domain::notation;
+using namespace mu::notation;
 using namespace mu::userscores;
 using namespace mu::framework;
 
@@ -87,7 +87,6 @@ bool operator==(const TemplateCategory& category1, const TemplateCategory& categ
 }
 }
 
-namespace domain {
 namespace notation {
 bool operator==(const Meta& meta1, const Meta& meta2)
 {
@@ -97,7 +96,6 @@ bool operator==(const Meta& meta1, const Meta& meta2)
     equals &= (meta1.creationDate == meta2.creationDate);
 
     return equals;
-}
 }
 }
 }

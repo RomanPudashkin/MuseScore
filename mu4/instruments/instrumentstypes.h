@@ -19,7 +19,7 @@
 #ifndef MU_INSTRUMENTS_INSTRUMENTSTYPES_H
 #define MU_INSTRUMENTS_INSTRUMENTSTYPES_H
 
-#include <QString>
+#include <QVariant>
 #include <vector>
 #include "qobjectdefs.h"
 
@@ -184,5 +184,7 @@ public:
 };
 }
 }
+
+Q_DECLARE_METATYPE(mu::instruments::Instrument)
 
 #endif // MU_INSTRUMENTS_INSTRUMENTSTYPES_H
