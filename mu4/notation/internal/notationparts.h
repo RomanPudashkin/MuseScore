@@ -16,20 +16,19 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_DOMAIN_NOTATION_NOTATIONPARTS_H
-#define MU_DOMAIN_NOTATION_NOTATIONPARTS_H
+#ifndef MU_NOTATION_NOTATIONPARTS_H
+#define MU_NOTATION_NOTATIONPARTS_H
 
 #include "modularity/ioc.h"
 #include "inotationparts.h"
 #include "igetscore.h"
-#include "scenes/instruments/iinstrumentsrepository.h"
+#include "instruments/iinstrumentsrepository.h"
 
 namespace mu {
-namespace domain {
 namespace notation {
 class NotationParts : public INotationParts
 {
-    INJECT(notation, scene::instruments::IInstrumentsRepository, instrumentsRepository)
+    INJECT(notation, instruments::IInstrumentsRepository, instrumentsRepository)
 
 public:
     NotationParts(IGetScore* getScore);
@@ -101,27 +100,27 @@ private:
 
     StaffList staves(const Part* part, const QString& instrumentId) const;
 
-    scene::instruments::InstrumentTemplateList instrumentTemplates(const std::vector<QString>& instrumentTemplateIds) const;
+    instruments::InstrumentTemplateList instrumentTemplates(const std::vector<QString>& instrumentTemplateIds) const;
 
     QList<Part*> scoreParts(const Ms::Score* score) const;
     QList<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
-    void addStaves(Part* part, const scene::instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
+    void addStaves(Part* part, const instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
 
     void insertInstrument(Part* part, Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId, InsertMode mode);
 
-    void removeUnselectedInstruments(const scene::instruments::InstrumentTemplateList& instrumentTemplates);
-    bool templatesContainsInstrument(const scene::instruments::InstrumentTemplateList& instrumentTemplates,
+    void removeUnselectedInstruments(const instruments::InstrumentTemplateList& instrumentTemplates);
+    bool templatesContainsInstrument(const instruments::InstrumentTemplateList& instrumentTemplates,
                                      const QString& instrumentId) const;
-    std::vector<QString> missingInstrumentIds(const scene::instruments::InstrumentTemplateList& instrumentTemplates) const;
+    std::vector<QString> missingInstrumentIds(const instruments::InstrumentTemplateList& instrumentTemplates) const;
 
     void cleanEmptyExcerpts();
 
-    Instrument instrumentFromTemplate(const scene::instruments::InstrumentTemplate& instrumentTemplate) const;
-    void initStaff(Staff* staff, const scene::instruments::InstrumentTemplate& instrumentTemplate,const Ms::StaffType* staffType, int cidx);
+    Instrument instrumentFromTemplate(const instruments::InstrumentTemplate& instrumentTemplate) const;
+    void initStaff(Staff* staff, const instruments::InstrumentTemplate& instrumentTemplate,const Ms::StaffType* staffType, int cidx);
 
-    QList<Ms::NamedEventList> convertedMidiActions(const scene::instruments::MidiActionList& templateMidiActions) const;
+    QList<Ms::NamedEventList> convertedMidiActions(const instruments::MidiActionList& templateMidiActions) const;
 
     IGetScore* m_getScore = nullptr;
 
@@ -132,6 +131,5 @@ private:
 };
 }
 }
-}
 
-#endif // MU_DOMAIN_NOTATION_NOTATIONPARTS_H
+#endif // MU_NOTATION_NOTATIONPARTS_H
