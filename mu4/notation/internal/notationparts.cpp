@@ -25,8 +25,8 @@
 
 #include "log.h"
 
-using namespace mu::domain::notation;
-using namespace mu::scene::instruments;
+using namespace mu::notation;
+using namespace mu::instruments;
 
 NotationParts::NotationParts(IGetScore* getScore)
     : m_getScore(getScore)

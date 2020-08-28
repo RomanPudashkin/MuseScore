@@ -16,16 +16,15 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_DOMAIN_NOTATION_INOTATIONPARTS_H
-#define MU_DOMAIN_NOTATION_INOTATIONPARTS_H
+#ifndef MU_NOTATION_INOTATIONPARTS_H
+#define MU_NOTATION_INOTATIONPARTS_H
 
 #include "notationtypes.h"
-#include "scenes/instruments/instrumentstypes.h"
+#include "instruments/instrumentstypes.h"
 #include "async/notification.h"
 #include "async/channel.h"
 
 namespace mu {
-namespace domain {
 namespace notation {
 class INotationParts
 {
@@ -74,6 +73,5 @@ public:
 };
 }
 }
-}
 
-#endif // MU_DOMAIN_NOTATION_INOTATIONPARTS_H
+#endif // MU_NOTATION_INOTATIONPARTS_H
