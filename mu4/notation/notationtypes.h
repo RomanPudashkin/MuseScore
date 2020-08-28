@@ -30,7 +30,6 @@
 #include "libmscore/timesig.h"
 #include "libmscore/key.h"
 #include "libmscore/part.h"
-#include "libmscore/instrument.h"
 #include "libmscore/staff.h"
 #include "libmscore/stafftype.h"
 
@@ -43,12 +42,10 @@ using SelectType = Ms::SelectType;
 using Pad = Ms::Pad;
 using PitchMode = Ms::UpDownMode;
 using StyleId = Ms::Sid;
-using Instrument = Ms::Instrument;
 using Part = Ms::Part;
 using Staff = Ms::Staff;
 using StaffType = Ms::StaffTypes;
 
-using InstrumentList = QList<const Instrument*>;
 using StaffList = QList<const Staff*>;
 using PartList = QList<const Part*>;
 
