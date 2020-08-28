@@ -49,7 +49,8 @@ using MidiArticulation = Ms::MidiArticulation;
 
 using ChannelList = QList<Channel>;
 
-struct ClefPair {
+struct ClefPair
+{
     ClefType concertClef = ClefType::G;
     ClefType transposingClef = ClefType::G;
 };
@@ -89,14 +90,15 @@ struct InstrumentGenre
 };
 using InstrumentGenreHash = QHash<QString /*id*/, InstrumentGenre>;
 
-struct Transposition {
+struct Transposition
+{
     QString id;
     QString name;
 
     bool isValid() const { return !id.isEmpty(); }
 };
 
-struct InstrumentTemplate
+struct Instrument
 {
     QString id;
     StaffNameList longNames;
@@ -110,10 +112,8 @@ struct InstrumentTemplate
     QString groupId;
     QStringList genreIds;
 
-    QString musicXMLId;
-
-    PitchRange aPitchRange;
-    PitchRange pPitchRange;
+    PitchRange amateurPitchRange;
+    PitchRange professionalPitchRange;
 
     ClefTypeList clefs[MAX_STAVES];
     int staffLines[MAX_STAVES];
@@ -125,10 +125,10 @@ struct InstrumentTemplate
     Interval transpose;
 
     StaffGroup staffGroup;
-    const StaffType* staffTypePreset;
+    const StaffType* staffTypePreset = nullptr;
 
     bool useDrumset = false;
-    Drumset* drumset = 0;
+    const Drumset* drumset = nullptr;
 
     StringData stringData;
 
@@ -139,7 +139,16 @@ struct InstrumentTemplate
 
     ChannelList channels;
 
+    bool isValid() const { return !id.isEmpty(); }
+};
+
+using InstrumentList = QList<Instrument>;
+
+struct InstrumentTemplate
+{
+    QString id;
     Transposition transposition;
+    Instrument instrument;
 
     bool isValid() const { return !id.isEmpty(); }
 };
