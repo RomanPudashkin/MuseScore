@@ -32,10 +32,10 @@ public:
     virtual ~INotationParts() = default;
 
     virtual PartList partList() const = 0;
-    virtual InstrumentList instrumentList(const QString& partId) const = 0;
+    virtual instruments::InstrumentList instrumentList(const QString& partId) const = 0;
     virtual StaffList staffList(const QString& partId, const QString& instrumentId) const = 0;
 
-    virtual void setInstruments(const std::vector<QString>& instrumentTemplateIds) = 0;
+    virtual void setInstruments(const instruments::InstrumentList& instruments) = 0;
     virtual void setPartVisible(const QString& partId, bool visible) = 0;
     virtual void setPartName(const QString& partId, const QString& name) = 0;
     virtual void setInstrumentVisible(const QString& partId, const QString& instrumentId, bool visible) = 0;
@@ -64,10 +64,10 @@ public:
     virtual const Staff* appendStaff(const QString& partId, const QString& instrumentId) = 0;
     virtual const Staff* appendLinkedStaff(int staffIndex) = 0;
 
-    virtual void replaceInstrument(const QString& partId, const QString& instrumentId,const QString& instrumentTemplateId) = 0;
+    virtual void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) = 0;
 
     virtual async::Channel<const Part*> partChanged() const = 0;
-    virtual async::Channel<const Instrument*> instrumentChanged() const = 0;
+    virtual async::Channel<const instruments::Instrument> instrumentChanged() const = 0;
     virtual async::Channel<const Staff*> staffChanged() const = 0;
     virtual async::Notification partsChanged() const = 0;
 };

@@ -58,6 +58,10 @@ struct PitchRange
 {
     int min = 0;
     int max = 0;
+
+    PitchRange() = default;
+    PitchRange(int min, int max)
+        : min(min), max(max) {}
 };
 
 struct MidiAction

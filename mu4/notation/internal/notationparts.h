@@ -19,25 +19,21 @@
 #ifndef MU_NOTATION_NOTATIONPARTS_H
 #define MU_NOTATION_NOTATIONPARTS_H
 
-#include "modularity/ioc.h"
 #include "inotationparts.h"
 #include "igetscore.h"
-#include "instruments/iinstrumentsrepository.h"
 
 namespace mu {
 namespace notation {
 class NotationParts : public INotationParts
 {
-    INJECT(notation, instruments::IInstrumentsRepository, instrumentsRepository)
-
 public:
     NotationParts(IGetScore* getScore);
 
     PartList partList() const override;
-    InstrumentList instrumentList(const QString& partId) const override;
+    instruments::InstrumentList instrumentList(const QString& partId) const override;
     StaffList staffList(const QString& partId, const QString& instrumentId) const override;
 
-    void setInstruments(const std::vector<QString>& instrumentTemplateIds) override;
+    void setInstruments(const instruments::InstrumentList& instruments) override;
     void setPartVisible(const QString& partId, bool visible) override;
     void setPartName(const QString& partId, const QString& name) override;
     void setInstrumentVisible(const QString& partId, const QString& instrumentId, bool visible) override;
@@ -54,17 +50,17 @@ public:
     void removeStaves(const std::vector<int>& stavesIndexes) override;
 
     void movePart(const QString& partId, const QString& toPartId, InsertMode mode = Before) override;
-    void moveInstrument(const QString& instrumentId, const QString& fromPartId, const QString& toPartId,
-                        const QString& toInstrumentId, InsertMode mode = Before) override;
+    void moveInstrument(const QString& instrumentId, const QString& fromPartId, const QString& toPartId,const QString& toInstrumentId,
+                        InsertMode mode = Before) override;
     void moveStaff(int staffIndex, int toStaffIndex, InsertMode mode = Before) override;
 
     const Staff* appendStaff(const QString& partId, const QString& instrumentId) override;
     const Staff* appendLinkedStaff(int staffIndex) override;
 
-    void replaceInstrument(const QString& partId, const QString& instrumentId, const QString& instrumentTemplateId) override;
+    void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) override;
 
     async::Channel<const Part*> partChanged() const override;
-    async::Channel<const Instrument*> instrumentChanged() const override;
+    async::Channel<const instruments::Instrument> instrumentChanged() const override;
     async::Channel<const Staff*> staffChanged() const override;
     async::Notification partsChanged() const override;
 
@@ -72,11 +68,11 @@ private:
     struct InstrumentInfo
     {
         int tick = 0;
-        Instrument* instrument = nullptr;
+        Ms::Instrument* instrument = nullptr;
 
         InstrumentInfo() = default;
 
-        InstrumentInfo(int tick, Instrument* instrument)
+        InstrumentInfo(int tick, Ms::Instrument* instrument)
             : tick(tick), instrument(instrument) {}
 
         bool isValid() const { return instrument != nullptr; }
@@ -100,32 +96,32 @@ private:
 
     StaffList staves(const Part* part, const QString& instrumentId) const;
 
-    instruments::InstrumentTemplateList instrumentTemplates(const std::vector<QString>& instrumentTemplateIds) const;
-
     QList<Part*> scoreParts(const Ms::Score* score) const;
     QList<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
-    void addStaves(Part* part, const instruments::InstrumentTemplate& instrumentTemplate, int& globalStaffIndex);
+    void addStaves(Part* part, const instruments::Instrument& instrument, int& globalStaffIndex);
 
-    void insertInstrument(Part* part, Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId, InsertMode mode);
+    void insertInstrument(Part* part, Ms::Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId,
+                          InsertMode mode);
 
-    void removeUnselectedInstruments(const instruments::InstrumentTemplateList& instrumentTemplates);
-    bool templatesContainsInstrument(const instruments::InstrumentTemplateList& instrumentTemplates,
-                                     const QString& instrumentId) const;
-    std::vector<QString> missingInstrumentIds(const instruments::InstrumentTemplateList& instrumentTemplates) const;
+    void removeUnselectedInstruments(const std::vector<QString>& selectedInstrumentIds);
+    std::vector<QString> missingInstrumentIds(const std::vector<QString>& selectedInstrumentIds) const;
 
     void cleanEmptyExcerpts();
 
-    Instrument instrumentFromTemplate(const instruments::InstrumentTemplate& instrumentTemplate) const;
-    void initStaff(Staff* staff, const instruments::InstrumentTemplate& instrumentTemplate,const Ms::StaffType* staffType, int cidx);
+    Ms::Instrument museScoreInstrument(const instruments::Instrument& instrument) const;
+    instruments::Instrument instrument(Ms::Instrument* museScoreInstrument) const;
 
-    QList<Ms::NamedEventList> convertedMidiActions(const instruments::MidiActionList& templateMidiActions) const;
+    void initStaff(Staff* staff, const instruments::Instrument& instrument, const Ms::StaffType* staffType, int cidx);
+
+    QList<Ms::NamedEventList> convertedMidiActions(const instruments::MidiActionList& midiActions) const;
+    instruments::MidiActionList convertedMidiActions(const QList<Ms::NamedEventList>& midiActions) const;
 
     IGetScore* m_getScore = nullptr;
 
     async::Channel<const Part*> m_partChanged;
-    async::Channel<const Instrument*> m_instrumentChanged;
+    async::Channel<const instruments::Instrument> m_instrumentChanged;
     async::Channel<const Staff*> m_staffChanged;
     async::Notification m_partsChanged;
 };
