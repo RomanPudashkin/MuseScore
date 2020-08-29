@@ -4,3 +4,4 @@ FamilyView 1.0 FamilyView.qml
 InstrumentsView 1.0 InstrumentsView.qml
 SelectedInstrumentsView 1.0 SelectedInstrumentsView.qml
 InstrumentsPanel 1.0 InstrumentsPanel.qml
+InstrumentSettingsPopup 1.0 InstrumentSettingsPopup.qml

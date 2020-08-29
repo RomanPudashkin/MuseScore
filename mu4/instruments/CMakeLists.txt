@@ -44,6 +44,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentpaneltreemodel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/staffsettingsmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/staffsettingsmodel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumentsettingsmodel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumentsettingsmodel.h
     )
 
 include(${PROJECT_SOURCE_DIR}/build/module.cmake)

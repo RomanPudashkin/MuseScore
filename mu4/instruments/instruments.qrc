@@ -10,5 +10,6 @@
         <file>qml/MuseScore/Instruments/internal/InstrumentsTreeItemDelegate.qml</file>
         <file>qml/MuseScore/Instruments/internal/InstrumentsTreeItemControl.qml</file>
         <file>qml/MuseScore/Instruments/StaffSettingsPopup.qml</file>
+        <file>qml/MuseScore/Instruments/InstrumentSettingsPopup.qml</file>
     </qresource>
 </RCC>
