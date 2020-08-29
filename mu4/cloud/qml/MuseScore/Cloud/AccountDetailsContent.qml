@@ -93,7 +93,9 @@ FocusScope {
 
             FlatButton {
                 width: privateProperties.buttonWidth
-                backgroundColor: ui.theme.accentColor
+                normalStateColor: ui.theme.accentColor
+                hoveredStateColor: ui.theme.accentColor
+                pressedStateColor: ui.theme.accentColor
                 text: qsTrc("cloud", "Account info")
 
                 onClicked: {

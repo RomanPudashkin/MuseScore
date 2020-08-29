@@ -7,12 +7,16 @@ FocusableItem {
     property alias icon: buttonIcon.iconCode
     property alias text: textLabel.text
     property int iconPixelSize: buttonIcon.isEmpty ? 0 : 16
-    property alias backgroundColor: backgroundRect.color
+
+    property color normalStateColor: ui.theme.buttonColor
+    property color hoveredStateColor: ui.theme.buttonColor
+    property color pressedStateColor: ui.theme.buttonColor
 
     signal clicked
 
+    implicitWidth: contentWrapper.width + 16
+
     height: contentWrapper.implicitHeight + 16
-    width: contentWrapper.width + 16
 
     opacity: root.enabled ? 1.0 : 0.3
 
@@ -21,7 +25,7 @@ FocusableItem {
 
         anchors.fill: parent
 
-        color: ui.theme.buttonColor
+        color: normalStateColor
         opacity: ui.theme.buttonOpacityNormal
         border.width: 0
         radius: 3
@@ -72,7 +76,7 @@ FocusableItem {
 
             PropertyChanges {
                 target: backgroundRect
-                color: ui.theme.buttonColor
+                color: pressedStateColor
                 opacity: ui.theme.buttonOpacityHit
                 border.color: ui.theme.strokeColor
                 border.width: 1
@@ -85,7 +89,7 @@ FocusableItem {
 
             PropertyChanges {
                 target: backgroundRect
-                color: ui.theme.buttonColor
+                color: hoveredStateColor
                 opacity: ui.theme.buttonOpacityHover
                 border.color: ui.theme.strokeColor
                 border.width: 1
