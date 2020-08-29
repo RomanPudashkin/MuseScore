@@ -38,6 +38,10 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/instrumentsconfiguration.h
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentlistmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentlistmodel.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumenttreeitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumenttreeitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumentpaneltreemodel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumentpaneltreemodel.h
     )
 
 include(${PROJECT_SOURCE_DIR}/build/module.cmake)
