@@ -26,8 +26,10 @@
 #include "internal/instrumentsrepository.h"
 #include "internal/instrumentsconfiguration.h"
 
+#include "view/instrumentpaneltreemodel.h"
 #include "view/instrumentlistmodel.h"
 #include "ui/iinteractiveuriregister.h"
+#include "instrumentstypes.h"
 
 using namespace mu::instruments;
 using namespace mu::framework;
@@ -63,6 +65,8 @@ void InstrumentsModule::registerResources()
 void InstrumentsModule::registerUiTypes()
 {
     qmlRegisterType<InstrumentListModel>("MuseScore.Instruments", 1, 0, "InstrumentListModel");
+    qmlRegisterType<InstrumentPanelTreeModel>("MuseScore.Instruments", 1, 0, "InstrumentPanelTreeModel");
+    qmlRegisterUncreatableType<InstrumentTreeItemType>("MuseScore.Instruments", 1, 0, "InstrumentTreeItemType", "Cannot create a ContainerType");
 }
 
 void InstrumentsModule::onInit()

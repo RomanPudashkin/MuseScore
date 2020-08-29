@@ -21,6 +21,7 @@
 
 #include <QString>
 #include <vector>
+#include "qobjectdefs.h"
 
 #include "libmscore/interval.h"
 #include "libmscore/drumset.h"
@@ -148,6 +149,24 @@ struct InstrumentsMeta
     InstrumentGroupHash groups;
     InstrumentGenreHash genres;
     MidiArticulationHash articulations;
+};
+
+class InstrumentTreeItemType
+{
+    Q_GADGET
+
+public:
+    enum class ItemType {
+        UNDEFINED = -1,
+        ROOT,
+        PART,
+        INSTRUMENT,
+        STAFF,
+        CONTROL_ADD_STAFF,
+        CONTROL_ADD_DOUBLE_INSTRUMENT
+    };
+
+    Q_ENUM(ItemType)
 };
 }
 }

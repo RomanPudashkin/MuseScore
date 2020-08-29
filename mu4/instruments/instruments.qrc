@@ -5,5 +5,9 @@
         <file>qml/MuseScore/Instruments/FamilyView.qml</file>
         <file>qml/MuseScore/Instruments/InstrumentsView.qml</file>
         <file>qml/MuseScore/Instruments/SelectedInstrumentsView.qml</file>
+        <file>qml/MuseScore/Instruments/InstrumentsPanel.qml</file>
+        <file>qml/MuseScore/Instruments/internal/InstrumentsControlPanel.qml</file>
+        <file>qml/MuseScore/Instruments/internal/InstrumentsTreeItemDelegate.qml</file>
+        <file>qml/MuseScore/Instruments/internal/InstrumentsTreeItemControl.qml</file>
     </qresource>
 </RCC>

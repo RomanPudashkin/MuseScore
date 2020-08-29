@@ -1,3 +1,0 @@
-module MuseScore.Instruments
-SelectInstrumentDialog 1.0 SelectInstrumentDialog.qml
-InstrumentsPanel 1.0 InstrumentsPanel.qml
