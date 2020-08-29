@@ -13,6 +13,8 @@ Item {
 
     property bool isInstrumentSelected: privateProperties.currentInstrumentIndex != -1
 
+    signal instrumentClicked(var instrument)
+
     QtObject {
         id: privateProperties
 
@@ -103,6 +105,7 @@ Item {
 
                 onClicked: {
                     privateProperties.currentInstrumentIndex = index
+                    root.instrumentClicked(modelData)
                 }
             }
 

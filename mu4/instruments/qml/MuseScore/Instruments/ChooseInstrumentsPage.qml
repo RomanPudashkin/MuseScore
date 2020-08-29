@@ -8,7 +8,7 @@ import MuseScore.Instruments 1.0
 Rectangle {
     id: root
 
-    color: ui.theme.backgroundPrimaryColor
+    property bool canSelectMultipleInstruments: true
 
     function selectedInstruments() {
         var instruments = instrumentsModel.selectedInstruments
@@ -21,12 +21,14 @@ Rectangle {
         return result
     }
 
+    color: ui.theme.backgroundPrimaryColor
+
     InstrumentListModel {
         id: instrumentsModel
     }
 
     Component.onCompleted: {
-        instrumentsModel.load()
+        instrumentsModel.load(canSelectMultipleInstruments)
         Qt.callLater(familyView.selectFirstGroup)
     }
 
@@ -39,7 +41,8 @@ Rectangle {
         FamilyView {
             id: familyView
 
-            Layout.preferredWidth: root.width / 4
+            Layout.preferredWidth: root.canSelectMultipleInstruments ? root.width / 4 : undefined
+            Layout.fillWidth: !root.canSelectMultipleInstruments
             Layout.fillHeight: true
 
             families: instrumentsModel.families
@@ -65,7 +68,7 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
@@ -74,7 +77,8 @@ Rectangle {
         InstrumentsView {
             id: instrumentsView
 
-            Layout.preferredWidth: root.width / 4
+            Layout.preferredWidth: root.canSelectMultipleInstruments ? root.width / 4 : undefined
+            Layout.fillWidth: !root.canSelectMultipleInstruments
             Layout.fillHeight: true
 
             instruments: instrumentsModel.instruments
@@ -83,16 +87,28 @@ Rectangle {
                 instrumentsModel.setSearchText(search)
                 Qt.callLater(familyView.selectFirstGroup)
             }
+
+            onInstrumentClicked: {
+                if (root.canSelectMultipleInstruments) {
+                    return
+                }
+
+                instrumentsModel.selectInstrument(instrument.id)
+            }
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            visible: root.canSelectMultipleInstruments
+
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
         }
 
         FlatButton {
+            visible: root.canSelectMultipleInstruments
+
             Layout.preferredWidth: 30
 
             enabled: instrumentsView.isInstrumentSelected
@@ -106,7 +122,9 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            visible: root.canSelectMultipleInstruments
+
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
@@ -114,6 +132,8 @@ Rectangle {
 
         SelectedInstrumentsView {
             id: selectedInstrumentsView
+
+            visible: root.canSelectMultipleInstruments
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -131,13 +151,17 @@ Rectangle {
         }
 
         Rectangle {
-            Layout.preferredWidth: 2
+            visible: root.canSelectMultipleInstruments
+
+            Layout.preferredWidth: 1
             Layout.fillHeight: true
 
             color: ui.theme.buttonColor
         }
 
         Column {
+            visible: root.canSelectMultipleInstruments
+
             Layout.preferredWidth: 30
             anchors.verticalCenter: parent.verticalCenter
 
