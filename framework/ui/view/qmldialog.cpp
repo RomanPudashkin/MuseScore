@@ -24,6 +24,7 @@
 
 #include "modularity/ioc.h"
 #include "ui/iuiengine.h"
+#include "ret.h"
 
 using namespace mu::framework;
 
@@ -33,6 +34,22 @@ QmlDialog::QmlDialog(QQuickItem* parent)
     setFlag(QQuickItem::ItemHasContents, true);
 
     m_dialog = new QDialog();
+
+    connect(m_dialog, &QDialog::finished, [this](int code) {
+        QDialog::DialogCode dialogCode = static_cast<QDialog::DialogCode>(code);
+
+        switch (dialogCode) {
+        case QDialog::Rejected: {
+            QVariantMap ret;
+            ret["errcode"] = static_cast<int>(Ret::Code::Cancel);
+            setRet(ret);
+            emit closed();
+            break;
+        }
+        case QDialog::Accepted:
+            break;
+        }
+    });
 }
 
 void QmlDialog::componentComplete()

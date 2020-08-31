@@ -12,6 +12,7 @@
 #include "context/iglobalcontext.h"
 #include "async/asyncable.h"
 #include "instrumentstypes.h"
+#include "iinteractive.h"
 
 namespace mu {
 namespace instruments {
@@ -20,7 +21,8 @@ class InstrumentPanelTreeModel : public QAbstractItemModel, public async::Asynca
 {
     Q_OBJECT
 
-    INJECT(instruments, mu::context::IGlobalContext, context)
+    INJECT(instruments, context::IGlobalContext, context)
+    INJECT(instruments, framework::IInteractive, interactive)
 
     Q_PROPERTY(bool isMovingUpAvailable READ isMovingUpAvailable WRITE setIsMovingUpAvailable NOTIFY isMovingUpAvailableChanged)
     Q_PROPERTY(bool isMovingDownAvailable READ isMovingDownAvailable WRITE setIsMovingDownAvailable NOTIFY isMovingDownAvailableChanged)
@@ -36,6 +38,7 @@ public:
 
     Q_INVOKABLE void load();
     Q_INVOKABLE void selectRow(const QModelIndex& rowIndex, const bool isMultipleSelectionModeOn);
+    Q_INVOKABLE void addInstruments();
     Q_INVOKABLE void moveSelectedRowsUp();
     Q_INVOKABLE void moveSelectedRowsDown();
     Q_INVOKABLE void removeSelectedRows();

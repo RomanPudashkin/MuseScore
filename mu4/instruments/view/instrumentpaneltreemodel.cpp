@@ -1,10 +1,12 @@
 #include "instrumentpaneltreemodel.h"
+
 #include <algorithm>
 
 #include "translation.h"
 #include "roottreeitem.h"
 #include "parttreeitem.h"
 #include "instrumenttreeitem.h"
+#include "log.h"
 
 using namespace mu::instruments;
 using namespace mu::notation;
@@ -81,6 +83,25 @@ void InstrumentPanelTreeModel::selectRow(const QModelIndex& rowIndex, const bool
     } else {
         m_selectionModel->select(rowIndex, QItemSelectionModel::ClearAndSelect);
     }
+}
+
+void InstrumentPanelTreeModel::addInstruments()
+{
+    mu::RetVal<Val> result = interactive()->open("musescore://instruments/select");
+
+    if (!result.ret) {
+        LOGE() << result.ret.toString();
+        return;
+    }
+
+    QVariantList objList = result.val.toQVariant().toList();
+    InstrumentList instruments;
+
+    for (const QVariant& obj: objList) {
+        instruments << obj.value<Instrument>();
+    }
+
+    m_notationParts->setInstruments(instruments);
 }
 
 void InstrumentPanelTreeModel::moveSelectedRowsUp()
