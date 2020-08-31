@@ -38,8 +38,14 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/instrumentsconfiguration.h
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentlistmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentlistmodel.h
-    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumenttreeitem.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumenttreeitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumentpaneltreeitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/abstractinstrumentpaneltreeitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/roottreeitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/roottreeitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/parttreeitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/parttreeitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumenttreeitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/instrumenttreeitem.h
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentpaneltreemodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/instrumentpaneltreemodel.h
     ${CMAKE_CURRENT_LIST_DIR}/view/staffsettingsmodel.cpp
