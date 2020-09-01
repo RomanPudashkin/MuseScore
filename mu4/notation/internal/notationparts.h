@@ -21,17 +21,20 @@
 
 #include "inotationparts.h"
 #include "igetscore.h"
+#include "async/asyncable.h"
 
 namespace mu {
 namespace notation {
-class NotationParts : public INotationParts
+class NotationParts : public INotationParts, public async::Asyncable
 {
 public:
-    NotationParts(IGetScore* getScore);
+    NotationParts(IGetScore* getScore, mu::async::Notification selectionChangedNotification);
 
     PartList partList() const override;
     instruments::InstrumentList instrumentList(const QString& partId) const override;
     StaffList staffList(const QString& partId, const QString& instrumentId) const override;
+
+    bool canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const override;
 
     void setInstruments(const instruments::InstrumentList& instruments) override;
     void setPartVisible(const QString& partId, bool visible) override;
@@ -54,8 +57,9 @@ public:
                          const QString& toInstrumentId,InsertMode mode = Before) override;
     void moveStaves(const std::vector<int>& stavesIndexes, int toStaffIndex, InsertMode mode = Before) override;
 
-    const Staff* appendStaff(const QString& partId, const QString& instrumentId) override;
-    const Staff* appendLinkedStaff(int staffIndex) override;
+    void appendInstrument(const QString& partId, const instruments::Instrument& instrument) override;
+    void appendStaff(const QString& partId, const QString& instrumentId) override;
+    void appendLinkedStaff(int originStaffIndex) override;
 
     void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) override;
 
@@ -65,6 +69,9 @@ public:
     async::Notification partsChanged() const override;
 
     async::Channel<StaffChangeData> staffAppended() const override;
+    async::Channel<InstrumentChangeData> instrumentAppended() const override;
+
+    async::Notification canChangeInstrumentsVisibilityChanged() const override;
 
 private:
     struct InstrumentInfo
@@ -85,6 +92,11 @@ private:
 
     void startEdit();
     void apply();
+
+    bool isDoublingInstrument(int ticks) const;
+    bool isInstrumentAssignedToChord(const QString& partId, const QString& instrumentId) const;
+    void updateCanChangeInstrumentsVisibility();
+    void assignIstrumentToSelectedChord(Ms::Instrument* instrument);
 
     void doSetStaffVisible(Staff* staff, bool visible);
     void doRemoveParts(const std::vector<QString>& partsIds);
@@ -130,6 +142,9 @@ private:
     async::Notification m_partsChanged;
 
     async::Channel<StaffChangeData> m_staffAppended;
+    async::Channel<InstrumentChangeData> m_instrumentAppended;
+
+    async::Notification m_canChangeInstrumentsVisibilityChanged;
 };
 }
 }

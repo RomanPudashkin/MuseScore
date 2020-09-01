@@ -22,15 +22,19 @@
 #include "libmscore/undo.h"
 #include "libmscore/excerpt.h"
 #include "libmscore/drumset.h"
+#include "libmscore/instrchange.h"
 
 #include "log.h"
 
 using namespace mu::notation;
 using namespace mu::instruments;
 
-NotationParts::NotationParts(IGetScore* getScore)
+NotationParts::NotationParts(IGetScore* getScore, async::Notification selectionChangedNotification)
     : m_getScore(getScore)
 {
+    selectionChangedNotification.onNotify(this, [this]() {
+        m_canChangeInstrumentsVisibilityChanged.notify();
+    });
 }
 
 Ms::Score* NotationParts::score() const
@@ -195,6 +199,11 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
         return;
     }
 
+    if (isDoublingInstrument(instrumentInfo.tick) && !isInstrumentAssignedToChord(partId, instrumentId)) {
+        assignIstrumentToSelectedChord(instrumentInfo.instrument);
+        return;
+    }
+
     startEdit();
 
     StaffList instrumentStaves = staves(part, instrumentId);
@@ -206,6 +215,53 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
     apply();
 
     m_instrumentChanged.send(InstrumentChangeData { part->id(), convertedInstrument(instrumentInfo.instrument, part) });
+    m_partsChanged.notify();
+}
+
+bool NotationParts::isDoublingInstrument(int ticks) const
+{
+    return Ms::Fraction(-1, 1).ticks() != ticks;
+}
+
+bool NotationParts::isInstrumentAssignedToChord(const QString& partId, const QString& instrumentId) const
+{
+    Ms::SegmentType segmentType = Ms::SegmentType::ChordRest;
+    for (const Ms::Segment* segment = score()->firstSegment(segmentType); segment; segment = segment->next1(segmentType)) {
+        for (Ms::Element* element: segment->elist()) {
+            auto instrumentChange = dynamic_cast<Ms::InstrumentChange*>(element);
+            if (!instrumentChange) {
+                continue;
+            }
+
+            if (instrumentChange->part()->id() == partId && instrumentChange->instrument()->instrumentId() == instrumentId) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
+{
+    Ms::ChordRest* chord = score()->getSelectedChordRest();
+    if (!chord) {
+        return;
+    }
+
+    startEdit();
+    chord->part()->removeInstrument(instrument->instrumentId());
+    chord->part()->setInstrument(instrument, chord->tick());
+
+    auto instrumentChange = new Ms::InstrumentChange(*instrument, score());
+    instrumentChange->setInit(true);
+    instrumentChange->setParent(chord->segment());
+    instrumentChange->setTrack((chord->track() / VOICES) * VOICES);
+    instrumentChange->setupInstrument(instrument);
+
+    score()->undoAddElement(instrumentChange);
+    apply();
+
     m_partsChanged.notify();
 }
 
@@ -359,17 +415,40 @@ void NotationParts::setVoiceVisible(int staffIndex, int voiceIndex, bool visible
     m_partsChanged.notify();
 }
 
-const Staff* NotationParts::appendStaff(const QString& partId, const QString& instrumentId)
+void NotationParts::appendInstrument(const QString& partId, const Instrument& instrument)
+{
+    Part* part = this->part(partId);
+    if (!part) {
+        return;
+    }
+
+    int lastTick = 1;
+    for (auto it = part->instruments()->cbegin(); it != part->instruments()->cend(); ++it) {
+        lastTick = std::max(it->first, lastTick);
+    }
+
+    part->setInstrument(convertedInstrument(instrument), Ms::Fraction::fromTicks(lastTick + 1));
+    m_instrumentAppended.send(InstrumentChangeData { partId, instrument });
+
+    QStringList instrumentsNames;
+    for (auto it = part->instruments()->cbegin(); it != part->instruments()->cend(); ++it) {
+        instrumentsNames << it->second->trackName();
+    }
+
+    setPartName(partId, instrumentsNames.join(" & "));
+}
+
+void NotationParts::appendStaff(const QString& partId, const QString& instrumentId)
 {
     Part* part = this->part(partId);
     if (!part) {
         LOGW() << "Part not found" << partId;
-        return nullptr;
+        return;
     }
 
     InstrumentInfo instrumentInfo = this->instrumentInfo(part, instrumentId);
     if (!instrumentInfo.isValid()) {
-        return nullptr;
+        return;
     }
 
     Ms::Instrument* instrument = instrumentInfo.instrument;
@@ -386,15 +465,13 @@ const Staff* NotationParts::appendStaff(const QString& partId, const QString& in
 
     m_staffAppended.send(StaffChangeData { partId, instrument->instrumentId(), staff });
     m_partsChanged.notify();
-
-    return staff;
 }
 
-const Staff* NotationParts::appendLinkedStaff(int staffIndex)
+void NotationParts::appendLinkedStaff(int originStaffIndex)
 {
-    Staff* staff = this->staff(staffIndex);
+    Staff* staff = this->staff(originStaffIndex);
     if (!staff || !staff->part()) {
-        return nullptr;
+        return;
     }
 
     Staff* linkedStaff = staff->clone();
@@ -409,8 +486,6 @@ const Staff* NotationParts::appendLinkedStaff(int staffIndex)
     instrumentInfo.instrument->setStaffCount(instrumentInfo.instrument->staffCount() + 1);
     m_staffAppended.send(StaffChangeData { linkedStaff->part()->id(), instrumentInfo.instrument->instrumentId(), linkedStaff });
     m_partsChanged.notify();
-
-    return linkedStaff;
 }
 
 void NotationParts::replaceInstrument(const QString& partId, const QString& instrumentId, const Instrument& newInstrument)
@@ -642,6 +717,32 @@ mu::async::Channel<INotationParts::StaffChangeData> NotationParts::staffAppended
     return m_staffAppended;
 }
 
+mu::async::Channel<INotationParts::InstrumentChangeData> NotationParts::instrumentAppended() const
+{
+    return m_instrumentAppended;
+}
+
+mu::async::Notification NotationParts::canChangeInstrumentsVisibilityChanged() const
+{
+    return m_canChangeInstrumentsVisibilityChanged;
+}
+
+bool NotationParts::canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const
+{
+    InstrumentInfo info = instrumentInfo(part(partId), instrumentId);
+
+    if (!info.isValid()) {
+        return false;
+    }
+
+    if (!isDoublingInstrument(info.tick)) {
+        return true;
+    }
+
+    const Ms::ChordRest* chord = score()->getSelectedChordRest();
+    return chord && chord->part()->id() == partId;
+}
+
 QList<Part*> NotationParts::scoreParts(const Ms::Score* score) const
 {
     QList<Part*> result;
@@ -751,6 +852,7 @@ StaffList NotationParts::staves(const Part* part, const QString& instrumentId) c
         }
         staffGlobalIndex += it->second->staffCount();
     }
+
     return result;
 }
 
