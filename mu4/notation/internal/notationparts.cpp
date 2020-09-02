@@ -140,7 +140,7 @@ void NotationParts::setInstruments(const InstrumentList& instruments)
         score()->insertMeasure(ElementType::MEASURE, 0, false);
     }
 
-    cleanEmptyExcerpts();
+    removeEmptyExcerpts();
 
     apply();
 
@@ -218,6 +218,17 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
     m_partsChanged.notify();
 }
 
+Ms::ChordRest* NotationParts::selectedChord() const
+{
+    Ms::ChordRest* chord = score()->getSelectedChordRest();
+
+    if (Ms::MScore::_error == Ms::MsError::NO_NOTE_REST_SELECTED) {
+        Ms::MScore::_error = Ms::MsError::MS_NO_ERROR;
+    }
+
+    return chord;
+}
+
 bool NotationParts::isDoublingInstrument(int ticks) const
 {
     return Ms::Fraction(-1, 1).ticks() != ticks;
@@ -244,7 +255,7 @@ bool NotationParts::isInstrumentAssignedToChord(const QString& partId, const QSt
 
 void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
 {
-    Ms::ChordRest* chord = score()->getSelectedChordRest();
+    Ms::ChordRest* chord = selectedChord();
     if (!chord) {
         return;
     }
@@ -459,7 +470,6 @@ void NotationParts::appendStaff(const QString& partId, const QString& instrument
     startEdit();
     Staff* staff = instrumentStaves.last()->clone();
     score()->undoInsertStaff(staff, lastStaffGlobalIndex + 1);
-    instrument->setStaffCount(instrument->staffCount() + 1);
     instrument->setClefType(lastStaffGlobalIndex + 1, staff->defaultClefType());
     apply();
 
@@ -483,7 +493,6 @@ void NotationParts::appendLinkedStaff(int originStaffIndex)
     apply();
 
     InstrumentInfo instrumentInfo = this->instrumentInfo(staff);
-    instrumentInfo.instrument->setStaffCount(instrumentInfo.instrument->staffCount() + 1);
     m_staffAppended.send(StaffChangeData { linkedStaff->part()->id(), instrumentInfo.instrument->instrumentId(), linkedStaff });
     m_partsChanged.notify();
 }
@@ -739,7 +748,7 @@ bool NotationParts::canChangeInstrumentVisibility(const QString& partId, const Q
         return true;
     }
 
-    const Ms::ChordRest* chord = score()->getSelectedChordRest();
+    const Ms::ChordRest* chord = selectedChord();
     return chord && chord->part()->id() == partId;
 }
 
@@ -803,27 +812,11 @@ NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Part* part, co
 
 NotationParts::InstrumentInfo NotationParts::instrumentInfo(const Staff* staff) const
 {
-    if (!staff) {
+    if (!staff || !staff->part()) {
         return InstrumentInfo();
     }
 
-    Part* part = staff->part();
-    if (!part) {
-        return InstrumentInfo();
-    }
-
-    auto instrumentList = part->instruments();
-    int staffGlobalIndex = 0;
-    for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
-        for (int staffLocalIndex = 0; staffLocalIndex < it->second->staffCount(); staffLocalIndex++) {
-            if (part->staff(staffGlobalIndex + staffLocalIndex)->idx() == staff->idx()) {
-                return InstrumentInfo(it->first, it->second);
-            }
-        }
-        staffGlobalIndex += it->second->staffCount();
-    }
-
-    return InstrumentInfo();
+    return InstrumentInfo(Ms::Fraction(-1, 1).ticks(), staff->part()->instrument());
 }
 
 Staff* NotationParts::staff(int staffIndex) const
@@ -839,18 +832,13 @@ Staff* NotationParts::staff(int staffIndex) const
 
 StaffList NotationParts::staves(const Part* part, const QString& instrumentId) const
 {
+    // TODO: configure staves by instrumentId
+    Q_UNUSED(instrumentId)
+
     StaffList result;
 
-    auto instrumentList = part->instruments();
-    int staffGlobalIndex = 0;
-    for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
-        if (it->second->instrumentId() == instrumentId) {
-            for (int staffLocalIndex = 0; staffLocalIndex < it->second->staffCount(); staffLocalIndex++) {
-                result << part->staff(staffGlobalIndex + staffLocalIndex);
-            }
-            return result;
-        }
-        staffGlobalIndex += it->second->staffCount();
+    for (const Staff* staff: *part->staves()) {
+        result << staff;
     }
 
     return result;
@@ -892,9 +880,6 @@ void NotationParts::addStaves(Part* part, const Instrument& instrument, int& glo
 void NotationParts::insertInstrument(Part* part, Ms::Instrument* instrument, const StaffList& staves, const QString& toInstrumentId,
                                      InsertMode mode)
 {
-    // TODO: temporary solution
-    instrument->setStaffCount(staves.size());
-
     InstrumentInfo toInstrumentInfo = instrumentInfo(part, toInstrumentId);
 
     if (mode == Before) {
@@ -976,7 +961,7 @@ std::vector<QString> NotationParts::missingInstrumentIds(const std::vector<QStri
     return missingInstrumentIds;
 }
 
-void NotationParts::cleanEmptyExcerpts()
+void NotationParts::removeEmptyExcerpts()
 {
     const QList<Ms::Excerpt*> excerpts(masterScore()->excerpts());
     for (Ms::Excerpt* excerpt: excerpts) {
@@ -1005,7 +990,6 @@ Ms::Instrument NotationParts::convertedInstrument(const Instrument& instrument) 
     if (instrument.useDrumset) {
         museScoreInstrument.setDrumset(instrument.drumset ? instrument.drumset : Ms::smDrumset);
     }
-    museScoreInstrument.setStaffCount(instrument.staves);
     for (int i = 0; i < instrument.staves; ++i) {
         museScoreInstrument.setClefType(i, instrument.clefs[i]);
     }
@@ -1035,8 +1019,7 @@ Instrument NotationParts::convertedInstrument(const Ms::Instrument* museScoreIns
     instrument.id = museScoreInstrument->instrumentId();
     instrument.useDrumset = museScoreInstrument->useDrumset();
     instrument.drumset = museScoreInstrument->drumset();
-    instrument.staves = museScoreInstrument->staffCount();
-    for (int i = 0; i < museScoreInstrument->staffCount(); ++i) {
+    for (int i = 0; i < museScoreInstrument->cleffTypeCount(); ++i) {
         instrument.clefs[i] = museScoreInstrument->clefType(i);
     }
     instrument.midiActions = convertedMidiActions(museScoreInstrument->midiActions());

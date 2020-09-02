@@ -93,6 +93,8 @@ private:
     void startEdit();
     void apply();
 
+    Ms::ChordRest* selectedChord() const;
+
     bool isDoublingInstrument(int ticks) const;
     bool isInstrumentAssignedToChord(const QString& partId, const QString& instrumentId) const;
     void updateCanChangeInstrumentsVisibility();
@@ -114,7 +116,7 @@ private:
     QList<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
-    void addStaves(Part* part, const instruments::Instrument& convertedInstrument, int& globalStaffIndex);
+    void addStaves(Part* part, const instruments::Instrument& instrument, int& globalStaffIndex);
 
     void insertInstrument(Part* part, Ms::Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId,
                           InsertMode mode);
@@ -122,7 +124,7 @@ private:
     void removeUnselectedInstruments(const std::vector<QString>& selectedInstrumentIds);
     std::vector<QString> missingInstrumentIds(const std::vector<QString>& selectedInstrumentIds) const;
 
-    void cleanEmptyExcerpts();
+    void removeEmptyExcerpts();
 
     Ms::Instrument convertedInstrument(const instruments::Instrument& instrument) const;
     instruments::Instrument convertedInstrument(const Ms::Instrument* museScoreInstrument, const Part* part) const;
