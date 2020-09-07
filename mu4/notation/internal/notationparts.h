@@ -100,10 +100,12 @@ private:
     void updateCanChangeInstrumentsVisibility();
     void assignIstrumentToSelectedChord(Ms::Instrument* instrument);
 
+    void doMovePart(const QString& partId, const QString& toPartId, InsertMode mode = Before);
     void doSetStaffVisible(Staff* staff, bool visible);
     void doRemoveParts(const std::vector<QString>& partsIds);
     void doRemoveInstruments(Part* part, const std::vector<QString>& instrumentIds);
     void doRemoveStaves(const std::vector<int>& stavesIndexes);
+    void doSetPartName(Part* part, const QString& name);
 
     Part* part(const QString& partId, const Ms::Score* score = nullptr) const;
     InstrumentInfo instrumentInfo(const Part* part, const QString& instrumentId) const;
@@ -135,6 +137,8 @@ private:
 
     QList<Ms::NamedEventList> convertedMidiActions(const instruments::MidiActionList& midiActions) const;
     instruments::MidiActionList convertedMidiActions(const QList<Ms::NamedEventList>& midiActions) const;
+
+    void sortParts(const std::vector<QString>& instrumentIds);
 
     IGetScore* m_getScore = nullptr;
 
