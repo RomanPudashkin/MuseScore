@@ -49,6 +49,9 @@ namespace Ms {
 Staff::Staff(Score* score)
     : Element(score)
 {
+    static std::atomic_int currentId { 0 };
+    _id = QString::number(++currentId);
+
     initFromStaffType(0);
 }
 
@@ -59,6 +62,15 @@ Staff::Staff(Score* score)
 Staff* Staff::clone() const
 {
     return new Staff(*this);
+}
+
+//---------------------------------------------------------
+//   id
+//---------------------------------------------------------
+
+QString Staff::id() const
+{
+    return _id;
 }
 
 //---------------------------------------------------------

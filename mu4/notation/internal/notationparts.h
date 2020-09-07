@@ -113,6 +113,7 @@ private:
     Staff* staff(int staffIndex) const;
 
     StaffList staves(const Part* part, const QString& instrumentId) const;
+    QList<Staff*> staves(const std::vector<int>& stavesIndexes) const;
 
     QList<Part*> scoreParts(const Ms::Score* score) const;
     QList<Part*> excerptParts(const Ms::Score* score) const;

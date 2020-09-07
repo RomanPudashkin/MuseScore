@@ -281,30 +281,34 @@ void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
 void NotationParts::doMovePart(const QString& partId, const QString& toPartId, INotationParts::InsertMode mode)
 {
     Part* part = this->part(partId);
-    if (!part) {
-        return;
-    }
-
-    std::vector<Staff*> staves;
-    for (const Staff* staff: *part->staves()) {
-        staves.push_back(staff->clone());
-    }
-
-    score()->cmdRemovePart(part);
-
     Part* toPart = this->part(toPartId);
-    if (!toPart) {
+    if (!part || !toPart) {
         return;
     }
 
-    int firstStaffIndex = score()->staffIdx(toPart);
-    int newFirstStaffIndex = (mode == Before ? firstStaffIndex : firstStaffIndex + toPart->nstaves());
+    bool partIsBefore = score()->staffIdx(part) < score()->staffIdx(toPart);
+    QList<Staff*> staves = *part->staves();
+    int currentStaffIndex = partIsBefore ? score()->staffIdx(part) + part->nstaves() : 0;
 
-    score()->undoInsertPart(part, newFirstStaffIndex);
+    score()->undoRemovePart(part);
 
-    for (size_t staffIndex = 0; staffIndex < staves.size(); ++staffIndex) {
-        Staff* staff = staves[staffIndex];
-        score()->undoInsertStaff(staff, staffIndex);
+    if (partIsBefore) {
+        part->staves()->clear();
+    }
+
+    int toPartIndex = score()->parts().indexOf(toPart);
+    int newPartIndex = mode == Before ? toPartIndex : toPartIndex + 1;
+    score()->parts().insert(newPartIndex, part);
+
+    for (Staff* staff: staves) {
+        Staff* movedStaff = staff->clone();
+        score()->undoInsertStaff(movedStaff, currentStaffIndex);
+        Ms::Excerpt::cloneStaff(staff, movedStaff);
+        currentStaffIndex++;
+    }
+
+    for (Staff* staff: staves) {
+        score()->undoRemoveStaff(staff);
     }
 }
 
@@ -635,11 +639,9 @@ void NotationParts::removeStaves(const std::vector<int>& stavesIndexes)
 
 void NotationParts::doRemoveStaves(const std::vector<int>& stavesIndexes)
 {
-    for (int staffIndex: stavesIndexes) {
-        Staff* staff = this->staff(staffIndex);
-        Ms::Instrument* instrument = this->instrumentInfo(staff).instrument;
-
-        score()->cmdRemoveStaff(staffIndex);
+    for (const Staff* staff: staves(stavesIndexes)) {
+        const Ms::Instrument* instrument = this->instrumentInfo(staff).instrument;
+        score()->cmdRemoveStaff(staff->idx());
         m_instrumentChanged.send(InstrumentChangeData { staff->part()->id(), convertedInstrument(instrument, staff->part()) });
     }
 }
@@ -651,10 +653,17 @@ void NotationParts::doSetPartName(Part* part, const QString& name)
 
 void NotationParts::moveParts(const std::vector<QString>& partIds, const QString& toPartId, InsertMode mode)
 {
+    Part* toPart = this->part(toPartId);
+    if (!toPart) {
+        return;
+    }
+
     startEdit();
+
     for (const QString& partId: partIds) {
         doMovePart(partId, toPartId, mode);
     }
+
     apply();
 
     m_partsChanged.notify();
@@ -694,24 +703,31 @@ void NotationParts::moveStaves(const std::vector<int>& stavesIndexes, int toStaf
 
     Staff* firstStaff = score()->staff(stavesIndexes.front());
     Ms::Instrument* fromInstrument = instrumentInfo(firstStaff).instrument;
-    int newStaffIndex = (mode == Before ? toStaffIndex - 1 : toStaffIndex);
+    Ms::Instrument* toInstrument = instrumentInfo(firstStaff).instrument;
+    int newStaffIndex = (mode == Before ? toStaffIndex : toStaffIndex + 1);
 
     Part* fromPart = firstStaff->part();
     Part* toPart = score()->staff(toStaffIndex)->part();
 
     startEdit();
-    for (int index: stavesIndexes) {
-        Staff* staff = this->staff(index);
-        if (!staff) {
-            return;
-        }
+    QList<Staff*> staves = this->staves(stavesIndexes);
 
-        score()->undoRemoveStaff(staff);
-        score()->undoInsertStaff(staff, newStaffIndex++);
+    for (Staff* staff: staves) {
+        Staff* movedStaff = staff->clone();
+        score()->undoInsertStaff(movedStaff, newStaffIndex);
+        Ms::Excerpt::cloneStaff(staff, movedStaff);
+        newStaffIndex++;
     }
+
+    for (Staff* staff: staves) {
+        score()->undoRemoveStaff(staff);
+    }
+
     apply();
 
-    Ms::Instrument* toInstrument = instrumentInfo(firstStaff).instrument;
+    for (const Staff* staff: *toPart->staves()) {
+        m_staffChanged.send(StaffChangeData { toPart->id(), toInstrument->instrumentId(), staff });
+    }
 
     m_instrumentChanged.send(InstrumentChangeData { fromPart->id(), convertedInstrument(fromInstrument, fromPart) });
     m_instrumentChanged.send(InstrumentChangeData { toPart->id(), convertedInstrument(toInstrument, toPart) });
@@ -867,6 +883,21 @@ StaffList NotationParts::staves(const Part* part, const QString& instrumentId) c
     }
 
     return result;
+}
+
+QList<Staff*> NotationParts::staves(const std::vector<int>& stavesIndexes) const
+{
+    QList<Staff*> staves;
+
+    for (int index: stavesIndexes) {
+        Staff* staff = this->staff(index);
+
+        if (staff) {
+            staves << staff;
+        }
+    }
+
+    return staves;
 }
 
 void NotationParts::appendPart(Part* part)
@@ -1100,9 +1131,10 @@ QList<Ms::NamedEventList> NotationParts::convertedMidiActions(const MidiActionLi
 
         for (const midi::Event& midiEvent: action.events) {
             Ms::MidiCoreEvent midiCoreEvent;
-            midiCoreEvent.setType(static_cast<uchar>(midiEvent.type));
+            midiCoreEvent.setType(static_cast<uchar>(midiEvent.type()));
             midiCoreEvent.setChannel(midiCoreEvent.channel());
-            midiCoreEvent.setData(midiEvent.a, midiEvent.b);
+            //!FIXME
+            //midiCoreEvent.setData(midiEvent.a, midiEvent.b);
             event.events.push_back(midiCoreEvent);
         }
     }
@@ -1121,10 +1153,13 @@ MidiActionList NotationParts::convertedMidiActions(const QList<Ms::NamedEventLis
 
         for (const Ms::MidiCoreEvent& midiCoreEvent: coreAction.events) {
             midi::Event midiEvent;
-            midiEvent.channel = midiCoreEvent.channel();
-            midiEvent.type = static_cast<midi::EventType>(midiCoreEvent.type());
-            midiEvent.a = midiCoreEvent.dataA();
-            midiEvent.b = midiCoreEvent.dataB();
+            midiEvent.setChannel(midiCoreEvent.channel());
+            midiEvent.setType(static_cast<midi::EventType>(midiCoreEvent.type()));
+
+            //!FIXME
+            //midiEvent.a = midiCoreEvent.dataA();
+            //midiEvent.b = midiCoreEvent.dataB();
+
             action.events.push_back(midiEvent);
         }
     }
@@ -1134,7 +1169,7 @@ MidiActionList NotationParts::convertedMidiActions(const QList<Ms::NamedEventLis
 
 void NotationParts::sortParts(const std::vector<QString>& instrumentIds)
 {
-    Q_ASSERT(score()->parts().size() == instrumentIds.size());
+    Q_ASSERT(score()->parts().size() == static_cast<int>(instrumentIds.size()));
 
     auto generalInstrumentId = [](Part* part) -> QString {
                                    return part->instrument()->instrumentId();
