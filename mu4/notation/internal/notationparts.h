@@ -30,9 +30,9 @@ class NotationParts : public INotationParts, public async::Asyncable
 public:
     NotationParts(IGetScore* getScore, mu::async::Notification selectionChangedNotification);
 
-    PartList partList() const override;
-    instruments::InstrumentList instrumentList(const QString& partId) const override;
-    StaffList staffList(const QString& partId, const QString& instrumentId) const override;
+    async::NotifyList<const Part*> partList() const override;
+    async::NotifyList<instruments::Instrument> instrumentList(const QString& partId) const override;
+    async::NotifyList<const Staff*> staffList(const QString& partId, const QString& instrumentId) const override;
 
     bool canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const override;
 
@@ -63,17 +63,12 @@ public:
 
     void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) override;
 
-    mu::async::Channel<PartChangeData> partChanged() const override;
-    async::Channel<InstrumentChangeData> instrumentChanged() const override;
-    async::Channel<StaffChangeData> staffChanged() const override;
     async::Notification partsChanged() const override;
-
-    async::Channel<StaffChangeData> staffAppended() const override;
-    async::Channel<InstrumentChangeData> instrumentAppended() const override;
-
     async::Notification canChangeInstrumentsVisibilityChanged() const override;
 
 private:
+    ~NotationParts();
+
     struct InstrumentInfo
     {
         int tick = 0;
@@ -112,16 +107,17 @@ private:
     InstrumentInfo instrumentInfo(const Staff* staff) const;
     Staff* staff(int staffIndex) const;
 
-    StaffList staves(const Part* part, const QString& instrumentId) const;
-    QList<Staff*> staves(const std::vector<int>& stavesIndexes) const;
+    std::vector<const Staff*> staves(const Part* part, const QString& instrumentId) const;
+    std::vector<Staff*> staves(const std::vector<int>& stavesIndexes) const;
 
-    QList<Part*> scoreParts(const Ms::Score* score) const;
-    QList<Part*> excerptParts(const Ms::Score* score) const;
+    std::vector<Part*> availableParts() const;
+    std::vector<Part*> scoreParts(const Ms::Score* score) const;
+    std::vector<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
     void addStaves(Part* part, const instruments::Instrument& instrument, int& globalStaffIndex);
 
-    void insertInstrument(Part* part, Ms::Instrument* instrumentInfo, const StaffList& staves, const QString& toInstrumentId,
+    void insertInstrument(Part* part, Ms::Instrument* instrumentInfo, const std::vector<const Staff*>& staves,const QString& toInstrumentId,
                           InsertMode mode);
 
     void removeUnselectedInstruments(const std::vector<QString>& selectedInstrumentIds);
@@ -141,17 +137,21 @@ private:
 
     void sortParts(const std::vector<QString>& instrumentIds);
 
+    void notifyAboutStaffChanged(int staffIndex) const;
+
+    async::ChangedNotifier<instruments::Instrument>* partNotifier(const QString& partId) const;
+    async::ChangedNotifier<const Staff*>* instrumentNotifier(const QString& instrumentId, const QString& partId) const;
+
+    QString calculatedPartName(const Part* part) const;
+
     IGetScore* m_getScore = nullptr;
 
-    async::Channel<PartChangeData> m_partChanged;
-    async::Channel<InstrumentChangeData> m_instrumentChanged;
-    async::Channel<StaffChangeData> m_staffChanged;
     async::Notification m_partsChanged;
-
-    async::Channel<StaffChangeData> m_staffAppended;
-    async::Channel<InstrumentChangeData> m_instrumentAppended;
-
     async::Notification m_canChangeInstrumentsVisibilityChanged;
+
+    mutable async::ChangedNotifier<const Part*>* m_partsNotifier = nullptr;
+    mutable std::map<QString, async::ChangedNotifier<instruments::Instrument>*> m_partsNotifiersMap;
+    mutable std::map<std::pair<QString, QString>, async::ChangedNotifier<const Staff*>*> m_instrumentsNotifiersMap;
 };
 }
 }

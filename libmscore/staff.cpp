@@ -49,9 +49,7 @@ namespace Ms {
 Staff::Staff(Score* score)
     : Element(score)
 {
-    static std::atomic_int currentId { 0 };
-    _id = QString::number(++currentId);
-
+    setId(makeId());
     initFromStaffType(0);
 }
 
@@ -881,6 +879,17 @@ qreal Staff::spatium(const Element* e) const
 qreal Staff::staffMag(const StaffType* stt) const
 {
     return (stt->small() ? score()->styleD(Sid::smallStaffMag) : 1.0) * stt->userMag();
+}
+
+void Staff::setId(const QString& id)
+{
+    _id = id;
+}
+
+QString Staff::makeId()
+{
+    static std::atomic_int currentId { 0 };
+    return QString::number(++currentId);
 }
 
 qreal Staff::staffMag(const Fraction& tick) const

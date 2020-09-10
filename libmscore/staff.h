@@ -121,6 +121,8 @@ public:
     QString partName() const;
     int rstaff() const;
     QString id() const;
+    void setId(const QString& id);
+    static QString makeId();
     int idx() const;
     void read(XmlReader&);
     bool readProperties(XmlReader&);

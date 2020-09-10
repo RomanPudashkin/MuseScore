@@ -23,6 +23,7 @@
 #include "instruments/instrumentstypes.h"
 #include "async/notification.h"
 #include "async/channel.h"
+#include "async/notifylist.h"
 
 namespace mu {
 namespace notation {
@@ -31,9 +32,9 @@ class INotationParts
 public:
     virtual ~INotationParts() = default;
 
-    virtual PartList partList() const = 0;
-    virtual instruments::InstrumentList instrumentList(const QString& partId) const = 0;
-    virtual StaffList staffList(const QString& partId, const QString& instrumentId) const = 0;
+    virtual async::NotifyList<const Part*> partList() const = 0;
+    virtual async::NotifyList<instruments::Instrument> instrumentList(const QString& partId) const = 0;
+    virtual async::NotifyList<const Staff*> staffList(const QString& partId, const QString& instrumentId) const = 0;
 
     virtual bool canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const = 0;
 
@@ -69,44 +70,7 @@ public:
 
     virtual void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) = 0;
 
-    struct PartChangeData
-    {
-        const Part* part = nullptr;
-
-        PartChangeData() = default;
-        PartChangeData(const Part* part)
-            : part(part) {}
-    };
-
-    struct InstrumentChangeData
-    {
-        QString partId;
-        instruments::Instrument instrument;
-
-        InstrumentChangeData() = default;
-        InstrumentChangeData(const QString& partId, const instruments::Instrument& instrument)
-            : partId(partId), instrument(instrument) {}
-    };
-
-    struct StaffChangeData
-    {
-        QString partId;
-        QString instrumentId;
-        const Staff* staff = nullptr;
-
-        StaffChangeData() = default;
-        StaffChangeData(const QString& partId, const QString& instrumentId, const Staff* staff)
-            : partId(partId), instrumentId(instrumentId), staff(staff) {}
-    };
-
-    virtual async::Channel<PartChangeData> partChanged() const = 0;
-    virtual async::Channel<InstrumentChangeData> instrumentChanged() const = 0;
-    virtual async::Channel<StaffChangeData> staffChanged() const = 0;
     virtual async::Notification partsChanged() const = 0;
-
-    virtual async::Channel<StaffChangeData> staffAppended() const = 0;
-    virtual async::Channel<InstrumentChangeData> instrumentAppended() const = 0;
-
     virtual async::Notification canChangeInstrumentsVisibilityChanged() const = 0;
 };
 }
