@@ -1,5 +1,5 @@
 module MuseScore.UserScores
-UserScoresContent 1.0 UserScoresContent.qml
+ScoresPage 1.0 ScoresPage.qml
 RecentScoresView 1.0 RecentScoresView.qml
 NewScoreDialog 1.0 NewScoreDialog.qml
 ScoreItem 1.0 ScoreItem.qml

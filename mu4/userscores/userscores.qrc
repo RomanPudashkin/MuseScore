@@ -4,7 +4,7 @@
         <file>qml/MuseScore/UserScores/qmldir</file>
         <file>qml/MuseScore/UserScores/NewScoreDialog.qml</file>
         <file>qml/MuseScore/UserScores/RecentScoresView.qml</file>
-        <file>qml/MuseScore/UserScores/UserScoresContent.qml</file>
+        <file>qml/MuseScore/UserScores/ScoresPage.qml</file>
         <file>qml/MuseScore/UserScores/ChooseInstrumentsAndTemplatesPage.qml</file>
         <file>qml/MuseScore/UserScores/ChooseTemplatePage.qml</file>
         <file>qml/MuseScore/UserScores/TemplatePreview.qml</file>
