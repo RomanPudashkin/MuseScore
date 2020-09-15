@@ -18,9 +18,10 @@ FocusScope {
     }
 
     Rectangle {
+        id: background
         anchors.fill: parent
 
-        color: ui.theme.backgroundPrimaryColor
+        color: ui.theme.backgroundSecondaryColor
     }
 
     RowLayout {
@@ -67,6 +68,7 @@ FocusScope {
 
         RecentScoresView {
             anchors.fill: parent
+            backgroundColor: background.color
 
             model: FilterProxyModel {
                 sourceModel: recentScoresModel
