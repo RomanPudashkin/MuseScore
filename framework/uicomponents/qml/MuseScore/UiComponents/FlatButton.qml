@@ -7,7 +7,7 @@ FocusableItem {
     property alias icon: buttonIcon.iconCode
     property alias text: textLabel.text
     property int iconPixelSize: buttonIcon.isEmpty ? 0 : 16
-    property alias backgroundColor: backgroundRect.color
+    property bool accentButton: false
 
     signal clicked
 
@@ -21,7 +21,7 @@ FocusableItem {
 
         anchors.fill: parent
 
-        color: ui.theme.buttonColor
+        color: root.accentButton ? ui.theme.accentColor : ui.theme.buttonColor
         opacity: ui.theme.buttonOpacityNormal
         border.width: 0
         radius: 3
