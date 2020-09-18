@@ -19,7 +19,9 @@
 
 import QtQuick 2.8
 import QtQuick.Controls 2.1
+
 import MuseScore.Palette 1.0
+import MuseScore.UiComponents 1.0
 
 import "utils.js" as Utils
 
@@ -41,7 +43,7 @@ Item {
         searchTextInput.selectAll()
     }
 
-    StyledButton {
+    FlatButton {
         id: morePalettesButton
         height: searchTextInput.height
         width: parent.width / 2 - 4
@@ -49,15 +51,12 @@ Item {
         onClicked: palettePopup.visible = !palettePopup.visible
     }
 
-    TextField {
+    SearchField {
         id: searchTextInput
         width: parent.width / 2 - 4
         anchors.right: parent.right
 
-        placeholderText: qsTr("Search")
-        font: ui.theme.font
-
-        onTextChanged: resultsTimer.restart()
+        onSearchTextChanged: resultsTimer.restart()
         onActiveFocusChanged: {
             resultsTimer.stop();
             Accessible.name = qsTr("Palette Search")
@@ -71,48 +70,10 @@ Item {
             }
         }
 
-        color: ui.theme.fontPrimaryColor
-
-        background: Rectangle {
-            color: ui.theme.backgroundPrimaryColor
-            border.color: "#aeaeae"
-        }
-
         KeyNavigation.tab: paletteTree.currentTreeItem
 
         Keys.onDownPressed: paletteTree.focusFirstItem();
         Keys.onUpPressed: paletteTree.focusLastItem();
-
-        StyledToolButton {
-            id: searchTextClearButton
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                right: parent.right
-                margins: 1
-            }
-            width: height
-            visible: searchTextInput.text.length && searchTextInput.width > 2 * width
-            flat: true
-            onClicked: searchTextInput.clear()
-            activeFocusOnTab: false // don't annoy keyboard users tabbing to palette (they can use Ctrl+A, Delete to clear search)
-
-            padding: 4
-
-            text: qsTr("Clear search text")
-
-            onHoveredChanged: {
-                if (hovered) {
-                    ui.tooltip.show(searchTextClearButton, searchTextClearButton.text)
-                } else {
-                    ui.tooltip.hide(searchTextClearButton)
-                }
-            }
-
-            contentItem: StyledIcon {
-                source: "icons/clear.png"
-            }
-        }
     }
 
     PalettesListPopup {

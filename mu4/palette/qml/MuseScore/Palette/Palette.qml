@@ -101,23 +101,10 @@ GridView {
         anchors.fill: parent
     }
 
-    StyledButton {
+    FlatButton {
         id: moreButton
         visible: showMoreButton
         activeFocusOnTab: this === paletteTree.currentTreeItem
-
-        highlighted: visualFocus || hovered
-
-        background: Rectangle {
-            color: ui.theme.backgroundPrimaryColor //! TODO mscore.paletteBackground
-            Rectangle {
-                anchors.fill: parent
-                color: ui.theme.backgroundPrimaryColor //! TODO globalStyle.voice1Color
-                opacity: moreButton.down ? 0.4 : (moreButton.highlighted ? 0.2 : 0.0)
-            }
-            border.color: moreButton.activeFocus ? "lightblue" : "transparent" // show current item
-            border.width: 2
-        }
 
         onActiveFocusChanged: {
             if (activeFocus) {
@@ -144,8 +131,6 @@ GridView {
         height: cellHeight - (paletteView.oneRow ? 0 : 1)
 
         text: qsTr("More")
-        textColor: down ? ui.theme.fontPrimaryColor /*TODO globalStyle.buttonText*/ : "black"// palette background has white or light color
-        visualFocusTextColor: "darkblue"
 
         onClicked: paletteView.moreButtonClicked()
 

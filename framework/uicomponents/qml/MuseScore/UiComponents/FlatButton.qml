@@ -20,6 +20,8 @@ FocusableItem {
     property color hoveredStateColor: privateProperties.defaultColor
     property color pressedStateColor: privateProperties.defaultColor
 
+    property alias hovered: clickableArea.containsMouse
+
     signal clicked
 
     height: contentWrapper.implicitHeight + 16

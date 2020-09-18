@@ -19,7 +19,9 @@
 
 import QtQuick 2.8
 import QtQuick.Controls 2.1
+
 import MuseScore.Palette 1.0
+import MuseScore.UiComponents 1.0
 
 StyledPopup {
     id: palettesListPopup
@@ -44,10 +46,9 @@ StyledPopup {
             color: ui.theme.fontPrimaryColor
         }
 
-        StyledButton {
+        FlatButton {
             id: createCustomPaletteButton
             width: parent.width
-    //         iconSource: "icons/add.png"
             text: qsTr("Create custom palette")
             onClicked: {
                 addCustomPaletteRequested();
@@ -55,20 +56,13 @@ StyledPopup {
             }
         }
 
-        ToolSeparator {
-            id: topSeparator
-            orientation: Qt.Horizontal
-            width: parent.width
-        }
+        SeparatorLine { id: topSeparator }
 
-        Text {
+        StyledTextLabel {
             width: parent.width
             visible: !palettesList.count
             text: qsTr("All palettes were added")
             wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-            font: ui.theme.font
-            color: ui.theme.fontPrimaryColor
         }
 
         ListView {
@@ -112,21 +106,16 @@ StyledPopup {
                         visible: !(morePalettesDelegate.added || morePalettesDelegate.removed)
                         anchors.fill: parent
 
-                        Text {
+                        StyledTextLabel {
                             height: parent.height
                             anchors.left: parent.left
                             anchors.right: addButton.left
                             text: morePalettesDelegate.text
-                            font: ui.theme.font
-                            color: ui.theme.windowText
-                            verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHLeft
-                            elide: Text.ElideRight
                         }
 
-                        StyledButton {
+                        FlatButton {
                             id: addButton
-    //                         height: parent.height
                             anchors.right: parent.right
                             text: qsTr("Add")
 
@@ -148,14 +137,10 @@ StyledPopup {
                         }
                     }
 
-                    Text {
+                    StyledTextLabel {
                         visible: morePalettesDelegate.added || morePalettesDelegate.removed
                         anchors.fill: parent
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
                         text: morePalettesDelegate.added ? qsTr("%1 Added!").arg(model.display) : (morePalettesDelegate.removed ? qsTr("%1 removed").arg(model.display) : "")
-                        font: ui.theme.font
-                        color: ui.theme.windowText
                         elide: Text.ElideMiddle
                     }
                 }
