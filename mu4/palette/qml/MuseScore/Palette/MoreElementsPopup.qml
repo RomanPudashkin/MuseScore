@@ -207,8 +207,9 @@ StyledPopup {
                         id: deleteButton
                         width: height
                         anchors.right: parent.right
-                        icon: IconCode.TRASH
+                        icon: IconCode.DELETE_TANK
                         enabled: customPaletteSelectionModel.hasSelection
+                        normalStateColor: "transparent"
 
                         ToolTip.text: text
 

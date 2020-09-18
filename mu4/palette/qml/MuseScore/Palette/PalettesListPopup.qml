@@ -22,6 +22,7 @@ import QtQuick.Controls 2.1
 
 import MuseScore.Palette 1.0
 import MuseScore.UiComponents 1.0
+import MuseScore.Ui 1.0
 
 StyledPopup {
     id: palettesListPopup
@@ -37,13 +38,11 @@ StyledPopup {
         id: column
         width: parent.width
 
-        spacing: 4
+        spacing: 12
 
-        Text {
+        StyledTextLabel {
             id: header
             text: qsTr("More palettes")
-            font: ui.theme.font
-            color: ui.theme.fontPrimaryColor
         }
 
         FlatButton {
@@ -94,6 +93,8 @@ StyledPopup {
                 topPadding: 0
                 bottomPadding: 0
 
+                background: Item {}
+
                 property bool added: false // TODO: store in some model
                 property bool removed: false
 
@@ -117,7 +118,7 @@ StyledPopup {
                         FlatButton {
                             id: addButton
                             anchors.right: parent.right
-                            text: qsTr("Add")
+                            icon: IconCode.PLUS
 
                             ToolTip.text: qsTr("Add %1 palette").arg(model.display)
                             Accessible.description: ToolTip.text
@@ -140,8 +141,9 @@ StyledPopup {
                     StyledTextLabel {
                         visible: morePalettesDelegate.added || morePalettesDelegate.removed
                         anchors.fill: parent
-                        text: morePalettesDelegate.added ? qsTr("%1 Added!").arg(model.display) : (morePalettesDelegate.removed ? qsTr("%1 removed").arg(model.display) : "")
+                        text: morePalettesDelegate.added ? qsTr("%1 added").arg(model.display) : (morePalettesDelegate.removed ? qsTr("%1 removed").arg(model.display) : "")
                         elide: Text.ElideMiddle
+                        font.bold: true
                     }
                 }
             }

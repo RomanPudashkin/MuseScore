@@ -83,9 +83,11 @@ Item {
         height: parent.height
         width: height
         anchors.right: paletteHeaderMenuButton.left
-        icon: IconCode.TRASH
+        anchors.rightMargin: 6
+        icon: IconCode.DELETE_TANK
         visible: paletteHeader.hidePaletteElementVisible && paletteHeader.editingEnabled
         activeFocusOnTab: mainPalette.currentItem === paletteTree.currentTreeItem
+        normalStateColor: "transparent"
 
         KeyNavigation.backtab: mainPalette.currentItem
         KeyNavigation.tab: focusBreaker
