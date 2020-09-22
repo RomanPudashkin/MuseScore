@@ -34,8 +34,13 @@ NotationParts::NotationParts(IGetScore* getScore, Notification selectionChangedN
     : m_getScore(getScore), m_partsNotifier(new ChangedNotifier<const Part*>())
 {
     selectionChangedNotification.onNotify(this, [this]() {
-        m_canChangeInstrumentsVisibilityChanged.notify();
+        updateCanChangeInstrumentsVisibility();
     });
+}
+
+NotationParts::~NotationParts()
+{
+    delete m_partsNotifier;
 }
 
 Ms::Score* NotationParts::score() const
@@ -207,7 +212,7 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
         return;
     }
 
-    if (isDoublingInstrument(instrumentInfo.tick) && !isInstrumentAssignedToChord(partId, instrumentId)) {
+    if (needAssignInstrumentToChord(partId, instrumentId)) {
         assignIstrumentToSelectedChord(instrumentInfo.instrument);
         return;
     }
@@ -222,7 +227,7 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
 
     apply();
 
-    ChangedNotifier<Instrument>* notifier = partNotifier(part->id());
+    ChangedNotifier<Instrument>* notifier = partNotifier(partId);
     notifier->itemChanged(convertedInstrument(instrumentInfo.instrument, part));
     m_partsChanged.notify();
 }
@@ -238,28 +243,59 @@ Ms::ChordRest* NotationParts::selectedChord() const
     return chord;
 }
 
-bool NotationParts::isDoublingInstrument(int ticks) const
+void NotationParts::updateCanChangeInstrumentsVisibility()
 {
-    return Ms::Fraction(-1, 1).ticks() != ticks;
+    for (const InstrumentKey& key: m_canChangeInstrumentsVisibilityHash.keys()) {
+        bool canChangeVisibility = resolveCanChangeInstrumentVisibility(key.partId, key.instrumentId);
+        m_canChangeInstrumentsVisibilityHash[key].ch.send(canChangeVisibility);
+    }
 }
 
-bool NotationParts::isInstrumentAssignedToChord(const QString& partId, const QString& instrumentId) const
+bool NotationParts::resolveCanChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const
 {
+    if (!needAssignInstrumentToChord(partId, instrumentId)) {
+        return true;
+    }
+
+    const Ms::ChordRest* chord = selectedChord();
+    return chord && chord->part()->id() == partId;
+}
+
+bool NotationParts::needAssignInstrumentToChord(const QString& partId, const QString& instrumentId) const
+{
+    Part* part = this->part(partId);
+    if (!part) {
+        return false;
+    }
+
+    bool isMainInstrument = part->instrumentId() == instrumentId;
+    if (isMainInstrument) {
+        return false;
+    }
+
     Ms::SegmentType segmentType = Ms::SegmentType::ChordRest;
     for (const Ms::Segment* segment = score()->firstSegment(segmentType); segment; segment = segment->next1(segmentType)) {
-        for (Ms::Element* element: segment->elist()) {
+        for (Ms::Element* element: segment->annotations()) {
+            if (!element) {
+                continue;
+            }
+
+            if (element->part()->id() != partId) {
+                continue;
+            }
+
             auto instrumentChange = dynamic_cast<Ms::InstrumentChange*>(element);
             if (!instrumentChange) {
                 continue;
             }
 
-            if (instrumentChange->part()->id() == partId && instrumentChange->instrument()->instrumentId() == instrumentId) {
-                return true;
+            if (instrumentChange->instrument()->instrumentId() == instrumentId) {
+                return false;
             }
         }
     }
 
-    return false;
+    return true;
 }
 
 void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
@@ -272,7 +308,7 @@ void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
     startEdit();
     Part* part = chord->part();
     part->removeInstrument(instrument->instrumentId());
-    part->setInstrument(instrument, chord->tick());
+    part->setInstrument(instrument, chord->segment()->tick());
 
     auto instrumentChange = new Ms::InstrumentChange(*instrument, score());
     instrumentChange->setInit(true);
@@ -468,7 +504,7 @@ void NotationParts::setVoiceVisible(int staffIndex, int voiceIndex, bool visible
     m_partsChanged.notify();
 }
 
-void NotationParts::appendInstrument(const QString& partId, const Instrument& instrument)
+void NotationParts::appendDoublingInstrument(const QString& partId, const Instrument& instrument)
 {
     Part* part = this->part(partId);
     if (!part) {
@@ -482,7 +518,7 @@ void NotationParts::appendInstrument(const QString& partId, const Instrument& in
 
     startEdit();
     part->setInstrument(convertedInstrument(instrument), Ms::Fraction::fromTicks(lastTick + 1));
-    doSetPartName(part, calculatedPartName(part));
+    doSetPartName(part, formatPartName(part));
     apply();
 
     ChangedNotifier<Instrument>* notifier = partNotifier(partId);
@@ -555,7 +591,7 @@ void NotationParts::replaceInstrument(const QString& partId, const QString& inst
 
     startEdit();
     part->setInstrument(convertedInstrument(newInstrument), Ms::Fraction::fromTicks(oldInstrumentInfo.tick));
-    doSetPartName(part, calculatedPartName(part));
+    doSetPartName(part, formatPartName(part));
     apply();
 
     ChangedNotifier<Instrument>* notifier = partNotifier(part->id());
@@ -712,30 +748,15 @@ void NotationParts::moveStaves(const std::vector<int>& stavesIndexes, int toStaf
     m_partsChanged.notify();
 }
 
-Notification NotationParts::canChangeInstrumentsVisibilityChanged() const
+mu::ValCh<bool> NotationParts::canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const
 {
-    return m_canChangeInstrumentsVisibilityChanged;
-}
+    InstrumentKey key{partId, instrumentId};
 
-NotationParts::~NotationParts()
-{
-    delete m_partsNotifier;
-}
-
-bool NotationParts::canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const
-{
-    InstrumentInfo info = instrumentInfo(part(partId), instrumentId);
-
-    if (!info.isValid()) {
-        return false;
+    if (!m_canChangeInstrumentsVisibilityHash.contains(key)) {
+        m_canChangeInstrumentsVisibilityHash[key].val = resolveCanChangeInstrumentVisibility(partId, instrumentId);
     }
 
-    if (!isDoublingInstrument(info.tick)) {
-        return true;
-    }
-
-    const Ms::ChordRest* chord = selectedChord();
-    return chord && chord->part()->id() == partId;
+    return m_canChangeInstrumentsVisibilityHash[key];
 }
 
 std::vector<Part*> NotationParts::availableParts() const
@@ -1183,18 +1204,16 @@ ChangedNotifier<Instrument>* NotationParts::partNotifier(const QString& partId) 
 
 ChangedNotifier<const Staff*>* NotationParts::instrumentNotifier(const QString& instrumentId, const QString& partId) const
 {
-    std::pair<QString, QString> key(instrumentId, partId);
-    if (m_instrumentsNotifiersMap.find(key) != m_instrumentsNotifiersMap.end()) {
-        return m_instrumentsNotifiersMap[key];
+    InstrumentKey key{partId, instrumentId};
+
+    if (!m_instrumentsNotifiersHash.contains(key)) {
+        m_instrumentsNotifiersHash[key] = new ChangedNotifier<const Staff*>();
     }
 
-    ChangedNotifier<const Staff*>* notifier = new ChangedNotifier<const Staff*>();
-    auto value = std::pair<std::pair<QString, QString>, ChangedNotifier<const Staff*>*>(key, notifier);
-    m_instrumentsNotifiersMap.insert(value);
-    return notifier;
+    return m_instrumentsNotifiersHash[key];
 }
 
-QString NotationParts::calculatedPartName(const Part* part) const
+QString NotationParts::formatPartName(const Part* part) const
 {
     QStringList instrumentsNames;
     for (auto it = part->instruments()->cbegin(); it != part->instruments()->cend(); ++it) {

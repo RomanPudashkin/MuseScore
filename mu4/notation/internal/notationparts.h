@@ -34,7 +34,7 @@ public:
     async::NotifyList<instruments::Instrument> instrumentList(const QString& partId) const override;
     async::NotifyList<const Staff*> staffList(const QString& partId, const QString& instrumentId) const override;
 
-    bool canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const override;
+    ValCh<bool> canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const override;
 
     void setInstruments(const instruments::InstrumentList& instruments) override;
     void setPartVisible(const QString& partId, bool visible) override;
@@ -57,14 +57,13 @@ public:
                          const QString& toInstrumentId,InsertMode mode = Before) override;
     void moveStaves(const std::vector<int>& stavesIndexes, int toStaffIndex, InsertMode mode = Before) override;
 
-    void appendInstrument(const QString& partId, const instruments::Instrument& instrument) override;
+    void appendDoublingInstrument(const QString& partId, const instruments::Instrument& instrument) override;
     void appendStaff(const QString& partId, const QString& instrumentId) override;
     void appendLinkedStaff(int originStaffIndex) override;
 
     void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) override;
 
     async::Notification partsChanged() const override;
-    async::Notification canChangeInstrumentsVisibilityChanged() const override;
 
 private:
     ~NotationParts() override;
@@ -82,6 +81,22 @@ private:
         bool isValid() const { return instrument != nullptr; }
     };
 
+    struct InstrumentKey
+    {
+        QString partId;
+        QString instrumentId;
+
+        bool operator==(const InstrumentKey& key) const
+        {
+            return partId == key.partId && instrumentId == key.instrumentId;
+        }
+
+        friend uint qHash(const InstrumentKey& key)
+        {
+            return qHash(QString(key.partId + key.instrumentId));
+        }
+    };
+
     Ms::Score* score() const;
     Ms::MasterScore* masterScore() const;
 
@@ -89,10 +104,9 @@ private:
     void apply();
 
     Ms::ChordRest* selectedChord() const;
-
-    bool isDoublingInstrument(int ticks) const;
-    bool isInstrumentAssignedToChord(const QString& partId, const QString& instrumentId) const;
     void updateCanChangeInstrumentsVisibility();
+    bool resolveCanChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const;
+    bool needAssignInstrumentToChord(const QString& partId, const QString& instrumentId) const;
     void assignIstrumentToSelectedChord(Ms::Instrument* instrument);
 
     void doMovePart(const QString& partId, const QString& toPartId, InsertMode mode = Before);
@@ -142,16 +156,15 @@ private:
     async::ChangedNotifier<instruments::Instrument>* partNotifier(const QString& partId) const;
     async::ChangedNotifier<const Staff*>* instrumentNotifier(const QString& instrumentId, const QString& partId) const;
 
-    QString calculatedPartName(const Part* part) const;
+    QString formatPartName(const Part* part) const;
 
     IGetScore* m_getScore = nullptr;
-
     async::Notification m_partsChanged;
-    async::Notification m_canChangeInstrumentsVisibilityChanged;
 
     mutable async::ChangedNotifier<const Part*>* m_partsNotifier = nullptr;
     mutable std::map<QString, async::ChangedNotifier<instruments::Instrument>*> m_partsNotifiersMap;
-    mutable std::map<std::pair<QString, QString>, async::ChangedNotifier<const Staff*>*> m_instrumentsNotifiersMap;
+    mutable QHash<InstrumentKey, async::ChangedNotifier<const Staff*>*> m_instrumentsNotifiersHash;
+    mutable QHash<InstrumentKey, ValCh<bool>> m_canChangeInstrumentsVisibilityHash;
 };
 }
 }

@@ -24,6 +24,7 @@
 #include "async/notification.h"
 #include "async/channel.h"
 #include "async/notifylist.h"
+#include "retval.h"
 
 namespace mu {
 namespace notation {
@@ -36,7 +37,7 @@ public:
     virtual async::NotifyList<instruments::Instrument> instrumentList(const QString& partId) const = 0;
     virtual async::NotifyList<const Staff*> staffList(const QString& partId, const QString& instrumentId) const = 0;
 
-    virtual bool canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const = 0;
+    virtual ValCh<bool> canChangeInstrumentVisibility(const QString& partId, const QString& instrumentId) const = 0;
 
     virtual void setInstruments(const instruments::InstrumentList& instruments) = 0;
     virtual void setPartVisible(const QString& partId, bool visible) = 0;
@@ -64,14 +65,13 @@ public:
                                  const QString& toInstrumentId, InsertMode mode = Before) = 0;
     virtual void moveStaves(const std::vector<int>& stavesIndexes, int toStaffIndex, InsertMode mode = Before) = 0;
 
-    virtual void appendInstrument(const QString& partId, const instruments::Instrument& instrument) = 0;
+    virtual void appendDoublingInstrument(const QString& partId, const instruments::Instrument& instrument) = 0;
     virtual void appendStaff(const QString& partId, const QString& instrumentId) = 0;
     virtual void appendLinkedStaff(int originStaffIndex) = 0;
 
     virtual void replaceInstrument(const QString& partId, const QString& instrumentId, const instruments::Instrument& newInstrument) = 0;
 
     virtual async::Notification partsChanged() const = 0;
-    virtual async::Notification canChangeInstrumentsVisibilityChanged() const = 0;
 };
 }
 }
