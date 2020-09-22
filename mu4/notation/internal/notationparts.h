@@ -67,7 +67,7 @@ public:
     async::Notification canChangeInstrumentsVisibilityChanged() const override;
 
 private:
-    ~NotationParts();
+    ~NotationParts() override;
 
     struct InstrumentInfo
     {

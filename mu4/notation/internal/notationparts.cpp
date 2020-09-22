@@ -82,7 +82,6 @@ NotifyList<Instrument> NotationParts::instrumentList(const QString& partId) cons
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return NotifyList<Instrument>();
     }
 
@@ -102,7 +101,6 @@ NotifyList<const Staff*> NotationParts::staffList(const QString& partId, const Q
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return NotifyList<const Staff*>();
     }
 
@@ -166,7 +164,6 @@ void NotationParts::setPartVisible(const QString& partId, bool visible)
     if (!part) {
         part = this->part(partId, masterScore());
         if (!part) {
-            LOGW() << "Part not found" << partId;
             return;
         }
 
@@ -187,7 +184,6 @@ void NotationParts::setPartName(const QString& partId, const QString& name)
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return;
     }
 
@@ -203,7 +199,6 @@ void NotationParts::setInstrumentVisible(const QString& partId, const QString& i
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return;
     }
 
@@ -275,8 +270,9 @@ void NotationParts::assignIstrumentToSelectedChord(Ms::Instrument* instrument)
     }
 
     startEdit();
-    chord->part()->removeInstrument(instrument->instrumentId());
-    chord->part()->setInstrument(instrument, chord->tick());
+    Part* part = chord->part();
+    part->removeInstrument(instrument->instrumentId());
+    part->setInstrument(instrument, chord->tick());
 
     auto instrumentChange = new Ms::InstrumentChange(*instrument, score());
     instrumentChange->setInit(true);
@@ -302,13 +298,9 @@ void NotationParts::doMovePart(const QString& partId, const QString& toPartId, I
 
     bool partIsBefore = score()->staffIdx(part) < score()->staffIdx(toPart);
     QList<Staff*> staves = *part->staves();
-    int currentStaffIndex = partIsBefore ? score()->staffIdx(part) + part->nstaves() : 0;
+    int newStaffIndex = partIsBefore ? staves.size() : 0;
 
     score()->undoRemovePart(part);
-
-    if (partIsBefore) {
-        part->staves()->clear();
-    }
 
     int toPartIndex = score()->parts().indexOf(toPart);
     int newPartIndex = mode == Before ? toPartIndex : toPartIndex + 1;
@@ -316,9 +308,9 @@ void NotationParts::doMovePart(const QString& partId, const QString& toPartId, I
 
     for (Staff* staff: staves) {
         Staff* movedStaff = staff->clone();
-        score()->undoInsertStaff(movedStaff, currentStaffIndex);
+        score()->undoInsertStaff(movedStaff, newStaffIndex);
         Ms::Excerpt::cloneStaff(staff, movedStaff);
-        currentStaffIndex++;
+        newStaffIndex++;
     }
 
     for (Staff* staff: staves) {
@@ -330,7 +322,6 @@ void NotationParts::setInstrumentName(const QString& partId, const QString& inst
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return;
     }
 
@@ -353,7 +344,6 @@ void NotationParts::setInstrumentAbbreviature(const QString& partId, const QStri
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return;
     }
 
@@ -505,7 +495,6 @@ void NotationParts::appendStaff(const QString& partId, const QString& instrument
 {
     Part* part = this->part(partId);
     if (!part) {
-        LOGW() << "Part not found" << partId;
         return;
     }
 
@@ -569,8 +558,8 @@ void NotationParts::replaceInstrument(const QString& partId, const QString& inst
     doSetPartName(part, calculatedPartName(part));
     apply();
 
-    ChangedNotifier<Instrument>* instrumentNotifier = partNotifier(part->id());
-    instrumentNotifier->itemReplaced(convertedInstrument(oldInstrumentInfo.instrument, part), newInstrument);
+    ChangedNotifier<Instrument>* notifier = partNotifier(part->id());
+    notifier->itemReplaced(convertedInstrument(oldInstrumentInfo.instrument, part), newInstrument);
 
     m_partsNotifier->itemChanged(part);
     m_partsChanged.notify();
@@ -655,11 +644,6 @@ void NotationParts::doSetPartName(Part* part, const QString& name)
 
 void NotationParts::moveParts(const std::vector<QString>& partIds, const QString& toPartId, InsertMode mode)
 {
-    Part* toPart = this->part(toPartId);
-    if (!toPart) {
-        return;
-    }
-
     startEdit();
 
     for (const QString& partId: partIds) {
@@ -821,6 +805,7 @@ Part* NotationParts::part(const QString& partId, const Ms::Score* score) const
         }
     }
 
+    LOGW() << QString("Part %1 not found").arg(partId);
     return nullptr;
 }
 
