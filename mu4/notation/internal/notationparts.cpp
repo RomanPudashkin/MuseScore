@@ -687,17 +687,12 @@ void NotationParts::moveStaves(const std::vector<int>& stavesIndexes, int toStaf
         return;
     }
 
-    Staff* firstStaff = score()->staff(stavesIndexes.front());
-    Ms::Instrument* fromInstrument = instrumentInfo(firstStaff).instrument;
-    Ms::Instrument* toInstrument = instrumentInfo(firstStaff).instrument;
-    int newStaffIndex = (mode == Before ? toStaffIndex : toStaffIndex + 1);
-
-    Part* fromPart = firstStaff->part();
+    std::vector<Staff*> staves = this->staves(stavesIndexes);
     Part* toPart = score()->staff(toStaffIndex)->part();
+    int newStaffIndex = (mode == Before ? toStaffIndex : toStaffIndex + 1);
+    newStaffIndex -= score()->staffIdx(toPart); // NOTE: convert to local part's staff index
 
     startEdit();
-    std::vector<Staff*> staves = this->staves(stavesIndexes);
-
     for (Staff* staff: staves) {
         Staff* movedStaff = staff->clone();
         score()->undoInsertStaff(movedStaff, newStaffIndex);
@@ -708,18 +703,11 @@ void NotationParts::moveStaves(const std::vector<int>& stavesIndexes, int toStaf
     for (Staff* staff: staves) {
         score()->undoRemoveStaff(staff);
     }
-
     apply();
 
     for (const Staff* staff: *toPart->staves()) {
         notifyAboutStaffChanged(staff->idx());
     }
-
-    ChangedNotifier<Instrument>* fromInstrumentNotifier = partNotifier(fromPart->id());
-    fromInstrumentNotifier->itemChanged(convertedInstrument(fromInstrument, fromPart));
-
-    ChangedNotifier<Instrument>* toInstrumentNotifier = partNotifier(toPart->id());
-    toInstrumentNotifier->itemChanged(convertedInstrument(toInstrument, toPart));
 
     m_partsChanged.notify();
 }
