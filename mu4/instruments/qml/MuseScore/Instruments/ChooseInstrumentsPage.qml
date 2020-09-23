@@ -52,7 +52,7 @@ Rectangle {
             Connections {
                 target: instrumentsModel
 
-                onSelectedFamilyChanged: {
+                function onSelectedFamilyChanged(family) {
                     familyView.setFamily(family)
                 }
             }
@@ -113,7 +113,7 @@ Rectangle {
 
         Column {
             Layout.preferredWidth: 30
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
 
             spacing: 12
 

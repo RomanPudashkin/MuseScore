@@ -15,7 +15,7 @@ RadioDelegate {
 
     property int orientation: Qt.Vertical
 
-    height: 48
+    implicitHeight: 48
 
     background: Item {
         anchors.fill: parent
@@ -92,37 +92,43 @@ RadioDelegate {
         }
     }
 
-    contentItem: RowLayout {
-        anchors.left: parent.left
-        anchors.leftMargin: !Boolean(iconComponent) ? 10 : 0
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
+    contentItem: Item {
+        anchors.fill: parent
 
-        spacing: 0
-
-        Item {
-            Layout.preferredWidth: 76
-            Layout.fillHeight: true
-
-            visible: Boolean(iconComponent)
-
-            Loader {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                sourceComponent: iconComponent
-            }
-        }
-
-        StyledTextLabel {
-            id: textLabel
+        RowLayout {
+            anchors.left: parent.left
+            anchors.leftMargin: !Boolean(iconComponent) ? 12 : 0
             anchors.verticalCenter: parent.verticalCenter
-            Layout.fillWidth: true
 
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: titlePixelSize
-            text: title
+            spacing: 0
+
+            onImplicitWidthChanged: {
+                root.implicitWidth = implicitWidth + 24
+            }
+
+            Item {
+                Layout.preferredWidth: 76
+                Layout.fillHeight: true
+
+                visible: Boolean(iconComponent)
+
+                Loader {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    sourceComponent: iconComponent
+                }
+            }
+
+            StyledTextLabel {
+                id: textLabel
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                Layout.preferredWidth: implicitWidth
+
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: titlePixelSize
+                text: title
+            }
         }
     }
 

@@ -66,14 +66,10 @@ Item {
 
         ChooseInstrumentsPage {
             id: instrumentsPage
-
-            anchors.fill: parent
         }
 
         ChooseTemplatePage {
             id: templatePage
-
-            anchors.fill: parent
         }
     }
 }
