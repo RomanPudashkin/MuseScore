@@ -41,22 +41,22 @@ public:
     virtual async::NotifyList<instruments::Instrument> instrumentList(const ID& partId) const = 0;
     virtual async::NotifyList<const Staff*> staffList(const ID& partId, const ID& instrumentId) const = 0;
 
-    virtual ValCh<bool> canChangeInstrumentVisibility(const ID& partId, const ID& instrumentId) const = 0;
+    virtual ValCh<bool> canChangeInstrumentVisibility(const ID& instrumentId, const ID& fromPartId) const = 0;
 
     virtual void setInstruments(const instruments::InstrumentList& instruments) = 0;
     virtual void setPartVisible(const ID& partId, bool visible) = 0;
-    virtual void setInstrumentVisible(const ID& partId, const ID& instrumentId, bool visible) = 0;
+    virtual void setInstrumentVisible(const ID& instrumentId, const ID& fromPartId, bool visible) = 0;
     virtual void setStaffVisible(const ID& staffId, bool visible) = 0;
     virtual void setVoiceVisible(const ID& staffId, int voiceIndex, bool visible) = 0;
     virtual void setPartName(const ID& partId, const QString& name) = 0;
-    virtual void setInstrumentName(const ID& partId, const ID& instrumentId, const QString& name) = 0;
-    virtual void setInstrumentAbbreviature(const ID& partId, const ID& instrumentId, const QString& abbreviature) = 0;
+    virtual void setInstrumentName(const ID& instrumentId, const ID& fromPartId, const QString& name) = 0;
+    virtual void setInstrumentAbbreviature(const ID& instrumentId, const ID& fromPartId, const QString& abbreviature) = 0;
     virtual void setStaffType(const ID& staffId, StaffType type) = 0;
-    virtual void setCutawayEnabled(const ID& staffId, bool value) = 0;
-    virtual void setSmallStaff(const ID& staffId, bool value) = 0;
+    virtual void setCutawayEnabled(const ID& staffId, bool enabled) = 0;
+    virtual void setSmallStaff(const ID& staffId, bool smallStaff) = 0;
 
     virtual void removeParts(const IDList& partsIds) = 0;
-    virtual void removeInstruments(const ID& partId, const IDList& instrumentsIds) = 0;
+    virtual void removeInstruments(const IDList& instrumentsIds, const ID& fromPartId) = 0;
     virtual void removeStaves(const IDList& stavesIds) = 0;
 
     enum InsertMode {
@@ -64,16 +64,16 @@ public:
         After
     };
 
-    virtual void moveParts(const IDList& partIds, const ID& toPartId, InsertMode mode = Before) = 0;
-    virtual void moveInstruments(const IDList& instrumentIds, const ID& fromPartId, const ID& toPartId,
-                                 const ID& toInstrumentId, InsertMode mode = Before) = 0;
-    virtual void moveStaves(const IDList& stavesIds, const ID& toStaffId, InsertMode mode = Before) = 0;
+    virtual void moveParts(const IDList& sourcePartsIds, const ID& destinationPartId, InsertMode mode = Before) = 0;
+    virtual void moveInstruments(const IDList& sourceInstrumentsIds, const ID& sourcePartId, const ID& destinationPartId,
+                                 const ID& destinationInstrumentId, InsertMode mode = Before) = 0;
+    virtual void moveStaves(const IDList& sourceStavesIds, const ID& destinationStaffId, InsertMode mode = Before) = 0;
 
-    virtual void appendDoublingInstrument(const ID& partId, const instruments::Instrument& instrument) = 0;
-    virtual void appendStaff(const ID& partId, const ID& instrumentId) = 0;
+    virtual void appendDoublingInstrument(const instruments::Instrument& instrument, const ID& destinationPartId) = 0;
+    virtual void appendStaff(const ID& destinationPartId) = 0;
     virtual void appendLinkedStaff(const ID& originStaffId) = 0;
 
-    virtual void replaceInstrument(const ID& partId, const ID& instrumentId, const instruments::Instrument& newInstrument) = 0;
+    virtual void replaceInstrument(const ID& instrumentId, const ID& fromPartId, const instruments::Instrument& newInstrument) = 0;
 
     virtual async::Notification partsChanged() const = 0;
 };
