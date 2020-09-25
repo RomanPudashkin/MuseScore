@@ -128,20 +128,21 @@ private:
     std::vector<Part*> excerptParts(const Ms::Score* score) const;
 
     void appendPart(Part* part);
-    void addStaves(Part* part, const instruments::Instrument& instrument, int& globalStaffIndex);
+    void appendStaves(Part* part, const instruments::Instrument& instrument);
 
     void insertInstrument(Part* part, Ms::Instrument* instrumentInfo, const std::vector<const Staff*>& staves, const ID& toInstrumentId,
                           InsertMode mode);
 
-    void removeUnselectedInstruments(const IDList& selectedInstrumentIds);
-    IDList missingInstrumentIds(const IDList& selectedInstrumentIds) const;
+    void removeMissingInstruments(const IDList& selectedInstrumentIds);
+    IDList allInstrumentsIds() const;
+    int lastStaffIndex() const;
 
     void removeEmptyExcerpts();
 
     Ms::Instrument convertedInstrument(const instruments::Instrument& instrument) const;
     instruments::Instrument convertedInstrument(const Ms::Instrument* museScoreInstrument, const Part* part) const;
 
-    bool isInstrumentVisible(const Part* part, const ID& instrumentId) const;
+    bool isInstrumentVisible(const ID& instrumentId, const Part* fromPart) const;
 
     void initStaff(Staff* staff, const instruments::Instrument& instrument, const Ms::StaffType* staffType, int cleffIndex);
 

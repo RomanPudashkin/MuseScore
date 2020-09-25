@@ -30,7 +30,7 @@ namespace mu {
 namespace notation {
 
 using ID = QString;
-using IDList = std::vector<ID>;
+using IDList = QList<ID>;
 
 class INotationParts
 {

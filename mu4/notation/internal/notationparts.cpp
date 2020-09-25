@@ -126,29 +126,27 @@ void NotationParts::setInstruments(const InstrumentList& instruments)
 {
     IDList instrumentIds;
     for (const Instrument& instrument: instruments) {
-        instrumentIds.push_back(instrument.id);
+        instrumentIds << instrument.id;
     }
 
     startEdit();
-    removeUnselectedInstruments(instrumentIds);
+    removeMissingInstruments(instrumentIds);
 
-    IDList missingInstrumentIds = this->missingInstrumentIds(instrumentIds);
+    IDList existedInstrumentIds = allInstrumentsIds();
 
-    int lastGlobalStaffIndex = !score()->staves().empty() ? score()->staves().last()->idx() : 0;
     for (const Instrument& instrument: instruments) {
-        bool instrumentIsExists = std::find(missingInstrumentIds.begin(), missingInstrumentIds.end(),
-                                            instrument.id) == missingInstrumentIds.end();
-        if (instrumentIsExists) {
+        bool isInstrumentExist = !existedInstrumentIds.isEmpty() && existedInstrumentIds.contains(instrument.id);
+        if (isInstrumentExist) {
             continue;
         }
 
         Part* part = new Part(score());
 
-        part->setPartName(instrument.trackName);
+        part->setPartName(instrument.name);
         part->setInstrument(convertedInstrument(instrument));
 
-        score()->undo(new Ms::InsertPart(part, lastGlobalStaffIndex));
-        addStaves(part, instrument, lastGlobalStaffIndex);
+        score()->undo(new Ms::InsertPart(part, lastStaffIndex()));
+        appendStaves(part, instrument);
     }
 
     if (score()->measures()->empty()) {
@@ -905,19 +903,20 @@ void NotationParts::appendPart(Part* part)
     score()->appendPart(part);
 }
 
-void NotationParts::addStaves(Part* part, const Instrument& instrument, int& globalStaffIndex)
-{
-    for (int i = 0; i < instrument.staves; i++) {
+void NotationParts::appendStaves(Part* part, const Instrument& instrument)
+{ 
+    for (int staffIndex = 0; staffIndex < instrument.staves; ++staffIndex) {
+        int lastStaffIndex = this->lastStaffIndex();
+
         Staff* staff = new Staff(score());
         staff->setPart(part);
-        initStaff(staff, instrument, Ms::StaffType::preset(StaffType(0)), i);
+        initStaff(staff, instrument, Ms::StaffType::preset(StaffType::STANDARD), staffIndex);
 
-        if (globalStaffIndex > 0) {
-            staff->setBarLineSpan(score()->staff(globalStaffIndex - 1)->barLineSpan());
+        if (lastStaffIndex > 0) {
+            staff->setBarLineSpan(score()->staff(lastStaffIndex - 1)->barLineSpan());
         }
 
-        score()->undoInsertStaff(staff, i);
-        globalStaffIndex++;
+        score()->undoInsertStaff(staff, staffIndex);
     }
 }
 
@@ -952,57 +951,51 @@ void NotationParts::insertInstrument(Part* part, Ms::Instrument* instrument, con
     }
 }
 
-void NotationParts::removeUnselectedInstruments(const IDList& selectedInstrumentIds)
+void NotationParts::removeMissingInstruments(const IDList& newInstrumentIds)
 {
-    NotifyList<const Part*> parts = partList();
-    if (parts.empty()) {
-        return;
-    }
-
     IDList partsToRemove;
-    for (const Part* part: parts) {
+
+    for (const Part* part: partList()) {
+        auto instruments = part->instruments();
         IDList instrumentsToRemove;
-        auto instrumentList = part->instruments();
-        for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
-            bool existsInSelectedInstruments = std::find(selectedInstrumentIds.begin(),
-                                                         selectedInstrumentIds.end(),
-                                                         it->second->instrumentId()) != selectedInstrumentIds.end();
-            if (!existsInSelectedInstruments) {
-                instrumentsToRemove.push_back(it->second->instrumentId());
+
+        for (auto it = instruments->cbegin(); it != instruments->cend(); ++it) {
+            ID instrumentId = it->second->instrumentId();
+
+            if (!newInstrumentIds.contains(instrumentId)) {
+                instrumentsToRemove << instrumentId;
             }
         }
 
-        bool removeAllInstruments = instrumentsToRemove.size() == part->instruments()->size();
+        bool removeAllInstruments = instrumentsToRemove.size() == static_cast<int>(instruments->size());
         if (removeAllInstruments) {
-            partsToRemove.push_back(part->id());
+            partsToRemove << part->id();
         } else {
             doRemoveInstruments(instrumentsToRemove, this->part(part->id()));
         }
     }
 
-    if (!partsToRemove.empty()) {
-        doRemoveParts(partsToRemove);
-    }
+    doRemoveParts(partsToRemove);
 }
 
-IDList NotationParts::missingInstrumentIds(const IDList& selectedInstrumentIds) const
+IDList NotationParts::allInstrumentsIds() const
 {
-    NotifyList<const Part*> parts = partList();
-    if (parts.empty()) {
-        return {};
-    }
+    IDList result;
 
-    IDList missingInstrumentIds = selectedInstrumentIds;
-
-    for (const Part* part: parts) {
+    for (const Part* part: partList()) {
         auto instrumentList = part->instruments();
-        for (auto it = instrumentList->begin(); it != instrumentList->end(); it++) {
-            missingInstrumentIds.erase(std::remove(missingInstrumentIds.begin(), missingInstrumentIds.end(),
-                                                   it->second->instrumentId()), missingInstrumentIds.end());
+
+        for (auto it = instrumentList->cbegin(); it != instrumentList->cend(); ++it) {
+            result << it->second->instrumentId();
         }
     }
 
-    return missingInstrumentIds;
+    return result;
+}
+
+int NotationParts::lastStaffIndex() const
+{
+    return !score()->staves().isEmpty() ? score()->staves().last()->idx() : 0;
 }
 
 void NotationParts::removeEmptyExcerpts()
@@ -1028,7 +1021,7 @@ Ms::Instrument NotationParts::convertedInstrument(const Instrument& instrument) 
     for (Ms::StaffName sn: instrument.shortNames) {
         museScoreInstrument.addShortName(StaffName(sn.name(), sn.pos()));
     }
-    museScoreInstrument.setTrackName(instrument.trackName);
+    museScoreInstrument.setTrackName(instrument.name);
     museScoreInstrument.setTranspose(instrument.transpose);
     museScoreInstrument.setInstrumentId(instrument.id);
     if (instrument.useDrumset) {
@@ -1058,7 +1051,7 @@ Instrument NotationParts::convertedInstrument(const Ms::Instrument* museScoreIns
     for (Ms::StaffName sn: museScoreInstrument->shortNames()) {
         instrument.shortNames << StaffName(sn.name(), sn.pos());
     }
-    instrument.trackName = museScoreInstrument->trackName();
+    instrument.name = museScoreInstrument->trackName();
     instrument.transpose = museScoreInstrument->transpose();
     instrument.id = museScoreInstrument->instrumentId();
     instrument.useDrumset = museScoreInstrument->useDrumset();
@@ -1073,14 +1066,14 @@ Instrument NotationParts::convertedInstrument(const Ms::Instrument* museScoreIns
     }
     instrument.stringData = *museScoreInstrument->stringData();
     instrument.singleNoteDynamics = museScoreInstrument->singleNoteDynamics();
-    instrument.visible = isInstrumentVisible(part, instrument.id);
+    instrument.visible = isInstrumentVisible(instrument.id, part);
     instrument.isDoubling = part->instrument()->instrumentId() != instrument.id;
     return instrument;
 }
 
-bool NotationParts::isInstrumentVisible(const Part* part, const ID& instrumentId) const
+bool NotationParts::isInstrumentVisible(const ID& instrumentId, const Part* fromPart) const
 {
-    for (const Staff* staff: staves(part, instrumentId)) {
+    for (const Staff* staff: staves(fromPart, instrumentId)) {
         if (!staff->invisible()) {
             return true;
         }
