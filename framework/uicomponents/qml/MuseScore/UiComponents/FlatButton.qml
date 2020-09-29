@@ -85,8 +85,6 @@ FocusableItem {
                 target: backgroundRect
                 color: pressedStateColor
                 opacity: ui.theme.buttonOpacityHit
-                border.color: ui.theme.strokeColor
-                border.width: 1
             }
         },
 
@@ -98,8 +96,6 @@ FocusableItem {
                 target: backgroundRect
                 color: hoveredStateColor
                 opacity: ui.theme.buttonOpacityHover
-                border.color: ui.theme.strokeColor
-                border.width: 1
             }
         }
     ]
