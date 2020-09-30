@@ -10,6 +10,13 @@ Rectangle {
 
     color: ui.theme.strokeColor
 
+    QtObject {
+        id: privateProperties
+        function parentIsLayout() {
+            return root.parent instanceof ColumnLayout || root.parent instanceof RowLayout
+        }
+    }
+
     states: [
         State {
             name: "HORIZONTAL"
@@ -18,7 +25,17 @@ Rectangle {
             PropertyChanges {
                 target: root
                 height: 1
-                Layout.fillWidth: true
+            }
+
+            StateChangeScript {
+                script: {
+                    if (privateProperties.parentIsLayout()) {
+                        root.Layout.fillWidth = true
+                    } else {
+                        root.anchors.left = root.parent.left
+                        root.anchors.right = root.parent.right
+                    }
+                }
             }
         },
 
@@ -29,7 +46,17 @@ Rectangle {
             PropertyChanges {
                 target: root
                 width: 1
-                Layout.fillHeight: true
+            }
+
+            StateChangeScript {
+                script: {
+                    if (privateProperties.parentIsLayout()) {
+                        root.Layout.fillHeight = true
+                    } else {
+                        root.anchors.top = root.parent.top
+                        root.anchors.bottom = root.parent.bottom
+                    }
+                }
             }
         }
     ]
