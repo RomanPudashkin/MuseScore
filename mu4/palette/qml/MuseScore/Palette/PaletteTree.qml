@@ -667,7 +667,8 @@ ListView {
                     modelIndex: control.modelIndex
 
                     onEditPalettePropertiesRequested: {
-                        paletteSettings.open()
+                        //paletteProperties.open()
+                        paletteCellProperties.open()
                     }
 
                     MouseArea {
@@ -719,7 +720,17 @@ ListView {
                 }
 
                 PalettePropertiesPopup {
-                    id: paletteSettings
+                    id: paletteProperties
+
+                    width: parent.width
+
+                    y: paletteHeader.expanded ? mainPaletteContainer.y + mainPaletteContainer.height :
+                                                paletteHeader.y + paletteHeader.height
+                    arrowX: parent.width / 2
+                }
+
+                PaletteCellPropertiesPopup {
+                    id: paletteCellProperties
 
                     width: parent.width
 

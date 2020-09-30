@@ -6,11 +6,10 @@ import MuseScore.UiComponents 1.0
 StyledPopup {
     id: root
 
-    property string paletteName: ""
-    property bool showGrid: false
-    property int cellWidth: 0
-    property int cellHeight: 0
-    property real elementOffset: 0
+    property string elementName: ""
+    property bool drawStaff: false
+    property real offsetByX: 0
+    property real offsetByY: 0
     property real scaleFactor: 0
 
     height: contentColumn.implicitHeight + topPadding + bottomPadding
@@ -30,19 +29,17 @@ StyledPopup {
         }
 
         TextInputField {
-            id: paletteNameField
-
-            currentText: root.paletteName
+            currentText: root.elementName
 
             onCurrentTextEdited: {
-                root.paletteName = newTextValue
+                root.elementName = newTextValue
             }
         }
 
         SeparatorLine {}
 
         StyledTextLabel {
-            text: qsTrc("palette", "Cell size")
+            text: qsTrc("palette", "Content offset")
             font.bold: true
         }
 
@@ -56,26 +53,23 @@ StyledPopup {
                 id: repeater
 
                 model: [
-                    { title: qsTrc("palette", "Width"), value: root.cellWidth, incrementStep: 1 },
-                    { title: qsTrc("palette", "Height"), value: root.cellHeight, incrementStep: 1 },
-                    { title: qsTrc("palette", "Element offset"), value: root.elementOffset, measureUnit: qsTrc("palette", "sp"), incrementStep: 0.1 },
-                    { title: qsTrc("palette", "Scale"), value: root.scaleFactor, incrementStep: 0.1 }
+                    { title: qsTrc("palette", "X"), value: root.offsetByX, incrementStep: 1, measureUnit: qsTrc("palette", "sp") },
+                    { title: qsTrc("palette", "Y"), value: root.offsetByY, incrementStep: 1, measureUnit: qsTrc("palette", "sp") },
+                    { title: qsTrc("palette", "Content scale"), value: root.scaleFactor, incrementStep: 0.1 }
                 ]
 
                 function setValue(index, value) {
                     if (index === 0) {
-                        root.cellWidth = value
+                        root.offsetByX = value
                     } else if (index === 1) {
-                        root.cellHeight = value
+                        root.offsetByY = value
                     } else if (index === 2) {
-                        root.elementOffset = value
-                    } else if (index === 3) {
                         root.scaleFactor = value
                     }
                 }
 
                 Column {
-                    width: contentColumn.width / 2 - 8
+                    width: parent.width / 2 - 8
 
                     spacing: 8
 
@@ -101,12 +95,12 @@ StyledPopup {
         }
 
         CheckBox {
-            text: qsTrc("palette", "Show grid")
+            text: qsTrc("palette", "Draw stave")
 
-            checked: root.showGrid
+            checked: root.drawStaff
 
             onClicked: {
-                root.showGrid = !checked
+                root.drawStaff = !checked
             }
         }
 
