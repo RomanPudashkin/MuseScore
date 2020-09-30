@@ -538,6 +538,8 @@ void UserPaletteController::editPaletteProperties(const QModelIndex& index)
     if (!p) {
         return;
     }
+
+    interactive()->open("musescore://palette/properties");
 }
 
 //---------------------------------------------------------
@@ -555,6 +557,8 @@ void UserPaletteController::editCellProperties(const QModelIndex& index)
     if (!cell) {
         return;
     }
+
+    interactive()->open("musescore://palette/cellproperties");
 }
 
 //---------------------------------------------------------
