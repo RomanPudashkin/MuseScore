@@ -36,6 +36,8 @@
 #include "ui/imainwindow.h"
 #include "ui/internal/uiengine.h"
 
+using namespace mu::palette;
+
 namespace Ms {
 static QMainWindow* qMainWindow()
 {
@@ -118,11 +120,40 @@ static std::unique_ptr<T> readMimeData(const QByteArray& data, const QString& ta
 //---------------------------------------------------------
 //   PaletteCell::PaletteCell
 //---------------------------------------------------------
+PaletteCell::PaletteCell()
+{
+    id = makeId();
+
+    updateCell();
+}
 
 PaletteCell::PaletteCell(std::unique_ptr<Element> e, const QString& _name, QString _tag, qreal _mag)
     : element(std::move(e)), name(_name), tag(_tag), mag(_mag)
 {
+    id = makeId();
+
     drawStaff = needsStaff(element.get());
+
+    updateCell();
+}
+
+void PaletteCell::updateCell()
+{
+    configuration()->paletteCellConfig(id).ch.onReceive(this, [this](const IPaletteConfiguration::PaletteCellConfig& config) {
+        name = config.name;
+        mag = config.scale;
+        drawStaff = config.drawStaff;
+        xoffset = config.xOffset;
+        yoffset = config.yOffset;
+
+        paletteCellChanged.notify();
+    });
+}
+
+QString PaletteCell::makeId()
+{
+    static int id = 0;
+    return QString::number(++id);
 }
 
 //---------------------------------------------------------
@@ -379,6 +410,29 @@ QByteArray PaletteCell::mimeData() const
 std::unique_ptr<PalettePanel> PalettePanel::readMimeData(const QByteArray& data)
 {
     return Ms::readMimeData<PalettePanel>(data, "Palette");
+}
+
+PalettePanel::PalettePanel(Type t)
+    : _type(t)
+{
+    static int id = 0;
+    _id = QString::number(++id);
+
+    mu::ValCh<IPaletteConfiguration::PaletteConfig> configCh = configuration()->paletteConfig(_id);
+    configCh.ch.onReceive(this, [this](const IPaletteConfiguration::PaletteConfig& config) {
+        setName(config.name);
+        setGrid(config.size);
+        setMag(config.scale);
+        setYOffset(config.elementOffset);
+        setDrawGrid(config.showGrid);
+
+        m_palettePanelChanged.notify();
+    });
+}
+
+QString PalettePanel::id() const
+{
+    return _id;
 }
 
 //---------------------------------------------------------
@@ -926,6 +980,11 @@ void PalettePanel::retranslate()
     for (auto& c : cells) {
         c->retranslate();
     }
+}
+
+mu::async::Notification PalettePanel::palettePanelChanged() const
+{
+    return m_palettePanelChanged;
 }
 
 //---------------------------------------------------------

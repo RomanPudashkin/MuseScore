@@ -21,6 +21,7 @@
 
 #include <QFileDialog>
 #include <QStandardItemModel>
+#include <QJsonDocument>
 
 #include "libmscore/keysig.h"
 #include "libmscore/timesig.h"
@@ -31,6 +32,8 @@
 
 #include "io/path.h"
 #include "mu4/commonscene/commonscenetypes.h"
+
+using namespace mu::palette;
 
 namespace Ms {
 //---------------------------------------------------------
@@ -533,13 +536,30 @@ void UserPaletteController::editPaletteProperties(const QModelIndex& index)
         return;
     }
 
-    const QModelIndex srcIndex = convertProxyIndex(index, _userPalette);
-    PalettePanel* p = _userPalette->findPalettePanel(srcIndex);
-    if (!p) {
+    QModelIndex srcIndex = convertProxyIndex(index, _userPalette);
+    PalettePanel* panel = _userPalette->findPalettePanel(srcIndex);
+    if (!panel) {
         return;
     }
 
-    interactive()->open("musescore://palette/properties");
+    panel->palettePanelChanged().onNotify(this, [this, srcIndex]() {
+        _userPalette->itemDataChanged(srcIndex);
+    });
+
+    QVariantMap properties;
+    properties["paletteId"] = panel->id();
+    properties["name"] = panel->translatedName();
+    properties["cellWidth"] = panel->gridSize().width();
+    properties["cellHeight"] = panel->gridSize().height();
+    properties["scale"] = panel->mag();
+    properties["elementOffset"] = panel->yOffset();
+    properties["showGrid"] = panel->drawGrid();
+
+    QJsonDocument document = QJsonDocument::fromVariant(properties);
+    QString uri = QString("musescore://palette/properties?sync=true&properties=%1")
+            .arg(QString(document.toJson()));
+
+    interactive()->open(uri.toStdString());
 }
 
 //---------------------------------------------------------
@@ -552,13 +572,29 @@ void UserPaletteController::editCellProperties(const QModelIndex& index)
         return;
     }
 
-    const QModelIndex srcIndex = convertProxyIndex(index, _userPalette);
+    QModelIndex srcIndex = convertProxyIndex(index, _userPalette);
     PaletteCellPtr cell = _userPalette->findCell(srcIndex);
     if (!cell) {
         return;
     }
 
-    interactive()->open("musescore://palette/cellproperties");
+    cell->paletteCellChanged.onNotify(this, [this, srcIndex]() {
+        _userPalette->itemDataChanged(srcIndex);
+    });
+
+    QVariantMap properties;
+    properties["cellId"] = cell->id;
+    properties["name"] = cell->translatedName();
+    properties["xOffset"] = cell->xoffset;
+    properties["yOffset"] = cell->yoffset;
+    properties["scale"] = cell->mag;
+    properties["drawStaff"] = cell->drawStaff;
+
+    QJsonDocument document = QJsonDocument::fromVariant(properties);
+    QString uri = QString("musescore://palette/cellproperties?sync=true&properties=%1")
+            .arg(QString(document.toJson()));
+
+    interactive()->open(uri.toStdString());
 }
 
 //---------------------------------------------------------
@@ -1048,23 +1084,5 @@ bool PaletteWorkspace::read(XmlReader& e)
     setUserPaletteTree(std::move(tree));
 
     return true;
-}
-
-//---------------------------------------------------------
-//   PaletteWorkspace::needsItemDestructionAccessibilityWorkaround
-///   Checks whether workaround for palette search crash
-///   with NVDA is needed, see issue #298899.
-//---------------------------------------------------------
-
-bool PaletteWorkspace::needsItemDestructionAccessibilityWorkaround() const
-{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
-    // Qt switched to a new accessibility backend since 5.11
-    // and no crashes are reported for 5.12 so presumably
-    // the workaround is not needed since Qt 5.11.
-    return false;
-#else
-    return QAccessible::isActive();
-#endif
 }
 } // namespace Ms
