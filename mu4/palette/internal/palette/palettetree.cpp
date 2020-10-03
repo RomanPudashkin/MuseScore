@@ -1086,10 +1086,12 @@ static void paintPaletteElement(void* data, Element* e)
     QPainter* p = static_cast<QPainter*>(data);
     p->save();
     p->translate(e->pos());   // necessary for drawing child elements
+
     QColor colorBackup = e->color();
-    e->setColor(foregroundColor());
+    e->undoSetColor(foregroundColor());
     e->draw(p);
-    e->setColor(colorBackup);
+    e->undoSetColor(colorBackup);
+
     p->restore();
 }
 
@@ -1197,27 +1199,6 @@ static void paintTag(QPainter& painter, const QRect& rect, QString tag)
 }
 
 //---------------------------------------------------------
-//   elementColor
-//---------------------------------------------------------
-
-static QColor elementColor(Element* el, bool selected)
-{
-    Q_ASSERT(el);
-
-    if (selected) {
-        return QApplication::palette(qMainWindow()).color(QPalette::Normal, QPalette::HighlightedText);
-    }
-
-    if (el->isChord()) {
-        return el->curColor();     // Show voice colors for notes.
-        // This is used in the "drumtools" palette that appears
-        // when entering notes on an unpitched percussion staff.
-    }
-
-    return QApplication::palette(qMainWindow()).color(QPalette::Normal, QPalette::Text);
-}
-
-//---------------------------------------------------------
 //   PaletteCellIconEngine::paintCell
 //---------------------------------------------------------
 
@@ -1256,9 +1237,7 @@ void PaletteCellIconEngine::paintCell(QPainter& p, const QRect& r, bool selected
 
     p.translate(origin);
     p.translate(_cell->xoffset * spatium, _cell->yoffset * spatium);   // additional offset for element only
-
-    QColor color(elementColor(el, selected));
-    p.setPen(QPen(color));
+    p.setPen(QPen(foregroundColor()));
 
     paintScoreElement(p, el, spatium, drawStaff);
 }
