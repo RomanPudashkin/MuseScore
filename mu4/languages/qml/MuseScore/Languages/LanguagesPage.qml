@@ -101,13 +101,14 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         ScrollBar.vertical: StyledScrollBar {
-            parent: flickable.parent
+            parent: view.parent
 
             anchors.top: parent.top
-            anchors.bottom: parent.bottom
+            anchors.bottom: languagePanel.visible ? languagePanel.top : parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: 16
 
+            visible: view.contentHeight > view.height
             z: 1
         }
 
