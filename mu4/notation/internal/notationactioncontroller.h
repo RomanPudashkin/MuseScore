@@ -54,12 +54,21 @@ private:
 
     void cutSelection();
     void copySelection();
-    void pasteSelection();
     void deleteSelection();
     void undo();
     void redo();
     void openPageStyle();
     void openStaffProperties();
+
+    enum class PastingType {
+        Default,
+        Half,
+        Double,
+        Special
+    };
+
+    void pasteSelection(PastingType type);
+    Fraction resolvePastingScale(const INotationInteractionPtr& interaction, PastingType type) const;
 };
 }
 }

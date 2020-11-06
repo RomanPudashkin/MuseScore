@@ -108,7 +108,7 @@ public:
     async::Notification textEditingChanged() const override;
 
     void copySelection() override;
-    void pasteSelection() override;
+    void pasteSelection(const Fraction& scale = Fraction(1, 1)) override;
     void deleteSelection() override;
 
 private:
