@@ -52,6 +52,9 @@ private:
     void moveAction(const actions::ActionName& action);
     void moveText(INotationInteractionPtr interaction, const actions::ActionName& action);
 
+    void cutSelection();
+    void copySelection();
+    void pasteSelection();
     void deleteSelection();
     void undo();
     void redo();
