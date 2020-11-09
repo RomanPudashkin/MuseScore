@@ -109,6 +109,7 @@ public:
 
     void copySelection() override;
     void pasteSelection(const Fraction& scale = Fraction(1, 1)) override;
+    void swapSelection() override;
     void deleteSelection() override;
 
 private:

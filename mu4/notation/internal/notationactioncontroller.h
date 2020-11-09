@@ -55,8 +55,11 @@ private:
     void cutSelection();
     void copySelection();
     void deleteSelection();
+    void swapSelection();
+
     void undo();
     void redo();
+
     void openPageStyle();
     void openStaffProperties();
 
@@ -67,7 +70,7 @@ private:
         Special
     };
 
-    void pasteSelection(PastingType type);
+    void pasteSelection(PastingType type = PastingType::Default);
     Fraction resolvePastingScale(const INotationInteractionPtr& interaction, PastingType type) const;
 };
 }

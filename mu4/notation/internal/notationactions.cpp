@@ -137,13 +137,14 @@ const std::vector<Action> NotationActions::m_actions = {
            ShortcutContext::NotationActive
            ),
     Action("swap",
-           QT_TRANSLATE_NOOP("action", "Swap"),
+           QT_TRANSLATE_NOOP("action", "Swap with Clipboard"),
            ShortcutContext::NotationActive
            ),
     Action("delete",
            QT_TRANSLATE_NOOP("action", "Delete"),
            ShortcutContext::NotationActive,
-           IconCode::Code::DELETE_TANK),
+           IconCode::Code::DELETE_TANK
+           ),
     Action("edit-style",
            QT_TRANSLATE_NOOP("action", "Style"),
            ShortcutContext::NotationActive
