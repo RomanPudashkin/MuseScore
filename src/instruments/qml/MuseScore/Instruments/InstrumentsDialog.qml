@@ -51,8 +51,7 @@ QmlDialog {
                 text: qsTrc("instruments", "Cancel")
 
                 onClicked: {
-                    root.ret = {errcode: 3}
-                    root.hide()
+                    root.reject()
                 }
             }
 

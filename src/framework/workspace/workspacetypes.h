@@ -24,14 +24,14 @@
 #include <map>
 #include "val.h"
 
-namespace mu {
-namespace workspace {
+namespace mu::workspace {
 struct AbstractData
 {
     virtual ~AbstractData() = default;
     std::string tag;
     std::string name;
 };
+
 using AbstractDataPtr = std::shared_ptr<AbstractData>;
 
 //! NOTE Only data associations with framework.
@@ -41,14 +41,15 @@ struct SettingsData : public AbstractData
 {
     std::map<std::string /*key*/, Val> vals;
 };
+
 using SettingsDataPtr = std::shared_ptr<SettingsData>;
 
 struct ToolbarData : public AbstractData
 {
     std::vector<std::string /*action*/> actions;
 };
+
 using ToolbarDataPtr = std::shared_ptr<ToolbarData>;
-}
 
 static constexpr std::string_view DEFAULT_WORKSPACE_NAME("Default");
 }
