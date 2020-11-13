@@ -21,16 +21,13 @@
 
 #include "../iworkspacedatastream.h"
 
-namespace mu {
-namespace workspace {
+namespace mu::workspace {
 class WorkspaceSettingsStream : public IWorkspaceDataStream
 {
 public:
-
     std::shared_ptr<AbstractData> read(Ms::XmlReader& xml) const override;
     void write(Ms::XmlWriter& xml, std::shared_ptr<AbstractData> data) const override;
 };
-}
 }
 
 #endif // MU_WORKSPACE_WORKSPACESETTINGSSTREAM_H

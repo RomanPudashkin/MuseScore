@@ -27,8 +27,7 @@ class XmlReader;
 class XmlWriter;
 }
 
-namespace mu {
-namespace workspace {
+namespace mu::workspace {
 class IWorkspaceDataStream
 {
 public:
@@ -37,7 +36,6 @@ public:
     virtual std::shared_ptr<AbstractData> read(Ms::XmlReader& xml) const = 0;
     virtual void write(Ms::XmlWriter& xml, std::shared_ptr<AbstractData> data) const = 0;
 };
-}
 }
 
 #endif // MU_WORKSPACE_IWORKSPACEDATASTREAM_H
