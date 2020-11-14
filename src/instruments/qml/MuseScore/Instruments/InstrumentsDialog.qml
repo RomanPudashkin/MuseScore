@@ -48,7 +48,7 @@ QmlDialog {
             FlatButton {
                 width: buttons.buttonWidth
 
-                text: qsTrc("instruments", "Cancel")
+                text: qsTrc("global", "Cancel")
 
                 onClicked: {
                     root.reject()
@@ -58,10 +58,10 @@ QmlDialog {
             FlatButton {
                 width: buttons.buttonWidth
 
-                text: qsTrc("instruments", "Ok")
+                text: qsTrc("global", "Ok")
 
                 onClicked: {
-                    root.ret = {errcode: 0, value: instrumentsPage.selectedInstruments()}
+                    root.ret = { errcode: 0, value: instrumentsPage.selectedInstruments() }
                     root.hide()
                 }
             }
