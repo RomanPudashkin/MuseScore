@@ -65,7 +65,10 @@ std::string PaletteModule::moduleName() const
 
 void PaletteModule::registerExports()
 {
+#ifdef BUILD_UI_MU4
     framework::ioc()->registerExport<IPaletteAdapter>(moduleName(), s_adapter);
+#endif
+
     framework::ioc()->registerExport<IPaletteConfiguration>(moduleName(), std::make_shared<PaletteConfiguration>());
 
     // create a score for internal use
@@ -85,7 +88,7 @@ void PaletteModule::resolveImports()
 {
     auto workspaceStreams = ioc()->resolve<workspace::IWorkspaceDataStreamRegister>(moduleName());
     if (workspaceStreams) {
-        workspaceStreams->regStream("PaletteBox", std::make_shared<WorkspacePaletteStream>());
+        workspaceStreams->regStream(workspace::WorkspaceTag::Palettes, std::make_shared<WorkspacePaletteStream>());
     }
 
     auto ar = framework::ioc()->resolve<actions::IActionsRegister>(moduleName());
@@ -136,5 +139,7 @@ void PaletteModule::onInit()
     PaletteWorkspaceSetup w;
     w.setup();
 
+#ifdef BUILD_UI_MU4
     s_actionsController->init();
+#endif
 }

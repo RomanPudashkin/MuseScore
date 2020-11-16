@@ -26,6 +26,7 @@
 #include "internal/workspaceconfiguration.h"
 #include "internal/workspacemanager.h"
 #include "internal/workspacedatastreamregister.h"
+#include "internal/workspacecreator.h"
 
 #include "internal/workspacesettingsstream.h"
 #include "internal/workspacetoolbarstream.h"
@@ -55,13 +56,14 @@ void WorkspaceModule::registerExports()
 {
     ioc()->registerExport<IWorkspaceConfiguration>(moduleName(), s_configuration);
     ioc()->registerExport<IWorkspaceManager>(moduleName(), s_manager);
-    ioc()->registerExport<WorkspaceDataStreamRegister>(moduleName(), s_streamRegister);
+    ioc()->registerExport<IWorkspaceDataStreamRegister>(moduleName(), s_streamRegister);
+    ioc()->registerExport<IWorkspaceCreator>(moduleName(), std::make_shared<WorkspaceCreator>());
 }
 
 void WorkspaceModule::resolveImports()
 {
-    s_streamRegister->regStream("Preferences", std::make_shared<WorkspaceSettingsStream>());
-    s_streamRegister->regStream("Toolbar", std::make_shared<WorkspaceToolbarStream>());
+    s_streamRegister->regStream(WorkspaceTag::Preferences, std::make_shared<WorkspaceSettingsStream>());
+    s_streamRegister->regStream(WorkspaceTag::Arrangement, std::make_shared<WorkspaceToolbarStream>());
 
     auto ir = ioc()->resolve<IInteractiveUriRegister>(moduleName());
     if (ir) {

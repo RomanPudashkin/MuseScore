@@ -33,9 +33,11 @@ class IWorkspaceDataStream
 public:
     virtual ~IWorkspaceDataStream() = default;
 
-    virtual std::shared_ptr<AbstractData> read(Ms::XmlReader& xml) const = 0;
-    virtual void write(Ms::XmlWriter& xml, std::shared_ptr<AbstractData> data) const = 0;
+    virtual AbstractDataPtr read(Ms::XmlReader& xml) const = 0;
+    virtual void write(Ms::XmlWriter& xml, AbstractDataPtr data) const = 0;
 };
+
+using IWorkspaceDataStreamPtr = std::shared_ptr<IWorkspaceDataStream>;
 }
 
 #endif // MU_WORKSPACE_IWORKSPACEDATASTREAM_H

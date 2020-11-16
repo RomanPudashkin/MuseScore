@@ -29,14 +29,31 @@
 using namespace mu;
 using namespace mu::workspace;
 
-Workspace::Workspace(const io::path& file)
-    : m_file(file)
+static WorkspaceTag workspaceTagFromString(const QString& str)
+{
+    static QHash<QString, WorkspaceTag> tagByStr {
+        { "Preferences", WorkspaceTag::Preferences },
+        { "Arrangement", WorkspaceTag::Arrangement },
+        { "Toolbar", WorkspaceTag::Toolbar },
+        { "PaletteBox", WorkspaceTag::Palettes },
+    };
+
+    return tagByStr[str];
+}
+
+Workspace::Workspace(const std::string& name)
+    : m_filePath(configuration()->userWorkspacePath(name))
+{
+}
+
+Workspace::Workspace(const io::path& filePath)
+    : m_filePath(filePath)
 {
 }
 
 std::string Workspace::name() const
 {
-    return io::basename(m_file).toStdString();
+    return io::basename(m_filePath).toStdString();
 }
 
 std::string Workspace::title() const
@@ -44,7 +61,7 @@ std::string Workspace::title() const
     return name();
 }
 
-AbstractDataPtr Workspace::data(const std::string& tag, const std::string& name) const
+AbstractDataPtr Workspace::data(WorkspaceTag tag, const std::string& name) const
 {
     DataKey key { tag, name };
     auto it = m_data.find(key);
@@ -56,7 +73,7 @@ AbstractDataPtr Workspace::data(const std::string& tag, const std::string& name)
 
 Val Workspace::settingValue(const std::string& key) const
 {
-    std::shared_ptr<AbstractData> d = data("Preferences", "");
+    AbstractDataPtr d = data(WorkspaceTag::Preferences, "");
     if (!d) {
         return Val();
     }
@@ -76,7 +93,7 @@ Val Workspace::settingValue(const std::string& key) const
 
 std::vector<std::string> Workspace::toolbarActions(const std::string& toolbarName) const
 {
-    AbstractDataPtr d = data("Toolbar", toolbarName);
+    AbstractDataPtr d = data(WorkspaceTag::Toolbar, toolbarName);
     if (!d) {
         return std::vector<std::string>();
     }
@@ -109,7 +126,7 @@ bool Workspace::isInited() const
 
 Ret Workspace::read()
 {
-    WorkspaceFile f(m_file);
+    WorkspaceFile f(m_filePath);
     QByteArray data = f.readRootFile();
     if (data.isEmpty()) {
         return make_ret(Ret::Code::UnknownError);
@@ -146,14 +163,14 @@ Ret Workspace::readWorkspace(const QByteArray& xmlData)
                 } else if ("source" == tag) {
                     m_source = xml.readElementText().toStdString();
                 } else {
-                    std::shared_ptr<IWorkspaceDataStream> reader = streamRegister()->stream(tag.toStdString());
+                    IWorkspaceDataStreamPtr reader = streamRegister()->stream(workspaceTagFromString(tag));
                     if (!reader) {
                         LOGW() << "not registred reader for: " << tag;
                         xml.skipCurrentElement();
                         continue;
                     }
 
-                    std::shared_ptr<AbstractData> data = reader->read(xml);
+                    AbstractDataPtr data = reader->read(xml);
                     if (!data) {
                         LOGE() << "failed read: " << tag;
                     } else {

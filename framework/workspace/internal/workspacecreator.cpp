@@ -16,29 +16,14 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_WORKSPACE_IWORKSPACECONFIGURATION_H
-#define MU_WORKSPACE_IWORKSPACECONFIGURATION_H
 
-#include <vector>
+#include "workspacecreator.h"
 
-#include "io/path.h"
-#include "modularity/imoduleexport.h"
-#include "retval.h"
+#include "workspace.h"
 
-namespace mu::workspace {
-class IWorkspaceConfiguration : MODULE_EXPORT_INTERFACE
+using namespace mu::workspace;
+
+IWorkspacePtr WorkspaceCreator::newWorkspace(const std::string& workspaceName) const
 {
-    INTERFACE_ID(IWorkspaceConfiguration)
-
-public:
-    virtual ~IWorkspaceConfiguration() = default;
-
-    virtual io::paths workspacePaths() const = 0;
-    virtual io::path userWorkspacePath(const std::string& workspaceName) const = 0;
-
-    virtual ValCh<std::string> currentWorkspaceName() const = 0;
-    virtual void setCurrentWorkspaceName(const std::string& workspaceName) = 0;
-};
+    return std::make_shared<Workspace>(workspaceName);
 }
-
-#endif // MU_WORKSPACE_IWORKSPACECONFIGURATION_H

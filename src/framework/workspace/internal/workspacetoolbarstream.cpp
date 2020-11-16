@@ -19,14 +19,15 @@
 #include "workspacetoolbarstream.h"
 
 #include "libmscore/xml.h"
+#include "log.h"
 
 using namespace mu::workspace;
 
-std::shared_ptr<AbstractData> WorkspaceToolbarStream::read(Ms::XmlReader& xml) const
+AbstractDataPtr WorkspaceToolbarStream::read(Ms::XmlReader& xml) const
 {
     std::shared_ptr<ToolbarData> data = std::make_shared<ToolbarData>();
 
-    data->tag = "Toolbar";
+    data->tag = WorkspaceTag::Toolbar;
     data->name = xml.attributes().value("name").toString().toStdString();
 
     while (xml.readNextStartElement()) {
@@ -41,8 +42,9 @@ std::shared_ptr<AbstractData> WorkspaceToolbarStream::read(Ms::XmlReader& xml) c
     return data;
 }
 
-void WorkspaceToolbarStream::write(Ms::XmlWriter& xml, std::shared_ptr<AbstractData> data) const
+void WorkspaceToolbarStream::write(Ms::XmlWriter& xml, AbstractDataPtr data) const
 {
-    Q_UNUSED(xml);
-    Q_UNUSED(data);
+    UNUSED(xml)
+    UNUSED(data)
+    NOT_IMPLEMENTED;
 }

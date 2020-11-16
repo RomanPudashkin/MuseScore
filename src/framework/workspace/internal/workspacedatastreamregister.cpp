@@ -20,12 +20,12 @@
 
 using namespace mu::workspace;
 
-void WorkspaceDataStreamRegister::regStream(const std::string& tag, std::shared_ptr<IWorkspaceDataStream> stream)
+void WorkspaceDataStreamRegister::regStream(WorkspaceTag tag, IWorkspaceDataStreamPtr stream)
 {
     m_streams[tag] = stream;
 }
 
-std::shared_ptr<IWorkspaceDataStream> WorkspaceDataStreamRegister::stream(const std::string& tag) const
+IWorkspaceDataStreamPtr WorkspaceDataStreamRegister::stream(WorkspaceTag tag) const
 {
     auto it = m_streams.find(tag);
     if (it != m_streams.end()) {

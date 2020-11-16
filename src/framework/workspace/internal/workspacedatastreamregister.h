@@ -22,19 +22,16 @@
 #include <map>
 #include "../iworkspacedatastreamregister.h"
 
-namespace mu {
-namespace workspace {
+namespace mu::workspace {
 class WorkspaceDataStreamRegister : public IWorkspaceDataStreamRegister
 {
 public:
-
-    void regStream(const std::string& tag, std::shared_ptr<IWorkspaceDataStream> stream) override;
-    std::shared_ptr<IWorkspaceDataStream> stream(const std::string& tag) const override;
+    void regStream(WorkspaceTag tag, IWorkspaceDataStreamPtr stream) override;
+    IWorkspaceDataStreamPtr stream(WorkspaceTag tag) const override;
 
 private:
-
-    std::map<std::string /*tag*/, std::shared_ptr<IWorkspaceDataStream> > m_streams;
+    std::map<WorkspaceTag, IWorkspaceDataStreamPtr> m_streams;
 };
 }
-}
+
 #endif // MU_WORKSPACE_WORKSPACEDATASTREAMREGISTER_H
