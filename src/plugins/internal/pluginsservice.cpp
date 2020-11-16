@@ -19,10 +19,10 @@
 
 #include "pluginsservice.h"
 
+#include "log.h"
+
 #include "view/pluginview.h"
 #include "pluginserrors.h"
-
-#include "log.h"
 
 using namespace mu::plugins;
 using namespace mu::framework;
@@ -82,7 +82,7 @@ mu::io::paths PluginsService::scanFileSystemForPlugins() const
     io::paths result;
 
     for (const io::path& dirPath: configuration()->pluginsDirPaths()) {
-        RetVal<io::paths> files = fileSystem()->scanFiles(dirPath, { "*.qml" }, IFileSystem::ScanMode::IncludeSubdirs);
+        RetVal<io::paths> files = fileSystem()->scanFiles(dirPath, { "*.qml" });
 
         if (!files.ret) {
             LOGE() << files.ret.toString();
