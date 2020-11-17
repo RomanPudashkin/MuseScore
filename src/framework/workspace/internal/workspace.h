@@ -41,7 +41,8 @@ public:
     std::string name() const override;
     std::string title() const override;
 
-    AbstractDataPtr data(const std::string& tag, const std::string& name) const override;
+    AbstractDataPtrList dataList(WorkspaceTag tag) const override;
+    AbstractDataPtr data(WorkspaceTag tag, const std::string& name = std::string()) const override;
     void addData(AbstractDataPtr data) override;
     async::Channel<AbstractDataPtr> dataChanged() const override;
 
@@ -57,7 +58,6 @@ private:
     Ret readWorkspace(const QByteArray& data);
 
     io::path m_filePath;
-    bool m_isInited = false;
     std::string m_title;
     std::string m_source;
 

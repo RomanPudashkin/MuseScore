@@ -19,6 +19,7 @@
 #include "workspace.h"
 
 #include <QXmlStreamReader>
+#include <QBuffer>
 
 #include "log.h"
 #include "translation.h"
@@ -32,7 +33,7 @@ using namespace mu::workspace;
 static WorkspaceTag workspaceTagFromString(const QString& str)
 {
     static QHash<QString, WorkspaceTag> tagByStr {
-        { "Preferences", WorkspaceTag::Preferences },
+        { "Preferences", WorkspaceTag::Settings },
         { "Arrangement", WorkspaceTag::Arrangement },
         { "Toolbar", WorkspaceTag::Toolbar },
         { "PaletteBox", WorkspaceTag::Palettes },
@@ -61,6 +62,19 @@ std::string Workspace::title() const
     return name();
 }
 
+AbstractDataPtrList Workspace::dataList(WorkspaceTag tag) const
+{
+    AbstractDataPtrList result;
+
+    for (auto it = m_data.cbegin(); it != m_data.cend(); ++it) {
+        if (it->first.tag == tag) {
+            result.push_back(it->second);
+        }
+    }
+
+    return result;
+}
+
 AbstractDataPtr Workspace::data(WorkspaceTag tag, const std::string& name) const
 {
     DataKey key { tag, name };
@@ -73,18 +87,13 @@ AbstractDataPtr Workspace::data(WorkspaceTag tag, const std::string& name) const
 
 Val Workspace::settingValue(const std::string& key) const
 {
-    AbstractDataPtr d = data(WorkspaceTag::Preferences, "");
-    if (!d) {
+    SettingsDataPtr settings = std::dynamic_pointer_cast<SettingsData>(data(WorkspaceTag::Settings));
+    IF_ASSERT_FAILED(settings) {
         return Val();
     }
 
-    SettingsData* sd = dynamic_cast<SettingsData*>(d.get());
-    IF_ASSERT_FAILED(sd) {
-        return Val();
-    }
-
-    auto it = sd->vals.find(key);
-    if (it == sd->vals.end()) {
+    auto it = settings->vals.find(key);
+    if (it == settings->vals.end()) {
         return Val();
     }
 
@@ -93,17 +102,12 @@ Val Workspace::settingValue(const std::string& key) const
 
 std::vector<std::string> Workspace::toolbarActions(const std::string& toolbarName) const
 {
-    AbstractDataPtr d = data(WorkspaceTag::Toolbar, toolbarName);
-    if (!d) {
+    ToolbarDataPtr toolbar = std::dynamic_pointer_cast<ToolbarData>(data(WorkspaceTag::Toolbar, toolbarName));
+    IF_ASSERT_FAILED(toolbar) {
         return std::vector<std::string>();
     }
 
-    ToolbarData* td = dynamic_cast<ToolbarData*>(d.get());
-    IF_ASSERT_FAILED(td) {
-        return std::vector<std::string>();
-    }
-
-    return td->actions;
+    return toolbar->actions;
 }
 
 async::Channel<AbstractDataPtr> Workspace::dataChanged() const
@@ -121,7 +125,7 @@ void Workspace::addData(AbstractDataPtr data)
 
 bool Workspace::isInited() const
 {
-    return m_isInited;
+    return !m_data.empty();
 }
 
 io::path Workspace::filePath() const
@@ -141,8 +145,6 @@ Ret Workspace::read()
     if (!ret) {
         return ret;
     }
-
-    m_isInited = true;
 
     return make_ret(Ret::Code::Ok);
 }
@@ -192,5 +194,33 @@ Ret Workspace::readWorkspace(const QByteArray& xmlData)
 
 Ret Workspace::write()
 {
-    return Ret();
+    QBuffer buffer;
+    buffer.open(QIODevice::WriteOnly);
+    Ms::XmlWriter xml(&buffer);
+
+    xml.setClipboardmode(true);
+    xml.header();
+    xml.stag("museScore version=\"" MSC_VERSION "\"");
+    xml.stag("Workspace");
+
+    if (!m_source.empty()) {
+        xml.tag("source", QString::fromStdString(m_source));
+    }
+
+    for (auto it = m_data.cbegin(); it != m_data.cend(); ++it) {
+        IWorkspaceDataStreamPtr writer = streamRegister()->stream(it->first.tag);
+
+        if (writer) {
+            writer->write(xml, it->second);
+        }
+    }
+
+    xml.etag();
+    xml.etag();
+
+    WorkspaceFile file(m_filePath);
+    Ret ret = file.writeRootFile(name() + ".xml", buffer.data());
+    buffer.close();
+
+    return ret;
 }

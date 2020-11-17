@@ -35,87 +35,74 @@ using namespace mu;
 using namespace mu::workspace;
 
 WorkspaceFile::WorkspaceFile(const io::path& filepath)
-    : m_filepath(filepath)
+    : m_filePath(filepath)
 {}
 
 QByteArray WorkspaceFile::readRootFile()
 {
-    QFile f(m_filepath.toQString());
-    if (!f.open(QIODevice::ReadOnly)) {
-        LOGE() << "failed open file: " << m_filepath;
+    QFile file(m_filePath.toQString());
+    if (!file.open(QIODevice::ReadOnly)) {
+        LOGE() << "failed open file: " << m_filePath;
         return QByteArray();
     }
 
-    QByteArray data = f.readAll();
+    QByteArray data = file.readAll();
 
     QBuffer buf(&data);
     MQZipReader zip(&buf);
 
-    std::string rootfile;
+    std::string rootFile;
     MetaInf meta;
     if (meta.read(zip)) {
-        rootfile = meta.rootfile();
+        rootFile = meta.rootFile();
     } else {
         QVector<MQZipReader::FileInfo> fis = zip.fileInfoList();
         if (!fis.isEmpty()) {
-            rootfile = fis.first().filePath.toStdString();
+            rootFile = fis.first().filePath.toStdString();
         }
     }
 
-    if (rootfile.empty()) {
-        LOGE() << "not found root file: " << m_filepath;
+    if (rootFile.empty()) {
+        LOGE() << "not found root file: " << m_filePath;
         return QByteArray();
     }
 
-    QByteArray fileData = zip.fileData(QString::fromStdString(rootfile));
+    QByteArray fileData = zip.fileData(QString::fromStdString(rootFile));
     if (fileData.isEmpty()) {
-        LOGE() << "failed read root file: " << m_filepath;
+        LOGE() << "failed read root file: " << m_filePath;
         return QByteArray();
     }
 
     return fileData;
 }
 
-bool WorkspaceFile::writeRootFile(const std::string& name, const QByteArray& file)
+bool WorkspaceFile::writeRootFile(const std::string& name, const QByteArray& data)
 {
-    QByteArray data;
-    QBuffer buf(&data);
-    MQZipWriter zip(&buf);
+    MQZipWriter zip(m_filePath.toQString());
 
     MetaInf meta;
-    meta.setRootfile(name);
-    zip.addFile(QString::fromStdString(name), file);
+    meta.setRootFile(name);
     meta.write(zip);
 
-    if (zip.status() != MQZipWriter::NoError) {
-        LOGE() << "failed add mscz, zip status: " << zip.status();
-        return false;
+    zip.addFile(QString::fromStdString(name), data);
+
+    bool ret = zip.status() == MQZipWriter::NoError;
+
+    if (!ret) {
+        LOGE() << "Error while writing workspace, zip status: " << zip.status();
     }
 
-    QFile f(m_filepath.toQString());
-    if (!f.open(QIODevice::WriteOnly)) {
-        LOGE() << "failed open file: " << m_filepath;
-        return false;
-    }
-
-    if (f.write(data) == 0) {
-        LOGE() << "failed write file: " << m_filepath;
-        return false;
-    }
-
-    return true;
+    return ret;
 }
 
-// === MetaInf ===
-
-void WorkspaceFile::MetaInf::setRootfile(const ::std::string& name)
+void WorkspaceFile::MetaInf::setRootFile(const std::string& name)
 {
-    m_rootfile = name;
+    m_rootFile = name;
 }
 
-std::string WorkspaceFile::MetaInf::rootfile() const
+std::string WorkspaceFile::MetaInf::rootFile() const
 {
-    return m_rootfile;
+    return m_rootFile;
 }
 
 void WorkspaceFile::MetaInf::write(MQZipWriter& zip)
@@ -134,7 +121,7 @@ bool WorkspaceFile::MetaInf::read(const MQZipReader& zip)
     }
 
     readContainer(container);
-    if (m_rootfile.empty()) {
+    if (m_rootFile.empty()) {
         return false;
     }
 
@@ -163,7 +150,7 @@ void WorkspaceFile::MetaInf::readContainer(const QByteArray& data)
                 }
 
                 QString path = xml.attributes().value("full-path").toString();
-                m_rootfile = path.toStdString();
+                m_rootFile = path.toStdString();
                 return;
             }
         }
@@ -183,7 +170,7 @@ void WorkspaceFile::MetaInf::writeContainer(QByteArray* data) const
     xml.writeStartElement("rootfiles");
 
     xml.writeStartElement("rootfile");
-    xml.writeAttribute("full-path", QString::fromStdString(m_rootfile));
+    xml.writeAttribute("full-path", QString::fromStdString(m_rootFile));
     xml.writeEndElement();
 
     xml.writeEndElement();

@@ -46,12 +46,11 @@ RetValCh<IWorkspacePtr> WorkspaceManager::currentWorkspace() const
     return rv;
 }
 
-RetValCh<IWorkspacePtrList> WorkspaceManager::workspaces() const
+RetVal<IWorkspacePtrList> WorkspaceManager::workspaces() const
 {
-    RetValCh<IWorkspacePtrList> result;
+    RetVal<IWorkspacePtrList> result;
 
     result.ret = make_ret(Ret::Code::Ok);
-    result.ch = m_workspacesChanged;
 
     for (auto workspace : m_workspaces) {
         result.val.push_back(workspace);
@@ -68,16 +67,12 @@ Ret WorkspaceManager::setWorkspaces(const IWorkspacePtrList& workspaces)
         ret = createInexistentWorkspaces(workspaces);
     }
 
-    if (ret) {
-        m_workspacesChanged.send(workspaces);
-    }
-
     return ret;
 }
 
 Ret WorkspaceManager::removeMissingWorkspaces(const IWorkspacePtrList& newWorkspaceList)
 {
-    RetValCh<IWorkspacePtrList> oldWorkspaceList = workspaces();
+    RetVal<IWorkspacePtrList> oldWorkspaceList = workspaces();
     if (!oldWorkspaceList.ret) {
         return oldWorkspaceList.ret;
     }
@@ -126,7 +121,7 @@ bool WorkspaceManager::canRemoveWorkspace(const std::string& workspaceName) cons
 
 Ret WorkspaceManager::createInexistentWorkspaces(const IWorkspacePtrList& newWorkspaceList)
 {
-    RetValCh<IWorkspacePtrList> existentWorkspaces = workspaces();
+    RetVal<IWorkspacePtrList> existentWorkspaces = workspaces();
     if (!existentWorkspaces.ret) {
         return existentWorkspaces.ret;
     }
@@ -136,7 +131,12 @@ Ret WorkspaceManager::createInexistentWorkspaces(const IWorkspacePtrList& newWor
             continue;
         }
 
-        Ret ret = createWorkspace(workspace);
+        WorkspacePtr workspace_ = std::dynamic_pointer_cast<Workspace>(workspace);
+        if (!workspace_) {
+            return false;
+        }
+
+        Ret ret = createWorkspace(workspace_);
         if (!ret) {
             return ret;
         }
@@ -145,11 +145,15 @@ Ret WorkspaceManager::createInexistentWorkspaces(const IWorkspacePtrList& newWor
     return make_ret(Ret::Code::Ok);
 }
 
-Ret WorkspaceManager::createWorkspace(const IWorkspacePtr& workspace)
+Ret WorkspaceManager::createWorkspace(const WorkspacePtr& workspace)
 {
-    UNUSED(workspace)
-    NOT_IMPLEMENTED;
-    return Ret();
+    Ret ret = workspace->write();
+
+    if (ret) {
+        m_workspaces.push_back(workspace);
+    }
+
+    return ret;
 }
 
 void WorkspaceManager::init()
@@ -175,17 +179,13 @@ void WorkspaceManager::load()
     m_workspaces.clear();
 
     io::paths files = findWorkspaceFiles();
-    IWorkspacePtrList workspaces;
 
     for (const io::path& file : files) {
         auto workspace = std::make_shared<Workspace>(file);
         m_workspaces.push_back(workspace);
-        workspaces.push_back(workspace);
     }
 
     setupCurrentWorkspace();
-
-    m_workspacesChanged.send(workspaces);
 }
 
 io::paths WorkspaceManager::findWorkspaceFiles() const
@@ -212,7 +212,7 @@ void WorkspaceManager::setupCurrentWorkspace()
 
     WorkspacePtr workspace = findAndInit(workspaceName);
     if (!workspace) {
-        LOGW() << "filed get workspace: " << workspaceName << ", will use Default";
+        LOGW() << "failed get workspace: " << workspaceName << ", will use Default";
         workspace = findAndInit(std::string(DEFAULT_WORKSPACE_NAME));
     }
 

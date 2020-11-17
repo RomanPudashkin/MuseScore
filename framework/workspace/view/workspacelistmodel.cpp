@@ -39,7 +39,7 @@ void WorkspaceListModel::load()
 
     beginResetModel();
 
-    RetValCh<IWorkspacePtrList> workspaces = workspacesManager()->workspaces();
+    RetVal<IWorkspacePtrList> workspaces = workspacesManager()->workspaces();
     if (!workspaces.ret) {
         LOGE() << workspaces.ret.toString();
     }
@@ -53,11 +53,6 @@ void WorkspaceListModel::load()
 
         m_workspaces << workspace;
     }
-
-    workspaces.ch.onReceive(this, [this, &workspaces](const IWorkspacePtrList&) {
-        workspaces.ch.close();
-        load();
-    });
 
     std::sort(m_workspaces.begin(), m_workspaces.end(), [this](const IWorkspacePtr& workspace1, const IWorkspacePtr& workspace2) {
         return workspace1->name() < workspace2->name();

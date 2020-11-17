@@ -21,8 +21,6 @@
 
 #include "palettecreator.h"
 
-#include <QAction>
-
 #include "libmscore/score.h"
 #include "libmscore/note.h"
 #include "libmscore/chordrest.h"
@@ -88,7 +86,7 @@ extern bool useFactorySettings;
 
 static Palette* toPalette(PalettePanel* pp)
 {
-    return new Palette(std::unique_ptr<PalettePanel>(pp));
+    return new Palette(PalettePanelPtr(pp));
 }
 
 //---------------------------------------------------------
@@ -345,9 +343,9 @@ Palette* PaletteCreator::newFretboardDiagramPalette()
 //   newMasterPaletteTree
 //---------------------------------------------------------
 
-PaletteTree* PaletteCreator::newMasterPaletteTree()
+PaletteTreePtr PaletteCreator::newMasterPaletteTree()
 {
-    PaletteTree* tree = new PaletteTree();
+    PaletteTreePtr tree = std::make_shared<PaletteTree>();
 
     tree->append(PaletteCreator::newClefsPalettePanel());
     tree->append(PaletteCreator::newKeySigPalettePanel());

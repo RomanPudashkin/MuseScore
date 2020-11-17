@@ -19,16 +19,9 @@ namespace Ms {
 //   Xml
 //---------------------------------------------------------
 
-XmlWriter::XmlWriter(Score* s)
-{
-    _score = s;
-    setCodec("UTF-8");
-}
-
-XmlWriter::XmlWriter(Score* s, QIODevice* device)
+XmlWriter::XmlWriter(QIODevice* device)
     : QTextStream(device)
 {
-    _score = s;
     setCodec("UTF-8");
 }
 

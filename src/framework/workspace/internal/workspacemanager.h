@@ -39,7 +39,7 @@ public:
 
     RetValCh<IWorkspacePtr> currentWorkspace() const override;
 
-    RetValCh<IWorkspacePtrList> workspaces() const override;
+    RetVal<IWorkspacePtrList> workspaces() const override;
     Ret setWorkspaces(const IWorkspacePtrList& workspaces) override;
 
 private:
@@ -50,7 +50,7 @@ private:
     bool canRemoveWorkspace(const std::string& workspaceName) const;
 
     Ret createInexistentWorkspaces(const IWorkspacePtrList& newWorkspaceList);
-    Ret createWorkspace(const IWorkspacePtr& workspace);
+    Ret createWorkspace(const WorkspacePtr& workspace);
 
     io::paths findWorkspaceFiles() const;
     void setupCurrentWorkspace();
@@ -62,7 +62,6 @@ private:
     std::vector<WorkspacePtr> m_workspaces;
 
     async::Channel<IWorkspacePtr> m_currentWorkspaceChanged;
-    async::Channel<IWorkspacePtrList> m_workspacesChanged;
 };
 }
 

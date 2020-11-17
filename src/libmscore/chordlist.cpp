@@ -1965,7 +1965,7 @@ bool ChordList::write(const QString& name) const
         return false;
     }
 
-    XmlWriter xml(0, &f);
+    XmlWriter xml(&f);
     xml.header();
     xml.stag("museScore version=\"" MSC_VERSION "\"");
 

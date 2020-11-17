@@ -10,10 +10,6 @@
 //  the file LICENSE.GPL
 //=============================================================================
 
-#include <cmath>
-#include <QDir>
-#include <QBuffer>
-
 #include "config.h"
 #include "score.h"
 #include "xml.h"
@@ -41,6 +37,15 @@
 #include "sym.h"
 
 #include "preferences.h"
+
+#ifdef OMR
+#include "omr/omr.h"
+#include "omr/omrpage.h"
+#endif
+
+#ifdef AVSOMR
+#include "avsomr/msmrwriter.h"
+#endif
 
 #include "sig.h"
 #include "undo.h"
@@ -125,6 +130,11 @@ void Score::writeMovement(XmlWriter& xml, bool selectionOnly)
         xml.tag("layoutMode", "system");
     }
 
+#ifdef OMR
+    if (masterScore()->omr() && xml.writeOmr()) {
+        masterScore()->omr()->write(xml);
+    }
+#endif
     if (isMaster() && masterScore()->showOmr() && xml.writeOmr()) {
         xml.tag("showOmr", masterScore()->showOmr());
     }
@@ -406,7 +416,14 @@ bool MasterScore::saveFile(bool generateBackup)
     bool rv = false;
     if ("mscx" == suffix) {
         rv = Score::saveFile(&temp, false);
-    } else {
+    }
+#ifdef AVSOMR
+    else if ("msmr" == suffix) {
+        Avs::MsmrWriter msmrWriter;
+        rv = msmrWriter.saveMsmrFile(this, &temp, info);
+    }
+#endif
+    else {
         QString fileName = info.completeBaseName() + ".mscx";
         rv = Score::saveCompressedFile(&temp, fileName, false);
     }
@@ -586,7 +603,7 @@ bool Score::saveCompressedFile(QIODevice* f, const QString& fn, bool onlySelecti
 
     QBuffer cbuf;
     cbuf.open(QIODevice::ReadWrite);
-    XmlWriter xml(this, &cbuf);
+    XmlWriter xml(&cbuf);
     xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     xml.stag("container");
     xml.stag("rootfiles");
@@ -643,6 +660,26 @@ bool Score::saveCompressedFile(QIODevice* f, const QString& fn, bool onlySelecti
         uz.addFile("Thumbnails/thumbnail.png", ba);
     }
 
+#ifdef OMR
+    //
+    // save OMR page images
+    //
+    if (masterScore()->omr()) {
+        int n = masterScore()->omr()->numPages();
+        for (int i = 0; i < n; ++i) {
+            QString path = QString("OmrPages/page%1.png").arg(i + 1);
+            QBuffer cbuf1;
+            OmrPage* page = masterScore()->omr()->page(i);
+            const QImage& image = page->image();
+            if (!image.save(&cbuf1, "PNG")) {
+                MScore::lastError = tr("Save file: cannot save image (%1x%2)").arg(image.width(), image.height());
+                return false;
+            }
+            uz.addFile(path, cbuf1.data());
+            cbuf1.close();
+        }
+    }
+#endif
     //
     // save audio
     //
@@ -716,7 +753,7 @@ bool Score::saveStyle(const QString& name)
         return false;
     }
 
-    XmlWriter xml(this, &f);
+    XmlWriter xml(&f);
     xml.header();
     xml.stag("museScore version=\"" MSC_VERSION "\"");
     style().save(xml, false);       // save complete style
@@ -733,13 +770,11 @@ bool Score::saveStyle(const QString& name)
 //    return true on success
 //---------------------------------------------------------
 
-//! FIXME
-//extern QString revision;
-static QString revision;
+extern QString revision;
 
 bool Score::saveFile(QIODevice* f, bool msczFormat, bool onlySelection)
 {
-    XmlWriter xml(this, f);
+    XmlWriter xml(f);
     xml.setWriteOmr(msczFormat);
     xml.header();
     if (!MScore::testMode) {
@@ -848,6 +883,25 @@ Score::FileError MasterScore::loadCompressedMsc(QIODevice* io, bool ignoreVersio
 
     FileError retval = read1(e, ignoreVersionError);
 
+#ifdef OMR
+    //
+    // load OMR page images
+    //
+    if (masterScore()->omr()) {
+        int n = masterScore()->omr()->numPages();
+        for (int i = 0; i < n; ++i) {
+            QString path = QString("OmrPages/page%1.png").arg(i + 1);
+            QByteArray dbuf1 = uz.fileData(path);
+            OmrPage* page = masterScore()->omr()->page(i);
+            QImage image;
+            if (image.loadFromData(dbuf1, "PNG")) {
+                page->setImage(image);
+            } else {
+                qDebug("load image failed");
+            }
+        }
+    }
+#endif
     //
     //  read audio
     //

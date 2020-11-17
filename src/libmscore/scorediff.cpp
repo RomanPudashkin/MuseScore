@@ -832,8 +832,8 @@ void ScoreDiff::update()
     qDeleteAll(_mergedTextDiffs);
     _mergedTextDiffs.clear();
 
-    XmlWriter xml1(_s1);
-    XmlWriter xml2(_s2);
+    XmlWriter xml1;
+    XmlWriter xml2;
     QString mscx1(scoreToMscx(_s1, xml1));
     QString mscx2(scoreToMscx(_s2, xml2));
 
@@ -950,12 +950,12 @@ void ScoreDiff::processMarkupDiffs()
 
     std::vector<BaseDiff*> newDiffs;
     for (auto& m : measuresToProcess) {
-        XmlWriter xml1(m.m1->score());
+        XmlWriter xml1;
         xml1.setWriteTrack(true);
         xml1.setWritePosition(true);
         QString mscx1 = measureToMscx(m.m1, xml1, m.staff);
 
-        XmlWriter xml2(m.m2->score());
+        XmlWriter xml2;
         xml2.setWriteTrack(true);
         xml2.setWritePosition(true);
         QString mscx2 = measureToMscx(m.m2, xml2, m.staff);

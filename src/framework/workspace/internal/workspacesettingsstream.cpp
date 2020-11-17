@@ -23,32 +23,51 @@
 #include "../workspacetypes.h"
 
 #include "libmscore/xml.h"
+
 #include "log.h"
 
 using namespace mu::workspace;
 
+static const QString SETTINGS_TAG("Preference");
+
 AbstractDataPtr WorkspaceSettingsStream::read(Ms::XmlReader& xml) const
 {
-    std::shared_ptr<SettingsData> data = std::make_shared<SettingsData>();
-    data->tag = WorkspaceTag::Preferences;
+    SettingsDataPtr settings = std::make_shared<SettingsData>();
+    settings->tag = WorkspaceTag::Settings;
 
     while (xml.readNextStartElement()) {
         QStringRef tag(xml.name());
-        if ("Preference" == tag) {
+        if (tag == SETTINGS_TAG) {
             std::string key = xml.attributes().value("name").toString().toStdString();
             Val val(xml.readElementText().toStdString());
-            data->vals.insert({ key, val });
+            settings->vals.insert({ key, val });
         } else {
             xml.skipCurrentElement();
         }
     }
 
-    return data;
+    return settings;
 }
 
 void WorkspaceSettingsStream::write(Ms::XmlWriter& xml, AbstractDataPtr data) const
 {
-    UNUSED(xml)
-    UNUSED(data)
-    NOT_IMPLEMENTED;
+    SettingsDataPtr settings = std::dynamic_pointer_cast<SettingsData>(data);
+    IF_ASSERT_FAILED(settings) {
+        return;
+    }
+
+    xml.stag(SETTINGS_TAG);
+
+    for (auto it = settings->vals.begin(); it != settings->vals.end(); ++it) {
+        QString settingKey = "Preference name=\"" + QString::fromStdString(it->first) + "\"";
+        QVariant settingValue = it->second.toQVariant();
+
+        if (settingValue.isNull()) {
+            continue;
+        }
+
+        xml.tag(settingKey, settingValue);
+    }
+
+    xml.etag();
 }

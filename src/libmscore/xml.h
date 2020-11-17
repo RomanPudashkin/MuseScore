@@ -14,8 +14,6 @@
 #define __XML_H__
 
 #include <QMultiMap>
-#include <QXmlStreamReader>
-#include <QTextStream>
 
 #include "connector.h"
 #include "stafftype.h"
@@ -226,7 +224,6 @@ class XmlWriter : public QTextStream
 {
     static const int BS = 2048;
 
-    Score* _score;
     QList<QString> stack;
     SelectionFilter _filter;
 
@@ -250,8 +247,7 @@ class XmlWriter : public QTextStream
     void putLevel();
 
 public:
-    XmlWriter(Score*);
-    XmlWriter(Score* s, QIODevice* dev);
+    XmlWriter(QIODevice* dev = nullptr);
 
     Fraction curTick() const { return _curTick; }
     void setCurTick(const Fraction& v) { _curTick   = v; }

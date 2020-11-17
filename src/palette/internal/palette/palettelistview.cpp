@@ -11,8 +11,6 @@
 
 #include "palettelistview.h"
 
-#include <QKeyEvent>
-
 #include "palettemodel.h"
 
 namespace Ms {
@@ -31,7 +29,7 @@ PaletteListView::PaletteListView(PalettePanel* panel, QWidget* parent)
     setGridSize(gridSize);
     setSpacing(-5);   // zero spacing still has a large gap between icons
 
-    PaletteTree* tree = new PaletteTree();
+    PaletteTreePtr tree = std::make_shared<PaletteTree>();
     tree->append(panel);
 
     PaletteTreeModel* model = new PaletteTreeModel(tree);

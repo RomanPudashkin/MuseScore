@@ -37,9 +37,6 @@
 #include "exportxml.h"
 
 #include <math.h>
-#include <QBuffer>
-#include <QDate>
-
 #include "config.h"
 
 #include "thirdparty/qzip/qzipwriter_p.h"
@@ -392,7 +389,6 @@ class ExportMusicXml
 
 public:
     ExportMusicXml(Score* s)
-        : _xml(s)
     {
         _score = s;
         _tick = { 0,1 };
@@ -7008,8 +7004,7 @@ static void writeMxlArchive(Score* score, MQZipWriter& zipwriter, const QString&
     QBuffer cbuf;
     cbuf.open(QIODevice::ReadWrite);
 
-    XmlWriter xml(score);
-    xml.setDevice(&cbuf);
+    XmlWriter xml(&cbuf);
     xml.setCodec("UTF-8");
     xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     xml.stag("container");

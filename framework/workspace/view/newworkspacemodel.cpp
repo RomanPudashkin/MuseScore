@@ -127,7 +127,7 @@ QVariant NewWorkspaceModel::createWorkspace()
     QList<WorkspaceTag> importedTags;
 
     if (importUiPreferences()) {
-        importedTags << WorkspaceTag::Preferences;
+        importedTags << WorkspaceTag::Settings;
     }
 
     if (importUiArrangement()) {
@@ -143,9 +143,9 @@ QVariant NewWorkspaceModel::createWorkspace()
     }
 
     for (WorkspaceTag tag : importedTags) {
-        AbstractDataPtr data = currentWorkspace->data(tag);
+        AbstractDataPtrList dataList = currentWorkspace->dataList(tag);
 
-        if (data) {
+        for (const AbstractDataPtr& data : dataList) {
             newWorkspace->addData(data);
         }
     }

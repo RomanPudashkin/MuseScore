@@ -26,8 +26,10 @@
 namespace mu::palette {
 struct PaletteWorkspaceData : public workspace::AbstractData
 {
-    std::unique_ptr<Ms::PaletteTree> tree;
+    Ms::PaletteTreePtr tree;
 };
+
+using PaletteWorkspaceDataPtr = std::shared_ptr<PaletteWorkspaceData>;
 
 class WorkspacePaletteStream : public workspace::IWorkspaceDataStream
 {

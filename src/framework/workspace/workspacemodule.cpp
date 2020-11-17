@@ -62,7 +62,7 @@ void WorkspaceModule::registerExports()
 
 void WorkspaceModule::resolveImports()
 {
-    s_streamRegister->regStream(WorkspaceTag::Preferences, std::make_shared<WorkspaceSettingsStream>());
+    s_streamRegister->regStream(WorkspaceTag::Settings, std::make_shared<WorkspaceSettingsStream>());
     s_streamRegister->regStream(WorkspaceTag::Toolbar, std::make_shared<WorkspaceToolbarStream>());
 
     auto ir = ioc()->resolve<IInteractiveUriRegister>(moduleName());

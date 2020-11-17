@@ -22,10 +22,6 @@
 #include <QFileDialog>
 #include <QStandardItemModel>
 #include <QJsonDocument>
-#include <QQmlEngine>
-#include <QMimeData>
-#include <QStandardPaths>
-#include <QMainWindow>
 
 #include "libmscore/keysig.h"
 #include "libmscore/timesig.h"
@@ -35,7 +31,7 @@
 #include "timedialog.h"
 
 #include "io/path.h"
-#include "commonscene/commonscenetypes.h"
+#include "mu4/commonscene/commonscenetypes.h"
 
 #include "translation.h"
 
@@ -1020,7 +1016,7 @@ bool PaletteWorkspace::loadPalette(const QModelIndex& index)
         return false;
     }
 
-    std::unique_ptr<PalettePanel> pp(new PalettePanel);
+    PalettePanelPtr pp = std::make_shared<PalettePanel>();
     if (!pp->readFromFile(path)) {
         return false;
     }
@@ -1031,31 +1027,31 @@ bool PaletteWorkspace::loadPalette(const QModelIndex& index)
     const int row = srcIndex.row();
     const QModelIndex parent = srcIndex.parent();
 
-    return userPalette->insertPalettePanel(std::move(pp), row, parent);
+    return userPalette->insertPalettePanel(pp, row, parent);
 }
 
 //---------------------------------------------------------
 //   PaletteWorkspace::setUserPaletteTree
 //---------------------------------------------------------
 
-void PaletteWorkspace::setUserPaletteTree(std::unique_ptr<PaletteTree> tree)
+void PaletteWorkspace::setUserPaletteTree(PaletteTreePtr tree)
 {
     if (userPalette) {
         disconnect(userPalette, &PaletteTreeModel::treeChanged, this, &PaletteWorkspace::userPaletteChanged);
-        userPalette->setPaletteTree(std::move(tree));
+        userPalette->setPaletteTree(tree);
         connect(userPalette, &PaletteTreeModel::treeChanged, this, &PaletteWorkspace::userPaletteChanged);
     } else {
-        userPalette = new PaletteTreeModel(std::move(tree), /* parent */ this);
+        userPalette = new PaletteTreeModel(tree, /* parent */ this);
         connect(userPalette, &PaletteTreeModel::treeChanged, this, &PaletteWorkspace::userPaletteChanged);
     }
 }
 
-void PaletteWorkspace::setDefaultPaletteTree(std::unique_ptr<PaletteTree> tree)
+void PaletteWorkspace::setDefaultPaletteTree(PaletteTreePtr tree)
 {
     if (defaultPalette) {
-        defaultPalette->setPaletteTree(std::move(tree));
+        defaultPalette->setPaletteTree(tree);
     } else {
-        defaultPalette = new PaletteTreeModel(std::move(tree), /* parent */ this);
+        defaultPalette = new PaletteTreeModel(tree, /* parent */ this);
     }
 }
 
@@ -1079,12 +1075,12 @@ void PaletteWorkspace::write(XmlWriter& xml) const
 
 bool PaletteWorkspace::read(XmlReader& e)
 {
-    std::unique_ptr<PaletteTree> tree(new PaletteTree);
+    PaletteTreePtr tree = std::make_shared<PaletteTree>();
     if (!tree->read(e)) {
         return false;
     }
 
-    setUserPaletteTree(std::move(tree));
+    setUserPaletteTree(tree);
 
     return true;
 }

@@ -15,8 +15,6 @@
  Implementation of class Selection plus other selection related functions.
 */
 
-#include <QBuffer>
-
 #include "log.h"
 
 #include "mscore.h"
@@ -889,7 +887,7 @@ QByteArray Selection::staffMimeData() const
 {
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    XmlWriter xml(score(), &buffer);
+    XmlWriter xml(&buffer);
     xml.header();
     xml.setClipboardmode(true);
     xml.setFilter(selectionFilter());
@@ -954,7 +952,7 @@ QByteArray Selection::symbolListMimeData() const
 
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    XmlWriter xml(score(), &buffer);
+    XmlWriter xml(&buffer);
     xml.header();
     xml.setClipboardmode(true);
 

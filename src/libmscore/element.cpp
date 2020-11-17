@@ -16,10 +16,6 @@
 */
 
 #include "element.h"
-
-#include <cmath>
-#include <QBuffer>
-
 #include "accidental.h"
 #include "ambitus.h"
 #include "arpeggio.h"
@@ -977,7 +973,7 @@ QByteArray Element::mimeData(const QPointF& dragOffset) const
 {
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    XmlWriter xml(score(), &buffer);
+    XmlWriter xml(&buffer);
     xml.setClipboardmode(true);
     xml.stag("Element");
     if (isNote()) {

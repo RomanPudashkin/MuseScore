@@ -17,25 +17,28 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 #include "workspacepalettestream.h"
-#include "ptrutils.h"
+
+#include "log.h"
 
 using namespace mu::palette;
 using namespace mu::workspace;
 
 AbstractDataPtr WorkspacePaletteStream::read(Ms::XmlReader& xml) const
 {
-    std::shared_ptr<PaletteWorkspaceData> data = std::make_shared<PaletteWorkspaceData>();
-    data->tag = WorkspaceTag::Palettes;
-    data->tree = std::unique_ptr<Ms::PaletteTree>(new Ms::PaletteTree);
-    data->tree->read(xml);
-    return data;
+    PaletteWorkspaceDataPtr palette = std::make_shared<PaletteWorkspaceData>();
+    palette->tag = WorkspaceTag::Palettes;
+    palette->tree = std::make_shared<Ms::PaletteTree>();
+    palette->tree->read(xml);
+
+    return palette;
 }
 
 void WorkspacePaletteStream::write(Ms::XmlWriter& xml, AbstractDataPtr data) const
 {
-    PaletteWorkspaceData* pdata = ptr::checked_cast<PaletteWorkspaceData>(data.get());
-    IF_ASSERT_FAILED(pdata) {
+    PaletteWorkspaceDataPtr palette = std::dynamic_pointer_cast<PaletteWorkspaceData>(data);
+    IF_ASSERT_FAILED(palette) {
         return;
     }
-    pdata->tree->write(xml);
+
+    palette->tree->write(xml);
 }

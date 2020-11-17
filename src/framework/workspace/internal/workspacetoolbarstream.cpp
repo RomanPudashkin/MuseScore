@@ -23,28 +23,39 @@
 
 using namespace mu::workspace;
 
+static const QString ACTION_TAG("action");
+
 AbstractDataPtr WorkspaceToolbarStream::read(Ms::XmlReader& xml) const
 {
-    std::shared_ptr<ToolbarData> data = std::make_shared<ToolbarData>();
+    ToolbarDataPtr toolbar = std::make_shared<ToolbarData>();
 
-    data->tag = WorkspaceTag::Toolbar;
-    data->name = xml.attributes().value("name").toString().toStdString();
+    toolbar->tag = WorkspaceTag::Toolbar;
+    toolbar->name = xml.attributes().value("name").toString().toStdString();
 
     while (xml.readNextStartElement()) {
         QStringRef tag(xml.name());
-        if ("action" == tag) {
-            data->actions.push_back(xml.readElementText().toStdString());
+        if (tag == ACTION_TAG) {
+            toolbar->actions.push_back(xml.readElementText().toStdString());
         } else {
             xml.skipCurrentElement();
         }
     }
 
-    return data;
+    return toolbar;
 }
 
 void WorkspaceToolbarStream::write(Ms::XmlWriter& xml, AbstractDataPtr data) const
 {
-    UNUSED(xml)
-    UNUSED(data)
-    NOT_IMPLEMENTED;
+    ToolbarDataPtr toolbar = std::dynamic_pointer_cast<ToolbarData>(data);
+    IF_ASSERT_FAILED(toolbar) {
+        return;
+    }
+
+    xml.stag(QString("Toolbar name=\"%1\"").arg(QString::fromStdString(toolbar->name)));
+
+    for (const std::string& actionName : toolbar->actions) {
+        xml.tag(ACTION_TAG, QString::fromStdString(actionName));
+    }
+
+    xml.etag();
 }

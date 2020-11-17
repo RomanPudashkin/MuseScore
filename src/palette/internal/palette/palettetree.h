@@ -20,14 +20,12 @@
 #ifndef __PALETTETREE_H__
 #define __PALETTETREE_H__
 
-#include <QIconEngine>
-
 #include "libmscore/element.h"
 #include "libmscore/xml.h"
 
 #include "modularity/ioc.h"
-#include "ipaletteadapter.h"
-#include "ipaletteconfiguration.h"
+#include "../ipaletteadapter.h"
+#include "../ipaletteconfiguration.h"
 #include "async/asyncable.h"
 #include "iinteractive.h"
 
@@ -44,8 +42,8 @@ struct PaletteCell
 {
     INJECT_STATIC(palette, mu::palette::IPaletteAdapter, adapter)
 
-    std::unique_ptr<Element> element;
-    std::unique_ptr<Element> untranslatedElement;
+    std::shared_ptr<Element> element;
+    std::shared_ptr<Element> untranslatedElement;
     QString id;
     QString name;             // used for tool tip
     QString tag;
@@ -61,7 +59,7 @@ struct PaletteCell
     bool active    { false };
 
     explicit PaletteCell() = default;
-    PaletteCell(std::unique_ptr<Element> e, const QString& _name, qreal _mag = 1.0);
+    PaletteCell(std::shared_ptr<Element> e, const QString& _name, qreal _mag = 1.0);
 
     static constexpr const char* mimeDataFormat = "application/musescore/palette/cell";
 
@@ -112,6 +110,9 @@ public:
 //---------------------------------------------------------
 //   PalettePanel
 //---------------------------------------------------------
+
+class PalettePanel;
+using PalettePanelPtr = std::shared_ptr<PalettePanel>;
 
 class PalettePanel
 {
@@ -213,7 +214,7 @@ public:
     void write(XmlWriter&) const;
     bool read(XmlReader&);
     QByteArray mimeData() const;
-    static std::unique_ptr<PalettePanel> readMimeData(const QByteArray& data);
+    static PalettePanelPtr readMimeData(const QByteArray& data);
 
     bool readFromFile(const QString& path);
     bool writeToFile(const QString& path) const;
@@ -247,8 +248,9 @@ public:
 //   PaletteTree
 //---------------------------------------------------------
 
-struct PaletteTree {
-    std::vector<std::unique_ptr<PalettePanel> > palettes;
+struct PaletteTree
+{
+    std::vector<PalettePanelPtr> palettes;
 
     void write(XmlWriter&) const;
     bool read(XmlReader&);
@@ -258,9 +260,12 @@ struct PaletteTree {
 
     void retranslate();
 };
+
+using PaletteTreePtr = std::shared_ptr<PaletteTree>;
+
 } // namespace Ms
 
-Q_DECLARE_METATYPE(const Ms::PaletteCell*);
-Q_DECLARE_METATYPE(Ms::PaletteCell*);
+Q_DECLARE_METATYPE(const Ms::PaletteCell*)
+Q_DECLARE_METATYPE(Ms::PaletteCell*)
 
 #endif
