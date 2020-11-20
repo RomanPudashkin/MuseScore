@@ -52,6 +52,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/iworkspacecreator.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/workspacecreator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/workspacecreator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/workspacesettingssource.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/workspacesettingssource.h
     )
 
 include(${PROJECT_SOURCE_DIR}/build/module.cmake)

@@ -27,6 +27,7 @@
 #include "internal/workspacemanager.h"
 #include "internal/workspacedatastreamregister.h"
 #include "internal/workspacecreator.h"
+#include "internal/workspacesettingssource.h"
 
 #include "internal/workspacesettingsstream.h"
 #include "internal/workspacetoolbarstream.h"
@@ -41,6 +42,7 @@ using namespace mu::framework;
 static std::shared_ptr<WorkspaceManager> s_manager = std::make_shared<WorkspaceManager>();
 static std::shared_ptr<WorkspaceDataStreamRegister> s_streamRegister = std::make_shared<WorkspaceDataStreamRegister>();
 static std::shared_ptr<WorkspaceConfiguration> s_configuration = std::make_shared<WorkspaceConfiguration>();
+static std::shared_ptr<WorkspaceSettingsSource> s_settingsSource = std::make_shared<WorkspaceSettingsSource>();
 
 static void workspace_init_qrc()
 {
@@ -58,6 +60,7 @@ void WorkspaceModule::registerExports()
     ioc()->registerExport<IWorkspaceManager>(moduleName(), s_manager);
     ioc()->registerExport<IWorkspaceDataStreamRegister>(moduleName(), s_streamRegister);
     ioc()->registerExport<IWorkspaceCreator>(moduleName(), std::make_shared<WorkspaceCreator>());
+    ioc()->registerExport<ISettingsSource>(moduleName(), s_settingsSource);
 }
 
 void WorkspaceModule::resolveImports()
@@ -91,6 +94,7 @@ void WorkspaceModule::registerUiTypes()
 
 void WorkspaceModule::onInit()
 {
+    s_settingsSource->init();
     s_configuration->init();
     s_manager->init();
 }

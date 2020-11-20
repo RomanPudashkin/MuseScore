@@ -85,21 +85,6 @@ AbstractDataPtr Workspace::data(WorkspaceTag tag, const std::string& name) const
     return nullptr;
 }
 
-Val Workspace::settingValue(const std::string& key) const
-{
-    SettingsDataPtr settings = std::dynamic_pointer_cast<SettingsData>(data(WorkspaceTag::Settings));
-    IF_ASSERT_FAILED(settings) {
-        return Val();
-    }
-
-    auto it = settings->vals.find(key);
-    if (it == settings->vals.end()) {
-        return Val();
-    }
-
-    return it->second;
-}
-
 std::vector<std::string> Workspace::toolbarActions(const std::string& toolbarName) const
 {
     ToolbarDataPtr toolbar = std::dynamic_pointer_cast<ToolbarData>(data(WorkspaceTag::Toolbar, toolbarName));
