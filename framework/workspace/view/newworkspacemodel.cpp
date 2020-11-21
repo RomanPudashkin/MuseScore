@@ -131,7 +131,7 @@ QVariant NewWorkspaceModel::createWorkspace()
     }
 
     if (importUiArrangement()) {
-        importedTags << WorkspaceTag::Arrangement;
+        importedTags << WorkspaceTag::UiArrangement;
     }
 
     if (importToolbarCustomization()) {

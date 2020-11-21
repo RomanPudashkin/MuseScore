@@ -32,7 +32,7 @@ enum class WorkspaceTag
     Settings,
     Toolbar,
     Palettes,
-    Arrangement
+    UiArrangement
 };
 
 struct AbstractData
@@ -62,6 +62,13 @@ struct ToolbarData : public AbstractData
 };
 
 using ToolbarDataPtr = std::shared_ptr<ToolbarData>;
+
+struct UiArrangementData : public AbstractData
+{
+    std::string mainWindowState;
+};
+
+using UiArrangementDataPtr = std::shared_ptr<UiArrangementData>;
 
 static constexpr std::string_view DEFAULT_WORKSPACE_NAME("Default");
 }

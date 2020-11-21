@@ -31,6 +31,7 @@
 
 #include "internal/workspacesettingsstream.h"
 #include "internal/workspacetoolbarstream.h"
+#include "internal/workspaceuiarrangementstream.h"
 
 #include "view/workspacelistmodel.h"
 #include "view/currentworkspacemodel.h"
@@ -67,6 +68,7 @@ void WorkspaceModule::resolveImports()
 {
     s_streamRegister->regStream(WorkspaceTag::Settings, std::make_shared<WorkspaceSettingsStream>());
     s_streamRegister->regStream(WorkspaceTag::Toolbar, std::make_shared<WorkspaceToolbarStream>());
+    s_streamRegister->regStream(WorkspaceTag::UiArrangement, std::make_shared<WorkspaceUiArrangementStream>());
 
     auto ir = ioc()->resolve<IInteractiveUriRegister>(moduleName());
     if (ir) {

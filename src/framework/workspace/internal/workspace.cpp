@@ -34,7 +34,7 @@ static WorkspaceTag workspaceTagFromString(const QString& str)
 {
     static QHash<QString, WorkspaceTag> tagByStr {
         { "Preferences", WorkspaceTag::Settings },
-        { "Arrangement", WorkspaceTag::Arrangement },
+        { "State", WorkspaceTag::UiArrangement },
         { "Toolbar", WorkspaceTag::Toolbar },
         { "PaletteBox", WorkspaceTag::Palettes },
     };
