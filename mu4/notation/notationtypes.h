@@ -59,6 +59,7 @@ using SharpFlat = Ms::PreferSharpFlat;
 using TransposeMode = Ms::TransposeMode;
 using TransposeDirection = Ms::TransposeDirection;
 using Fraction = Ms::Fraction;
+using NoteInputMethod = Ms::NoteEntryMethod;
 
 using StaffList = QList<const Staff*>;
 using PartList = QList<const Part*>;
@@ -93,6 +94,22 @@ enum class BreaksSpawnIntervalType
     AfterEachSystem = -1,
     None = 0,
     MeasuresInterval
+};
+
+enum class NoteName {
+    C = 0,
+    D,
+    E,
+    F,
+    G,
+    A,
+    B
+};
+
+enum class NoteAddingMode {
+    CurrentChord,
+    NextChord,
+    InsertChord
 };
 
 struct Meta

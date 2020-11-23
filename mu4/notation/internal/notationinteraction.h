@@ -56,6 +56,8 @@ public:
     // Put notes
     void startNoteEntry() override;
     void endNoteEntry() override;
+    void setNoteEntryMethod(NoteInputMethod method) override;
+    void addNote(NoteName noteName, NoteAddingMode addingMode) override;
     void padNote(const Pad& pad) override;
     void putNote(const QPointF& pos, bool replace, bool insert) override;
     INotationInputStatePtr inputState() const override;

@@ -29,6 +29,12 @@ void NotationActionController::init()
 {
     dispatcher()->reg(this, "note-input", this, &NotationActionController::toggleNoteInput);
 
+    dispatcher()->reg(this, "note-input", [this]() { toggleNoteInputMethod(NoteInputMethod::STEPTIME); });
+    dispatcher()->reg(this, "note-input-rhythm", [this]() { toggleNoteInputMethod(NoteInputMethod::RHYTHM); });
+    dispatcher()->reg(this, "note-input-repitch", [this]() { toggleNoteInputMethod(NoteInputMethod::REPITCH); });
+    dispatcher()->reg(this, "note-input-realtime-auto", [this]() { toggleNoteInputMethod(NoteInputMethod::REALTIME_AUTO); });
+    dispatcher()->reg(this, "note-input-realtime-manual", [this]() { toggleNoteInputMethod(NoteInputMethod::REALTIME_MANUAL); });
+
     dispatcher()->reg(this, "note-longa", [this]() { padNote(Pad::NOTE00); });
     dispatcher()->reg(this, "note-breve", [this]() { padNote(Pad::NOTE0); });
     dispatcher()->reg(this, "pad-note-1", [this]() { padNote(Pad::NOTE1); });
@@ -47,6 +53,30 @@ void NotationActionController::init()
     dispatcher()->reg(this, "pad-dot3", [this]() { padNote(Pad::DOT3); });
     dispatcher()->reg(this, "pad-dot4", [this]() { padNote(Pad::DOT4); });
     dispatcher()->reg(this, "pad-rest", [this]() { padNote(Pad::REST); });
+
+    dispatcher()->reg(this, "note-c", [this]() { addNote(NoteName::C, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-d", [this]() { addNote(NoteName::D, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-e", [this]() { addNote(NoteName::E, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-f", [this]() { addNote(NoteName::F, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-g", [this]() { addNote(NoteName::G, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-a", [this]() { addNote(NoteName::A, NoteAddingMode::NextChord); });
+    dispatcher()->reg(this, "note-b", [this]() { addNote(NoteName::B, NoteAddingMode::NextChord); });
+
+    dispatcher()->reg(this, "chord-c", [this]() { addNote(NoteName::C, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-d", [this]() { addNote(NoteName::D, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-e", [this]() { addNote(NoteName::E, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-f", [this]() { addNote(NoteName::F, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-g", [this]() { addNote(NoteName::G, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-a", [this]() { addNote(NoteName::A, NoteAddingMode::CurrentChord); });
+    dispatcher()->reg(this, "chord-b", [this]() { addNote(NoteName::B, NoteAddingMode::CurrentChord); });
+
+    dispatcher()->reg(this, "insert-c", [this]() { addNote(NoteName::C, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-d", [this]() { addNote(NoteName::D, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-e", [this]() { addNote(NoteName::E, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-f", [this]() { addNote(NoteName::F, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-g", [this]() { addNote(NoteName::G, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-a", [this]() { addNote(NoteName::A, NoteAddingMode::InsertChord); });
+    dispatcher()->reg(this, "insert-b", [this]() { addNote(NoteName::B, NoteAddingMode::InsertChord); });
 
     dispatcher()->reg(this, "put-note", this, &NotationActionController::putNote);
 
@@ -123,6 +153,30 @@ void NotationActionController::toggleNoteInput()
     } else {
         interaction->startNoteEntry();
     }
+}
+
+void NotationActionController::toggleNoteInputMethod(NoteInputMethod method)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return;
+    }
+
+    if (interaction->inputState()->isNoteEnterMode()) {
+        interaction->startNoteEntry();
+    }
+
+    interaction->setNoteEntryMethod(method);
+}
+
+void NotationActionController::addNote(NoteName note, NoteAddingMode addingMode)
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return;
+    }
+
+    interaction->addNote(note, addingMode);
 }
 
 void NotationActionController::padNote(const Pad& pad)

@@ -192,10 +192,14 @@ void NotationInteraction::endNoteEntry()
     hideShadowNote();
 }
 
-    }
+void NotationInteraction::setNoteEntryMethod(NoteInputMethod method)
+{
+    inputState()->setNoteEntryMethod(method);
+}
 
-    hideShadowNote();
-    m_inputStateChanged.notify();
+void NotationInteraction::addNote(NoteName noteName, NoteAddingMode addingMode)
+{
+    inputState()->addNote(noteName, addingMode);
 }
 
 void NotationInteraction::padNote(const Pad& pad)

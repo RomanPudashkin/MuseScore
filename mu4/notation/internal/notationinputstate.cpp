@@ -172,6 +172,33 @@ void NotationInputState::endNoteEntry()
     m_stateChanged.notify();
 }
 
+void NotationInputState::setNoteEntryMethod(NoteInputMethod method)
+{
+    Ms::InputState& inputState = score()->inputState();
+    inputState.setNoteEntryMethod(method);
+
+    m_stateChanged.notify();
+}
+
+void NotationInputState::addNote(NoteName noteName, NoteAddingMode addingMode)
+{
+    if (!isNoteEnterMode()) {
+        startNoteEntry();
+    }
+
+    Ms::EditData editData;
+    editData.view = m_scoreCallbacks;
+
+    m_undoStack->prepareChanges();
+    int inote = static_cast<int>(noteName);
+    bool addToUpOnCurrentChord = addingMode == NoteAddingMode::CurrentChord;
+    bool insertNewChord = addingMode == NoteAddingMode::InsertChord;
+    score()->cmdAddPitch(editData, inote, addToUpOnCurrentChord, insertNewChord);
+    m_undoStack->commitChanges();
+
+    m_stateChanged.notify();
+}
+
 void NotationInputState::padNote(const Pad& pad)
 {
     Ms::EditData ed;
