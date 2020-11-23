@@ -100,3 +100,8 @@ void WorkspaceModule::onInit()
     s_configuration->init();
     s_manager->init();
 }
+
+void WorkspaceModule::onDeinit()
+{
+    s_manager->deinit();
+}

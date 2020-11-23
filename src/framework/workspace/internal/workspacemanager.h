@@ -36,6 +36,7 @@ class WorkspaceManager : public IWorkspaceManager, async::Asyncable
 
 public:
     void init();
+    void deinit();
 
     RetValCh<IWorkspacePtr> currentWorkspace() const override;
 

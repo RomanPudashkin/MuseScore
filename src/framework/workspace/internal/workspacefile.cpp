@@ -34,8 +34,8 @@
 using namespace mu;
 using namespace mu::workspace;
 
-WorkspaceFile::WorkspaceFile(const io::path& filepath)
-    : m_filePath(filepath)
+WorkspaceFile::WorkspaceFile(const io::path& filePath)
+    : m_filePath(filePath)
 {}
 
 QByteArray WorkspaceFile::readRootFile()
@@ -87,7 +87,6 @@ bool WorkspaceFile::writeRootFile(const std::string& name, const QByteArray& dat
     zip.addFile(QString::fromStdString(name), data);
 
     bool ret = zip.status() == MQZipWriter::NoError;
-
     if (!ret) {
         LOGE() << "Error while writing workspace, zip status: " << zip.status();
     }

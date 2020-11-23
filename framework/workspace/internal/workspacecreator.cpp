@@ -25,5 +25,7 @@ using namespace mu::workspace;
 
 IWorkspacePtr WorkspaceCreator::newWorkspace(const std::string& workspaceName) const
 {
-    return std::make_shared<Workspace>(workspaceName);
+    io::path workspacePath = configuration()->userWorkspacePath(workspaceName);
+
+    return std::make_shared<Workspace>(workspacePath);
 }

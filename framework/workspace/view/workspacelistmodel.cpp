@@ -25,7 +25,7 @@ using namespace mu::workspace;
 
 static const QString NAME_KEY("name");
 static const QString IS_SELECTED_KEY("isSelected");
-static const QString CAN_REMOVE_KEY("canRemove");
+static const QString IS_REMOVABLE_KEY("isRemovable");
 static const QString INDEX_KEY("index");
 
 WorkspaceListModel::WorkspaceListModel(QObject* parent)
@@ -35,9 +35,8 @@ WorkspaceListModel::WorkspaceListModel(QObject* parent)
 
 void WorkspaceListModel::load()
 {
-    m_workspaces.clear();
-
     beginResetModel();
+    m_workspaces.clear();
 
     RetVal<IWorkspacePtrList> workspaces = workspacesManager()->workspaces();
     if (!workspaces.ret) {
@@ -45,10 +44,11 @@ void WorkspaceListModel::load()
     }
 
     IWorkspacePtr currentWorkspace = workspacesManager()->currentWorkspace().val;
+    IWorkspacePtr selectedWorkspace;
 
     for (const IWorkspacePtr& workspace : workspaces.val) {
         if (workspace == currentWorkspace) {
-            m_selectedWorkspace = workspace;
+            selectedWorkspace = workspace;
         }
 
         m_workspaces << workspace;
@@ -60,12 +60,17 @@ void WorkspaceListModel::load()
 
     endResetModel();
 
-    emit selectedWorkspaceChanged(selectedWorkspace());
+    setSelectedWorkspace(selectedWorkspace);
 }
 
 QVariant WorkspaceListModel::selectedWorkspace() const
 {
-    return workspaceToObject(m_selectedWorkspace);
+    QVariantMap obj = workspaceToObject(m_selectedWorkspace);
+    if (obj.isEmpty()) {
+        return QVariant();
+    }
+
+    return obj;
 }
 
 QVariant WorkspaceListModel::data(const QModelIndex& index, int role) const
@@ -79,8 +84,8 @@ QVariant WorkspaceListModel::data(const QModelIndex& index, int role) const
     switch (role) {
     case RoleName:
         return workspace[NAME_KEY];
-    case RoleCanRemove:
-        return workspace[CAN_REMOVE_KEY];
+    case RoleIsRemovable:
+        return workspace[IS_REMOVABLE_KEY];
     case RoleIsSelected:
         return workspace[IS_SELECTED_KEY];
     }
@@ -88,14 +93,34 @@ QVariant WorkspaceListModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
+void WorkspaceListModel::setSelectedWorkspace(IWorkspacePtr workspace)
+{
+    if (m_selectedWorkspace == workspace) {
+        return;
+    }
+
+    QModelIndex previousSelectedModelIndex = index(m_workspaces.indexOf(m_selectedWorkspace));
+    QModelIndex currentSelectedModelIndex = index(m_workspaces.indexOf(workspace));
+
+    m_selectedWorkspace = workspace;
+
+    emit selectedWorkspaceChanged(selectedWorkspace());
+    emit dataChanged(previousSelectedModelIndex, previousSelectedModelIndex);
+    emit dataChanged(currentSelectedModelIndex, currentSelectedModelIndex);
+}
+
 QVariantMap WorkspaceListModel::workspaceToObject(IWorkspacePtr workspace) const
 {
-    std::string workspaceName = workspace ? workspace->name() : "";
+    if (!workspace) {
+        return QVariantMap();
+    }
+
+    std::string workspaceName = workspace->name();
     std::string selectedWorkspaceName = m_selectedWorkspace ? m_selectedWorkspace->name() : "";
 
     QVariantMap result;
     result[NAME_KEY] = QString::fromStdString(workspaceName);
-    result[CAN_REMOVE_KEY] = workspaceName != DEFAULT_WORKSPACE_NAME;
+    result[IS_REMOVABLE_KEY] = workspaceName != DEFAULT_WORKSPACE_NAME;
     result[IS_SELECTED_KEY] = workspaceName == selectedWorkspaceName;
     result[INDEX_KEY] = m_workspaces.indexOf(workspace);
 
@@ -112,7 +137,7 @@ QHash<int, QByteArray> WorkspaceListModel::roleNames() const
     static const QHash<int, QByteArray> roles {
         { RoleName, NAME_KEY.toUtf8() },
         { RoleIsSelected, IS_SELECTED_KEY.toUtf8() },
-        { RoleCanRemove, CAN_REMOVE_KEY.toUtf8() }
+        { RoleIsRemovable, IS_REMOVABLE_KEY.toUtf8() }
     };
 
     return roles;
@@ -145,20 +170,7 @@ void WorkspaceListModel::selectWorkspace(int workspaceIndex)
         return;
     }
 
-    IWorkspacePtr workspace = m_workspaces[workspaceIndex];
-
-    if (m_selectedWorkspace == workspace) {
-        return;
-    }
-
-    QModelIndex previousModelIndex = index(m_workspaces.indexOf(m_selectedWorkspace));
-    QModelIndex currentModelIndex = index(workspaceIndex);
-
-    m_selectedWorkspace = workspace;
-
-    emit dataChanged(previousModelIndex, previousModelIndex);
-    emit dataChanged(currentModelIndex, currentModelIndex);
-    emit selectedWorkspaceChanged(selectedWorkspace());
+    setSelectedWorkspace(m_workspaces[workspaceIndex]);
 }
 
 void WorkspaceListModel::removeWorkspace(int workspaceIndex)
@@ -168,8 +180,12 @@ void WorkspaceListModel::removeWorkspace(int workspaceIndex)
     }
 
     beginRemoveRows(QModelIndex(), workspaceIndex, workspaceIndex);
-    m_workspaces.removeAt(workspaceIndex);
+    IWorkspacePtr removedWorkspace = m_workspaces.takeAt(workspaceIndex);
     endRemoveRows();
+
+    if (removedWorkspace == m_selectedWorkspace) {
+        setSelectedWorkspace(nullptr);
+    }
 }
 
 bool WorkspaceListModel::apply()
@@ -181,7 +197,6 @@ bool WorkspaceListModel::apply()
     }
 
     Ret ret = workspacesManager()->setWorkspaces(newWorkspaceList);
-
     if (!ret) {
         LOGE() << ret.toString();
     }

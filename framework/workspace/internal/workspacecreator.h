@@ -21,10 +21,15 @@
 #define MU_WORKSPACE_WORKSPACECREATOR_H
 
 #include "iworkspacecreator.h"
+#include "iworkspaceconfiguration.h"
+
+#include "modularity/ioc.h"
 
 namespace mu::workspace {
 class WorkspaceCreator : public IWorkspaceCreator
 {
+    INJECT(workspace, IWorkspaceConfiguration, configuration)
+
 public:
     IWorkspacePtr newWorkspace(const std::string& workspaceName) const override;
 };

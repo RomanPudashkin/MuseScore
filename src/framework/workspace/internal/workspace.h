@@ -24,7 +24,6 @@
 #include "../iworkspace.h"
 #include "modularity/ioc.h"
 #include "../iworkspacedatastreamregister.h"
-#include "../iworkspaceconfiguration.h"
 #include "io/path.h"
 #include "ret.h"
 
@@ -32,10 +31,8 @@ namespace mu::workspace {
 class Workspace : public IWorkspace
 {
     INJECT(workspace, IWorkspaceDataStreamRegister, streamRegister)
-    INJECT(workspace, IWorkspaceConfiguration, configuration)
 
 public:
-    Workspace(const std::string& name);
     Workspace(const io::path& filePath);
 
     std::string name() const override;

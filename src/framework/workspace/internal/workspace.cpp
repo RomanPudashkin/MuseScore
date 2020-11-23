@@ -42,11 +42,6 @@ static WorkspaceTag workspaceTagFromString(const QString& str)
     return tagByStr[str];
 }
 
-Workspace::Workspace(const std::string& name)
-    : m_filePath(configuration()->userWorkspacePath(name))
-{
-}
-
 Workspace::Workspace(const io::path& filePath)
     : m_filePath(filePath)
 {

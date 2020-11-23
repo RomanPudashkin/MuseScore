@@ -152,6 +152,11 @@ Ret WorkspaceManager::createWorkspace(const WorkspacePtr& workspace)
 
 void WorkspaceManager::init()
 {
+    Ret ret = fileSystem()->makePath(configuration()->userWorkspacesDirPath());
+    if (!ret) {
+        LOGE() << ret.toString();
+    }
+
     RetCh<Extension> extensionChanged = extensionsController()->extensionChanged();
     if (extensionChanged.ret) {
         extensionChanged.ch.onReceive(this, [this](const Extension& newExtension) {
@@ -241,4 +246,12 @@ WorkspacePtr WorkspaceManager::findAndInit(const std::string& name) const
     }
 
     return workspace;
+}
+
+void WorkspaceManager::deinit()
+{
+    Ret ret = m_currentWorkspace->write();
+    if (!ret) {
+        LOGE() << ret.toString();
+    }
 }
