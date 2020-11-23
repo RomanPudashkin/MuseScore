@@ -9,10 +9,8 @@ using namespace mu::async;
 void WorkspaceSettingsSource::init()
 {
     RetValCh<IWorkspacePtr> currentWorkspace = workspaceManager()->currentWorkspace();
-
     if (!currentWorkspace.ret) {
         LOGE() << currentWorkspace.ret.toString();
-        return;
     }
 
     m_currentWorkspace = currentWorkspace.val;
@@ -35,7 +33,7 @@ mu::Val WorkspaceSettingsSource::value(const std::string& key) const
     }
 
     SettingsDataPtr settings = std::dynamic_pointer_cast<SettingsData>(m_currentWorkspace->data(WorkspaceTag::Settings));
-    IF_ASSERT_FAILED(settings) {
+    if (!settings) {
         return Val();
     }
 
@@ -54,7 +52,7 @@ void WorkspaceSettingsSource::setValue(const std::string &key, const Val& value)
     }
 
     SettingsDataPtr settings = std::dynamic_pointer_cast<SettingsData>(m_currentWorkspace->data(WorkspaceTag::Settings));
-    IF_ASSERT_FAILED(settings) {
+    if (!settings) {
         return;
     }
 

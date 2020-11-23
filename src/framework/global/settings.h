@@ -20,10 +20,9 @@
 #define MU_FRAMEWORK_SETTINGS_H
 
 #include <string>
-#include <vector>
 
-#include "val.h"
 #include "async/channel.h"
+#include "async/asyncable.h"
 
 #include "isettingssource.h"
 #include "modularity/ioc.h"
@@ -36,7 +35,7 @@
 class QSettings;
 
 namespace mu::framework {
-class Settings
+class Settings : public async::Asyncable
 {
     INJECT(framework, ISettingsSource, source)
 

@@ -110,13 +110,7 @@ Ret WorkspaceManager::removeWorkspace(const IWorkspacePtr& workspace)
 
 bool WorkspaceManager::canRemoveWorkspace(const std::string& workspaceName) const
 {
-    static const QList<std::string_view> standardWorkspaces {
-        DEFAULT_WORKSPACE_NAME,
-        BASIC_WORKSPACE_NAME,
-        ADVANCED_WORKSPACE_NAME
-    };
-
-    return !standardWorkspaces.contains(workspaceName);
+    return workspaceName != DEFAULT_WORKSPACE_NAME;
 }
 
 Ret WorkspaceManager::createInexistentWorkspaces(const IWorkspacePtrList& newWorkspaceList)
