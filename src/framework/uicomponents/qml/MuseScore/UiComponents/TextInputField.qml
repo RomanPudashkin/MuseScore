@@ -28,6 +28,10 @@ Rectangle {
         valueInput.forceActiveFocus()
     }
 
+    function selectAll() {
+        valueInput.selectAll()
+    }
+
     implicitHeight: 32
     implicitWidth: parent.width
 

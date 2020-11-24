@@ -19,10 +19,10 @@
 #ifndef MU_WORKSPACE_WORKSPACETYPES_H
 #define MU_WORKSPACE_WORKSPACETYPES_H
 
-#include <string>
 #include <vector>
 #include <map>
 #include <memory>
+
 #include "val.h"
 
 namespace mu::workspace {

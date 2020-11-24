@@ -34,6 +34,7 @@
 #include "framework/global/widgetstatestore.h"
 
 using namespace mu::dock;
+using namespace mu::workspace;
 
 static const QString windowQss = QString("QMainWindow { background: %1; } "
                                          "QMainWindow::separator { background: %1; width: 4px; } "
@@ -69,8 +70,6 @@ DockWindow::DockWindow(QQuickItem* parent)
     m_statusbar->setSizeGripEnabled(false);
     m_window->setStatusBar(m_statusbar);
 
-    WidgetStateStore::restoreGeometry(m_window);
-
     connect(m_pages.notifier(), &framework::QmlListPropertyNotifier::appended, this, &DockWindow::onPageAppended);
     connect(this, &DockWindow::colorChanged, this, &DockWindow::updateStyle);
 }
@@ -79,6 +78,7 @@ void DockWindow::componentComplete()
 {
     QQuickItem::componentComplete();
 
+    restoreWindowState();
     updateStyle();
 
     for (DockToolBar* t : m_toolbars.list()) {
@@ -94,6 +94,42 @@ void DockWindow::componentComplete()
     m_isComponentComplete = true;
 }
 
+void DockWindow::restoreWindowState()
+{
+    WidgetStateStore::restoreGeometry(m_window);
+
+    if (!uiArrangement()) {
+        return;
+    }
+
+    QByteArray state(QByteArray::fromBase64(uiArrangement()->mainWindowState.c_str()));
+    m_window->restoreState(state);
+}
+
+void DockWindow::saveWindowState()
+{
+    WidgetStateStore::saveGeometry(m_window);
+
+    UiArrangementDataPtr uiArrangement = this->uiArrangement();
+    if (!uiArrangement) {
+        return;
+    }
+
+    uiArrangement->mainWindowState = QString(m_window->saveState().toBase64()).toStdString();
+}
+
+UiArrangementDataPtr DockWindow::uiArrangement() const
+{
+    IWorkspacePtr currentWorkspace = workspaceManager()->currentWorkspace().val;
+
+    if (!currentWorkspace) {
+        return nullptr;
+    }
+
+    AbstractDataPtr uiArrangmenet = currentWorkspace->data(WorkspaceTag::UiArrangement);
+    return std::dynamic_pointer_cast<UiArrangementData>(uiArrangmenet);
+}
+
 void DockWindow::onMainWindowEvent(QEvent* e)
 {
     if (QEvent::Resize == e->type()) {
@@ -101,7 +137,7 @@ void DockWindow::onMainWindowEvent(QEvent* e)
         setSize(QSizeF(re->size()));
         adjustPanelsSize(currentPage());
     } else if (QEvent::Close == e->type()) {
-        WidgetStateStore::saveGeometry(m_window);
+        saveWindowState();
     }
 }
 

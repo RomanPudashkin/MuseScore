@@ -57,6 +57,15 @@ QmlDialog {
                 onCurrentTextEdited: {
                     workspaceModel.workspaceName = newTextValue
                 }
+
+                Component.onCompleted: {
+                    Qt.callLater(initFocus)
+                }
+
+                function initFocus() {
+                    forceActiveFocus()
+                    selectAll()
+                }
             }
 
             StyledTextLabel {

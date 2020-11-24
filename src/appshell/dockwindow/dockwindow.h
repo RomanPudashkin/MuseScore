@@ -27,16 +27,21 @@
 
 #include "ui/imainwindow.h"
 
+#include "workspace/iworkspacemanager.h"
+#include "modularity/ioc.h"
+
 class QMainWindow;
 class QStackedWidget;
 class QStatusBar;
 
-namespace mu {
-namespace dock {
+namespace mu::dock {
 class EventsWatcher;
 class DockWindow : public QQuickItem, public framework::IMainWindow
 {
     Q_OBJECT
+
+    INJECT(workspace, workspace::IWorkspaceManager, workspaceManager)
+
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
@@ -80,6 +85,11 @@ private slots:
 private:
     void componentComplete() override;
 
+    void restoreWindowState();
+    void saveWindowState();
+
+    workspace::UiArrangementDataPtr uiArrangement() const;
+
     DockPage* page(const QString& uri) const;
     DockPage* currentPage() const;
 
@@ -99,7 +109,6 @@ private:
     bool m_isComponentComplete = false;
     QColor m_color;
 };
-}
 }
 
 #endif // MU_DOCK_DOCKWINDOW_H

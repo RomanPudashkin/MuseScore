@@ -57,7 +57,6 @@ void WorkspaceSettingsSource::setValue(const std::string &key, const Val& value)
     }
 
     settings->vals[key] = value;
-    m_currentWorkspace->addData(settings);
 }
 
 Notification WorkspaceSettingsSource::sourceChanged() const
