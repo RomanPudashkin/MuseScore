@@ -60,6 +60,7 @@ using TransposeMode = Ms::TransposeMode;
 using TransposeDirection = Ms::TransposeDirection;
 using Fraction = Ms::Fraction;
 using NoteInputMethod = Ms::NoteEntryMethod;
+using AccidentalType = Ms::AccidentalType;
 
 using StaffList = QList<const Staff*>;
 using PartList = QList<const Part*>;
@@ -110,6 +111,12 @@ enum class NoteAddingMode {
     CurrentChord,
     NextChord,
     InsertChord
+};
+
+struct NoteInputState
+{
+    Duration duration;
+    AccidentalType accidentalType;
 };
 
 struct Meta
