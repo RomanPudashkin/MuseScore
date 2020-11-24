@@ -207,6 +207,8 @@ io::paths WorkspaceManager::findWorkspaceFiles() const
 
 void WorkspaceManager::setupCurrentWorkspace()
 {
+    saveCurrentWorkspace();
+
     std::string workspaceName = configuration()->currentWorkspaceName().val;
 
     WorkspacePtr workspace = findAndInit(workspaceName);
@@ -250,6 +252,15 @@ WorkspacePtr WorkspaceManager::findAndInit(const std::string& name) const
 
 void WorkspaceManager::deinit()
 {
+    saveCurrentWorkspace();
+}
+
+void WorkspaceManager::saveCurrentWorkspace()
+{
+    if (!m_currentWorkspace) {
+        return;
+    }
+
     Ret ret = m_currentWorkspace->write();
     if (!ret) {
         LOGE() << ret.toString();

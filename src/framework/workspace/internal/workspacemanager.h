@@ -45,6 +45,7 @@ public:
 
 private:
     void load();
+    void saveCurrentWorkspace();
 
     Ret removeMissingWorkspaces(const IWorkspacePtrList& newWorkspaceList);
     Ret removeWorkspace(const IWorkspacePtr& workspace);

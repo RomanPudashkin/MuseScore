@@ -105,7 +105,7 @@ void Workspace::addData(AbstractDataPtr data)
 
 bool Workspace::isInited() const
 {
-    return !m_data.empty();
+    return m_isInited;
 }
 
 io::path Workspace::filePath() const
@@ -126,11 +126,14 @@ Ret Workspace::read()
         return ret;
     }
 
+    m_isInited = true;
+
     return make_ret(Ret::Code::Ok);
 }
 
 Ret Workspace::readWorkspace(const QByteArray& xmlData)
 {
+    m_data.clear();
     Ms::XmlReader xml(xmlData);
 
     while (xml.readNextStartElement()) {

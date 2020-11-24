@@ -54,6 +54,7 @@ private:
     Ret readWorkspace(const QByteArray& data);
 
     io::path m_filePath;
+    bool m_isInited = false;
     std::string m_title;
     std::string m_source;
 
