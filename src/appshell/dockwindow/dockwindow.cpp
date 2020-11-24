@@ -111,22 +111,26 @@ void DockWindow::saveWindowState()
     WidgetStateStore::saveGeometry(m_window);
 
     UiArrangementDataPtr uiArrangement = this->uiArrangement();
-    if (!uiArrangement) {
+    if (!uiArrangement || !currentWorkspace()) {
         return;
     }
 
     uiArrangement->mainWindowState = QString(m_window->saveState().toBase64()).toStdString();
+    currentWorkspace()->addData(uiArrangement);
+}
+
+IWorkspacePtr DockWindow::currentWorkspace() const
+{
+    return workspaceManager()->currentWorkspace().val;
 }
 
 UiArrangementDataPtr DockWindow::uiArrangement() const
 {
-    IWorkspacePtr currentWorkspace = workspaceManager()->currentWorkspace().val;
-
-    if (!currentWorkspace) {
+    if (!currentWorkspace()) {
         return nullptr;
     }
 
-    AbstractDataPtr uiArrangmenet = currentWorkspace->data(WorkspaceTag::UiArrangement);
+    AbstractDataPtr uiArrangmenet = currentWorkspace()->data(WorkspaceTag::UiArrangement);
     return std::dynamic_pointer_cast<UiArrangementData>(uiArrangmenet);
 }
 

@@ -87,6 +87,7 @@ private:
 
     void restoreWindowState();
     void saveWindowState();
+    workspace::IWorkspacePtr currentWorkspace() const;
 
     workspace::UiArrangementDataPtr uiArrangement() const;
 

@@ -58,7 +58,7 @@ Element* MTest::writeReadElement(Element* element)
     //
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    XmlWriter xml(element->score(), &buffer);
+    XmlWriter xml(&buffer);
     xml.header();
     element->write(xml);
     buffer.close();

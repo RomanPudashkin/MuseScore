@@ -101,6 +101,7 @@ void Workspace::addData(AbstractDataPtr data)
     m_data[key] = data;
 
     m_dataChanged.send(data);
+    m_hasUnsavedChanges = true;
 }
 
 bool Workspace::isInited() const
@@ -177,6 +178,10 @@ Ret Workspace::readWorkspace(const QByteArray& xmlData)
 
 Ret Workspace::write()
 {
+    if (!m_hasUnsavedChanges) {
+        return make_ret(Ret::Code::Ok);
+    }
+
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
     Ms::XmlWriter xml(&buffer);
@@ -204,6 +209,10 @@ Ret Workspace::write()
     WorkspaceFile file(m_filePath);
     Ret ret = file.writeRootFile(name() + ".xml", buffer.data());
     buffer.close();
+
+    if (ret) {
+        m_hasUnsavedChanges = false;
+    }
 
     return ret;
 }

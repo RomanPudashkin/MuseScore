@@ -262,7 +262,6 @@ struct PaletteTree
 };
 
 using PaletteTreePtr = std::shared_ptr<PaletteTree>;
-
 } // namespace Ms
 
 Q_DECLARE_METATYPE(const Ms::PaletteCell*)

@@ -70,7 +70,9 @@ void Settings::load()
 {
     m_items = readItems();
 
-    source()->sourceChanged().onNotify(this, [this]() { reload(); });
+    if (source()) {
+        source()->sourceChanged().onNotify(this, [this]() { reload(); });
+    }
 }
 
 Settings::Items Settings::readItems() const
@@ -90,7 +92,7 @@ Settings::Items Settings::readItems() const
 
 Val Settings::value(const Key& key) const
 {
-    if (source()->hasValue(key.key)) {
+    if (source() && source()->hasValue(key.key)) {
         return source()->value(key.key);
     }
 
@@ -127,7 +129,7 @@ void Settings::setValue(const Key& key, const Val& value)
 
 void Settings::writeValue(const Key& key, const Val& value)
 {
-    if (source()->hasValue(key.key)) {
+    if (source() && source()->hasValue(key.key)) {
         source()->setValue(key.key, value);
     } else {
         // TODO: implement writing/reading first part of key (module name)

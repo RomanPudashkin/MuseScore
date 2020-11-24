@@ -55,6 +55,7 @@ private:
 
     io::path m_filePath;
     bool m_isInited = false;
+    bool m_hasUnsavedChanges = false;
     std::string m_title;
     std::string m_source;
 

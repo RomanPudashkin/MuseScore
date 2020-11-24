@@ -38,7 +38,8 @@ class NewWorkspaceModel : public QObject
     Q_PROPERTY(bool importUiPreferences READ importUiPreferences WRITE setImportUiPreferences NOTIFY importUiPreferencesChanged)
     Q_PROPERTY(bool importUiArrangement READ importUiArrangement WRITE setImportUiArrangement NOTIFY importUiArrangementChanged)
     Q_PROPERTY(bool importPalettes READ importPalettes WRITE setImportPalettes NOTIFY importPalettesChanged)
-    Q_PROPERTY(bool importToolbarCustomization READ importToolbarCustomization WRITE setImportToolbarCustomization NOTIFY importToolbarCustomizationChanged)
+    Q_PROPERTY(
+        bool importToolbarCustomization READ importToolbarCustomization WRITE setImportToolbarCustomization NOTIFY importToolbarCustomizationChanged)
     Q_PROPERTY(bool canCreateWorkspace READ canCreateWorkspace NOTIFY canCreateWorkspaceChanged)
 
 public:

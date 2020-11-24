@@ -33,20 +33,31 @@ void PaletteWorkspaceSetup::setup()
     }
 
     PaletteWorkspace* paletteWorkspace = adapter()->paletteWorkspace();
-    auto applyWorkspaceData = [paletteWorkspace](workspace::IWorkspacePtr workspace) {
-                                  workspace::AbstractDataPtr data = workspace->data(workspace::WorkspaceTag::Palettes);
-                                  if (!data) {
-                                      LOGW() << "no palette data in workspace: " << workspace->name();
-                                      return false;
-                                  }
+    auto updateWorkspaceConnection = std::make_shared<QMetaObject::Connection>();
 
+    auto applyWorkspaceData = [paletteWorkspace, updateWorkspaceConnection](workspace::IWorkspacePtr workspace) {
+                                  workspace::AbstractDataPtr data = workspace->data(workspace::WorkspaceTag::Palettes);
                                   PaletteWorkspaceDataPtr palette = std::dynamic_pointer_cast<PaletteWorkspaceData>(data);
-                                  IF_ASSERT_FAILED(palette) {
+
+                                  if (!palette) {
+                                      LOGW() << "no palette data in workspace: " << workspace->name();
                                       return false;
                                   }
 
                                   paletteWorkspace->setDefaultPaletteTree(palette->tree);
                                   paletteWorkspace->setUserPaletteTree(palette->tree);
+
+                                  if (updateWorkspaceConnection) {
+                                      QObject::disconnect(*updateWorkspaceConnection);
+                                  }
+
+                                  auto newConnection
+                                      = QObject::connect(paletteWorkspace, &PaletteWorkspace::userPaletteChanged, [workspace, palette]() {
+            workspace->addData(palette);
+        });
+
+                                  *updateWorkspaceConnection = newConnection;
+
                                   return true;
                               };
 
