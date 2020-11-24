@@ -141,58 +141,68 @@ INotationInteractionPtr NotationActionController::currentNotationInteraction() c
     return notation->interaction();
 }
 
-void NotationActionController::toggleNoteInput()
+INotationInputStatePtr NotationActionController::currentNotationInputState() const
 {
     auto interaction = currentNotationInteraction();
     if (!interaction) {
+        return nullptr;
+    }
+
+    return interaction->inputState();
+}
+
+void NotationActionController::toggleNoteInput()
+{
+    auto inputState = currentNotationInputState();
+    if (!inputState) {
         return;
     }
 
-    if (interaction->inputState()->isNoteEnterMode()) {
-        interaction->endNoteEntry();
+    if (inputState->isNoteInputMode()) {
+        inputState->endNoteInput();
     } else {
-        interaction->startNoteEntry();
+        inputState->startNoteInput();
     }
 }
 
 void NotationActionController::toggleNoteInputMethod(NoteInputMethod method)
 {
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
+    auto inputState = currentNotationInputState();
+    if (!inputState) {
         return;
     }
 
-    if (interaction->inputState()->isNoteEnterMode()) {
-        interaction->startNoteEntry();
+    if (inputState->isNoteInputMode()) {
+        inputState->startNoteInput();
     }
 
-    interaction->setNoteEntryMethod(method);
+    inputState->setNoteInputMethod(method);
 }
 
 void NotationActionController::addNote(NoteName note, NoteAddingMode addingMode)
 {
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
+    auto inputState = currentNotationInputState();
+    if (!inputState) {
         return;
     }
 
-    interaction->addNote(note, addingMode);
+    inputState->addNote(note, addingMode);
 }
 
 void NotationActionController::padNote(const Pad& pad)
 {
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
+    auto inputState = currentNotationInputState();
+    if (!inputState) {
         return;
     }
 
-    interaction->padNote(pad);
+    inputState->padNote(pad);
 }
 
 void NotationActionController::putNote(const actions::ActionData& data)
 {
-    auto interaction = currentNotationInteraction();
-    if (!interaction) {
+    auto inputState = currentNotationInputState();
+    if (!inputState) {
         return;
     }
 
@@ -204,7 +214,8 @@ void NotationActionController::putNote(const actions::ActionData& data)
     bool replace = data.arg<bool>(1);
     bool insert = data.arg<bool>(2);
 
-    interaction->putNote(pos, replace, insert);
+    inputState->putNote(pos, replace, insert);
+}
 }
 
 void NotationActionController::moveAction(const actions::ActionName& action)

@@ -30,13 +30,12 @@
 using namespace mu::notation;
 using namespace mu::async;
 
-NotationInputState::NotationInputState(const IGetScore* getScore, INotationUndoStackPtr undoStack,
-                                       Notification selectionChangedNotification)
-    : m_getScore(getScore), m_undoStack(undoStack)
+NotationInputState::NotationInputState(const IGetScore* getScore, INotationInteraction* interaction, INotationUndoStackPtr undoStack)
+    : m_getScore(getScore), m_interaction(interaction), m_undoStack(undoStack)
 {
     m_scoreCallbacks = new ScoreCallbacks();
 
-    selectionChangedNotification.onNotify(this, [this]() {
+    m_interaction->selectionChanged().onNotify(this, [this]() {
         updateInputState();
     });
 }
@@ -46,7 +45,7 @@ NotationInputState::~NotationInputState()
     delete m_scoreCallbacks;
 }
 
-bool NotationInputState::isNoteEnterMode() const
+bool NotationInputState::isNoteInputMode() const
 {
     return score()->inputState().noteEntryMode();
 }
@@ -82,7 +81,7 @@ Duration NotationInputState::duration() const
     return score()->inputState().duration();
 }
 
-void NotationInputState::startNoteEntry()
+void NotationInputState::startNoteInput()
 {
     //! NOTE Coped from `void ScoreView::startNoteEntry()`
     Ms::InputState& is = score()->inputState();
@@ -126,7 +125,7 @@ void NotationInputState::startNoteEntry()
     }
     is.setAccidentalType(Ms::AccidentalType::NONE);
 
-    score()->select(el, SelectType::SINGLE, 0); // todoooo
+    m_interaction->select(el, SelectType::SINGLE, 0);
 
     is.setRest(false);
     is.setNoteEntryMode(true);
@@ -157,7 +156,7 @@ void NotationInputState::startNoteEntry()
     m_stateChanged.notify();
 }
 
-void NotationInputState::endNoteEntry()
+void NotationInputState::endNoteInput()
 {
     Ms::InputState& is = score()->inputState();
     is.setNoteEntryMode(false);
@@ -172,7 +171,7 @@ void NotationInputState::endNoteEntry()
     m_stateChanged.notify();
 }
 
-void NotationInputState::setNoteEntryMethod(NoteInputMethod method)
+void NotationInputState::setNoteInputMethod(NoteInputMethod method)
 {
     Ms::InputState& inputState = score()->inputState();
     inputState.setNoteEntryMethod(method);
@@ -182,8 +181,8 @@ void NotationInputState::setNoteEntryMethod(NoteInputMethod method)
 
 void NotationInputState::addNote(NoteName noteName, NoteAddingMode addingMode)
 {
-    if (!isNoteEnterMode()) {
-        startNoteEntry();
+    if (!isNoteInputMode()) {
+        startNoteInput();
     }
 
     Ms::EditData editData;

@@ -41,6 +41,7 @@ private:
 
     INotationPtr currentNotation() const;
     INotationInteractionPtr currentNotationInteraction() const;
+    INotationInputStatePtr currentNotationInputState() const;
 
     void toggleNoteInput();
     void toggleNoteInputMethod(NoteInputMethod method);
