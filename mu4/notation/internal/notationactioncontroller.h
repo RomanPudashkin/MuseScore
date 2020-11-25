@@ -60,6 +60,8 @@ private:
     void deleteSelection();
     void swapSelection();
     void flipSelection();
+    void addTieToSelection();
+    void addSlurToSelection();
 
     void undo();
     void redo();

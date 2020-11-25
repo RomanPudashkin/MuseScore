@@ -109,6 +109,8 @@ void NotationActionController::init()
     dispatcher()->reg(this, "delete", this, &NotationActionController::deleteSelection);
     dispatcher()->reg(this, "select-all", this, &NotationActionController::selectAll);
     dispatcher()->reg(this, "flip", this, &NotationActionController::flipSelection);
+    dispatcher()->reg(this, "tie", this, &NotationActionController::addTieToSelection);
+    dispatcher()->reg(this, "add-slur", this, &NotationActionController::addSlurToSelection);
 
     dispatcher()->reg(this, "undo", this, &NotationActionController::undo);
     dispatcher()->reg(this, "redo", this, &NotationActionController::redo);
@@ -397,6 +399,26 @@ void NotationActionController::flipSelection()
     }
 
     interaction->flipSelection();
+}
+
+void NotationActionController::addTieToSelection()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return;
+    }
+
+    interaction->addTieToSelection();
+}
+
+void NotationActionController::addSlurToSelection()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return;
+    }
+
+    interaction->addSlurToSelection();
 }
 
 void NotationActionController::undo()
