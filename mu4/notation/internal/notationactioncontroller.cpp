@@ -107,9 +107,11 @@ void NotationActionController::init()
     dispatcher()->reg(this, "paste-special", [this]() { pasteSelection(PastingType::Special); });
     dispatcher()->reg(this, "swap", this, &NotationActionController::swapSelection);
     dispatcher()->reg(this, "delete", this, &NotationActionController::deleteSelection);
+    dispatcher()->reg(this, "select-all", this, &NotationActionController::selectAll);
+    dispatcher()->reg(this, "flip", this, &NotationActionController::flipSelection);
+
     dispatcher()->reg(this, "undo", this, &NotationActionController::undo);
     dispatcher()->reg(this, "redo", this, &NotationActionController::redo);
-    dispatcher()->reg(this, "select-all", this, &NotationActionController::selectAll);
 
     dispatcher()->reg(this, "edit-style", this, &NotationActionController::openPageStyle);
     dispatcher()->reg(this, "staff-properties", this, &NotationActionController::openStaffProperties);
@@ -385,6 +387,16 @@ void NotationActionController::swapSelection()
     }
 
     interaction->swapSelection();
+}
+
+void NotationActionController::flipSelection()
+{
+    auto interaction = currentNotationInteraction();
+    if (!interaction) {
+        return;
+    }
+
+    interaction->flipSelection();
 }
 
 void NotationActionController::undo()

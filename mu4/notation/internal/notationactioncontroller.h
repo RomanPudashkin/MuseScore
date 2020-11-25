@@ -59,6 +59,7 @@ private:
     void copySelection();
     void deleteSelection();
     void swapSelection();
+    void flipSelection();
 
     void undo();
     void redo();
