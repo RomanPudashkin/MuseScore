@@ -110,6 +110,8 @@ public:
     void transpose(const TransposeOptions& options) override;
     void swapVoices(int voiceIndex1, int voiceIndex2) override;
 
+    void changeSelectedNotesVoice(int voiceIndex) override;
+
 private:
     Ms::Score* score() const;
 
@@ -135,8 +137,6 @@ private:
     void applyDropPaletteElement(Ms::Score* score, Ms::Element* target, Ms::Element* e, Qt::KeyboardModifiers modifiers,
                                  QPointF pt = QPointF(), bool pasteMode = false);
     void doAddSlur(const Ms::Slur* slurTemplate = nullptr);
-
-    bool isVoiceIndexValid(int voiceIndex) const;
 
     struct HitMeasureData
     {

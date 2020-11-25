@@ -118,10 +118,11 @@ enum class NoteAddingMode
 
 struct NoteInputState
 {
-    NoteInputMethod method;
+    NoteInputMethod method = NoteInputMethod::UNKNOWN;
     Duration duration;
-    AccidentalType accidentalType;
+    AccidentalType accidentalType = AccidentalType::NONE;
     bool withSlur = false;
+    int currentVoiceIndex = 0;
 };
 
 enum class NoteFilter
@@ -242,6 +243,11 @@ inline QList<StaffType> allStaffTypes()
     }
 
     return result;
+}
+
+inline bool isVoiceIndexValid(int voiceIndex)
+{
+    return voiceIndex >= 0 && voiceIndex < VOICES;
 }
 }
 }

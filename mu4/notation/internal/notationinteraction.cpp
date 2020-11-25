@@ -1854,7 +1854,16 @@ void NotationInteraction::swapVoices(int voiceIndex1, int voiceIndex2)
     m_notation->notifyAboutNotationChanged();
 }
 
-bool NotationInteraction::isVoiceIndexValid(int voiceIndex) const
+void NotationInteraction::changeSelectedNotesVoice(int voiceIndex)
 {
-    return voiceIndex >= 0 && voiceIndex < VOICES;
+    if (!isVoiceIndexValid(voiceIndex)) {
+        return;
+    }
+
+    m_undoStack->prepareChanges();
+    score()->changeSelectedNotesVoice(voiceIndex);
+    m_undoStack->commitChanges();
+
+    m_notation->notifyAboutNotationChanged();
+    m_selectionChanged.notify();
 }
