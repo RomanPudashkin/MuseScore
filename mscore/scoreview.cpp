@@ -4445,7 +4445,9 @@ void ScoreView::changeVoice(int voice)
         }
     } else {
         // treat as command to move notes to another voice
+        score()->startCmd();
         score()->changeVoice(voice);
+        score()->endCmd();
         // modify the input state only if the command was successful
         for (ChordRest* cr : score()->getSelectedChordRests()) {
             if (cr->voice() == voice) {

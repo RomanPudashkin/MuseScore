@@ -78,6 +78,7 @@ private:
     void updateNoteDotState();
     void updateNoteDurationState();
     void updateNoteAccidentalState();
+    void updateVoicesState();
 
     bool isNoteInputModeAction(const actions::ActionName& actionName) const;
     actions::Action currentNoteInputModeAction() const;
@@ -96,6 +97,13 @@ private:
 
     ActionItem& item(const actions::ActionName& actionName);
     int findNoteInputModeItemIndex() const;
+
+    INotationNoteInputPtr noteInput() const;
+    INotationInteractionPtr interaction() const;
+    INotationSelectionPtr selection() const;
+    int resolveCurrentVoiceIndex() const;
+    bool isNoteInputMode() const;
+    NoteInputState noteInputState() const;
 
     QList<ActionItem> m_items;
 

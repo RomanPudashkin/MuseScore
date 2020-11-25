@@ -21,6 +21,7 @@
 
 #include "async/notification.h"
 #include "notationtypes.h"
+#include "retval.h"
 
 namespace mu::notation {
 class INotationNoteInput
@@ -39,6 +40,8 @@ public:
     virtual void padNote(const Pad& pad)  = 0;
     virtual void putNote(const QPointF& pos, bool replace, bool insert) = 0;
     virtual void toogleAccidental(AccidentalType accidentalType) = 0;
+
+    virtual void setCurrentVoiceIndex(int voiceIndex) = 0;
 
     virtual async::Notification noteAdded() const = 0;
     virtual async::Notification stateChanged() const = 0;

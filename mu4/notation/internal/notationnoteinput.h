@@ -49,6 +49,8 @@ public:
     void putNote(const QPointF& pos, bool replace, bool insert) override;
     void toogleAccidental(AccidentalType accidentalType) override;
 
+    void setCurrentVoiceIndex(int voiceIndex) override;
+
     async::Notification noteAdded() const override;
     async::Notification stateChanged() const override;
 
@@ -56,6 +58,7 @@ private:
     Ms::Score* score() const;
 
     void updateInputState();
+    void notifyAboutStateChanged();
 
     const IGetScore* m_getScore = nullptr;
     INotationInteraction* m_interaction = nullptr;
