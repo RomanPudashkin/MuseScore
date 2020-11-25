@@ -102,6 +102,7 @@ public:
     void pasteSelection(const Fraction& scale = Fraction(1, 1)) override;
     void swapSelection() override;
     void deleteSelection() override;
+    void flipSelection() override;
 
     void setBreaksSpawnInterval(BreaksSpawnIntervalType intervalType, int interval = 0) override;
     void transpose(const TransposeOptions& options) override;
