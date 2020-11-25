@@ -115,6 +115,7 @@ enum class NoteAddingMode {
 
 struct NoteInputState
 {
+    NoteInputMethod method;
     Duration duration;
     AccidentalType accidentalType;
 };

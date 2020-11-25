@@ -43,7 +43,6 @@ private:
     INotationInteractionPtr currentNotationInteraction() const;
     INotationNoteInputPtr currentNotationNoteInput() const;
 
-    void toggleNoteInput();
     void toggleNoteInputMethod(NoteInputMethod method);
     void addNote(NoteName note, NoteAddingMode addingMode);
     void padNote(const Pad& pad);
