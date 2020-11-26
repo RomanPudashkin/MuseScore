@@ -337,9 +337,9 @@ void NotationActionController::changeVoice(int voiceIndex)
         return;
     }
 
-    if (noteInput->isNoteInputMode()) {
-        noteInput->setCurrentVoiceIndex(voiceIndex);
-    } else {
+    noteInput->setCurrentVoiceIndex(voiceIndex);
+
+    if (!noteInput->isNoteInputMode()) {
         interaction->changeSelectedNotesVoice(voiceIndex);
     }
 }
