@@ -329,11 +329,15 @@ QVariant PaletteTreeModel::data(const QModelIndex& index, int role) const
             return name;
         }
         case Qt::DecorationRole: {
+            /*
             qreal extraMag = 1.0;
             if (const PalettePanel* pp = iptrToPalettePanel(index.internalPointer())) {
                 extraMag = pp->mag();
             }
             return QIcon(new PaletteCellIconEngine(cell, extraMag * Palette::paletteScaling()));
+            */
+
+            return QVariant();
         }
         case PaletteCellRole:
             return QVariant::fromValue(cell.get());
