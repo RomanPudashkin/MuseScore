@@ -61,6 +61,17 @@ Flickable {
 
         SeparatorLine {}
 
+        JackAudioServerSection {
+            useJackAudioServer: ioModel.useJaskAudioServer
+            configuration: ioModel.jackAudioServerConfiguration
+
+            onConfigurationChangeRequsted: {
+                ioModel.jackAudioServerConfiguration = newConfiguration
+            }
+        }
+
+        SeparatorLine {}
+
         AudioEngineSection {
             onRestartAudioAndMidiDevicesRequested: ioModel.restartAudioAndMidiDevices()
         }
