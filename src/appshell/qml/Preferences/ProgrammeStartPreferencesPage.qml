@@ -34,8 +34,6 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
 
                     width: 220
-                    padding: 0
-                    spacing: 6
 
                     checked: modelData.checked
 

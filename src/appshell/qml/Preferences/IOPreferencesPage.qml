@@ -31,10 +31,7 @@ Flickable {
         spacing: 24
 
         RoundedRadioButton {
-            implicitWidth: parent.width
-
-            padding: 0
-            spacing: 6
+            width: parent.width
 
             checked: ioModel.usePulseAudio
             visible: ioModel.isPulseAudioAvailable()

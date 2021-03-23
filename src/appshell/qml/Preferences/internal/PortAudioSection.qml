@@ -20,9 +20,6 @@ ColumnLayout {
 
         implicitWidth: parent.width
 
-        padding: 0
-        spacing: 6
-
         StyledTextLabel {
             text: qsTrc("appshell", "PortAudio")
             font: ui.theme.bodyBoldFont
