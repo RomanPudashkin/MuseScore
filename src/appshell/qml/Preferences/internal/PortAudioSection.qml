@@ -42,6 +42,7 @@ ColumnLayout {
         height: contentHeight
 
         spacing: 4
+        interactive: false
 
         model: [
             { text: qsTrc("appshell", "API"), currentIndex: root.configuration.apiIndex, possibleValues: root.configuration.availableApiList },

@@ -28,6 +28,31 @@ Flickable {
         width: parent.width
         height: childrenRect.height
 
+        spacing: 24
+
+        RoundedRadioButton {
+            implicitWidth: parent.width
+
+            padding: 0
+            spacing: 6
+
+            checked: ioModel.usePulseAudio
+            visible: ioModel.isPulseAudioAvailable()
+
+            StyledTextLabel {
+                text: qsTrc("appshell", "PulseAudio")
+                font: ui.theme.bodyBoldFont
+
+                horizontalAlignment: Qt.AlignLeft
+            }
+
+            onClicked: {
+                ioModel.usePulseAudio = !checked
+            }
+        }
+
+        SeparatorLine {}
+
         PortAudioSection {
             usePortAudio: ioModel.usePortAudio
             configuration: ioModel.portAudioConfiguration
@@ -35,6 +60,12 @@ Flickable {
             onConfigurationChangeRequested: {
                 ioModel.portAudioConfiguration = newConfiguration
             }
+        }
+
+        SeparatorLine {}
+
+        AudioEngineSection {
+            onRestartAudioAndMidiDevicesRequested: ioModel.restartAudioAndMidiDevices()
         }
     }
 }
