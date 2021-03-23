@@ -44,6 +44,7 @@
         <file>qml/Preferences/internal/ColorAndWallpaperSection.qml</file>
         <file>qml/Preferences/internal/PortAudioSection.qml</file>
         <file>qml/Preferences/internal/JackAudioServerSection.qml</file>
+        <file>qml/Preferences/internal/AlsaAudioSection.qml</file>
         <file>qml/Preferences/internal/AudioEngineSection.qml</file>
         <file>qml/Preferences/FoldersPreferencesPage.qml</file>
         <file>qml/Preferences/IOPreferencesPage.qml</file>

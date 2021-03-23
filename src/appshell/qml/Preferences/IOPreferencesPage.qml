@@ -30,6 +30,8 @@ Flickable {
 
         spacing: 24
 
+        property int firstColumnWidth: 220
+
         RoundedRadioButton {
             width: parent.width
 
@@ -48,11 +50,12 @@ Flickable {
             }
         }
 
-        SeparatorLine {}
+        SeparatorLine { visible: ioModel.isPulseAudioAvailable() }
 
         PortAudioSection {
             usePortAudio: ioModel.usePortAudio
             configuration: ioModel.portAudioConfiguration
+            firstColumnWidth: content.firstColumnWidth
 
             onConfigurationChangeRequested: {
                 ioModel.portAudioConfiguration = newConfiguration
@@ -60,6 +63,20 @@ Flickable {
         }
 
         SeparatorLine {}
+
+        AlsaAudioSection {
+            useAlsaAudio: ioModel.useAlsaAudio
+            configuration: ioModel.alsaAudioConfiguration
+            firstColumnWidth: content.firstColumnWidth
+
+            visible: ioModel.isAlsaAudioAvailable()
+
+            onConfigurationChangeRequested: {
+                ioModel.alsaAudioConfiguration = newConfiguration
+            }
+        }
+
+        SeparatorLine { visible: ioModel.isAlsaAudioAvailable() }
 
         JackAudioServerSection {
             useJackAudioServer: ioModel.useJaskAudioServer

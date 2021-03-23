@@ -27,7 +27,7 @@ using namespace mu::appshell;
 static const QString DEVICE_NAME_KEY("deviceName");
 static const QString SAMPLE_RATE_INDEX("sampleRateIndex");
 static const QString FRAGMENTS_NUMBER_KEY("fragmentsNumber");
-static const QString PERIOD_SIZE_KEY("periodSize");
+static const QString PERIOD_SIZE_INDEX_KEY("periodSizeIndex");
 static const QString AVAILABLE_SAMPLE_RATE_LIST_KEY("availableSampleRateList");
 static const QString AVAILABLE_PERIOD_SIZE_LIST_KEY("availablePeriodSizeList");
 
@@ -74,7 +74,7 @@ QVariant IOPreferencesModel::alsaAudioConfiguration() const
     configuration[DEVICE_NAME_KEY] = QString();
     configuration[SAMPLE_RATE_INDEX] = 0;
     configuration[FRAGMENTS_NUMBER_KEY] = 0;
-    configuration[PERIOD_SIZE_KEY] = 0;
+    configuration[PERIOD_SIZE_INDEX_KEY] = 0;
     configuration[AVAILABLE_SAMPLE_RATE_LIST_KEY] = QStringList();
     configuration[AVAILABLE_PERIOD_SIZE_LIST_KEY] = QStringList();
 

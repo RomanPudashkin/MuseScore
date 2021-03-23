@@ -9,6 +9,8 @@ ColumnLayout {
     property alias usePortAudio: usePortAudioRadioButton.checked
     property var configuration
 
+    property int firstColumnWidth: 0
+
     signal usePortAudioRequsted()
     signal configurationChangeRequested(var newConfiguration)
 
@@ -51,12 +53,12 @@ ColumnLayout {
         delegate: Row {
             width: ListView.view.width
 
-            spacing: 110
+            spacing: 0
 
             StyledTextLabel {
                 anchors.verticalCenter: parent.verticalCenter
 
-                width: 110
+                width: root.firstColumnWidth
                 horizontalAlignment: Qt.AlignLeft
 
                 text: modelData.text + ":"
@@ -90,12 +92,12 @@ ColumnLayout {
     Row {
         Layout.topMargin: 4
 
-        spacing: 110
+        spacing: 0
 
         StyledTextLabel {
             anchors.verticalCenter: parent.verticalCenter
 
-            width: 110
+            width: root.firstColumnWidth
             horizontalAlignment: Qt.AlignLeft
 
             text: qsTrc("appshell", "MIDI output latency:")
