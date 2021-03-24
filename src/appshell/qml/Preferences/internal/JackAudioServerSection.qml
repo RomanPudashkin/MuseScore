@@ -30,6 +30,8 @@ Column {
     }
 
     GridLayout {
+        enabled: root.useJackAudioServer
+
         columns: 3
 
         rowSpacing: 22

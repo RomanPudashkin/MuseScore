@@ -27,10 +27,16 @@ namespace mu::audio {
 class AudioConfiguration : public IAudioConfiguration
 {
     INJECT(audio, framework::IGlobalConfiguration, globalConfiguration)
+
 public:
     AudioConfiguration() = default;
 
     void init();
+
+    bool isAudioSystemAvailable(AudioSystemType type) const override;
+
+    AudioSystemType currentAudioSystem() const override;
+    void setCurrentAudioSystem(AudioSystemType type) override;
 
     unsigned int driverBufferSize() const override;
 
@@ -43,6 +49,8 @@ public:
     async::Notification synthesizerStateGroupChanged(const std::string& groupName) const override;
 
 private:
+    AudioSystemType defaultAudioSystem() const;
+    int defaultAudioBufferSize() const;
 
     io::path stateFilePath() const;
     bool readState(const io::path& path, synth::SynthesizerState& state) const;

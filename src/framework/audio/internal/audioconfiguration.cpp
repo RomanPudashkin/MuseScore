@@ -42,15 +42,76 @@ static const Settings::Key USER_SOUNDFONTS_PATH("midi", "application/paths/mySou
 static const std::string DEFAULT_FLUID_SOUNDFONT = "MuseScore_General.sf3";     // "GeneralUser GS v1.471.sf2"; // "MuseScore_General.sf3";
 static const std::string DEFAULT_ZERBERUS_SOUNDFONT = "FM-Piano1-20190916.sfz"; // "";
 
+static const Settings::Key CURRENT_AUDIO_SYSTEM_KEY("audio", "io/currentAudioSystem");
+
 void AudioConfiguration::init()
 {
-    int defaultBufferSize = 0;
+    settings()->setDefaultValue(CURRENT_AUDIO_SYSTEM_KEY, Val(static_cast<int>(defaultAudioSystem())));
+    settings()->setDefaultValue(AUDIO_BUFFER_SIZE, Val(defaultAudioBufferSize()));
+}
+
+AudioSystemType AudioConfiguration::defaultAudioSystem() const
+{
+    for (AudioSystemType type : allAudioSystemTypes()) {
+        if (isAudioSystemAvailable(type)) {
+            return type;
+        }
+    }
+
+    return AudioSystemType::PortAudio;
+}
+
+int AudioConfiguration::defaultAudioBufferSize() const
+{
 #ifdef Q_OS_WASM
-    defaultBufferSize = 8192;
+    return 8192;
 #else
-    defaultBufferSize = 1024;
+    return 1024;
 #endif
-    settings()->setDefaultValue(AUDIO_BUFFER_SIZE, Val(defaultBufferSize));
+}
+
+bool AudioConfiguration::isAudioSystemAvailable(AudioSystemType type) const
+{
+    return true; // temporary
+
+    switch (type) {
+    case AudioSystemType::AlsaAudio:
+#ifndef USE_ALSA
+        return true;
+#else
+        return false;
+#endif
+    case AudioSystemType::PortAudio:
+#ifdef USE_PORTAUDIO
+        return true;
+#else
+        return false;
+#endif
+    case AudioSystemType::PulseAudio:
+#ifdef USE_PULSEAUDIO
+        return true;
+#else
+        return false;
+#endif
+    case AudioSystemType::JackAudioServer:
+#ifdef USE_JACK
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    return false;
+}
+
+AudioSystemType AudioConfiguration::currentAudioSystem() const
+{
+    return static_cast<AudioSystemType>(settings()->value(CURRENT_AUDIO_SYSTEM_KEY).toInt());
+}
+
+void AudioConfiguration::setCurrentAudioSystem(AudioSystemType type)
+{
+    settings()->setValue(CURRENT_AUDIO_SYSTEM_KEY, Val(static_cast<int>(type)));
 }
 
 unsigned int AudioConfiguration::driverBufferSize() const

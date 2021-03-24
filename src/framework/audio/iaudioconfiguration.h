@@ -24,13 +24,20 @@
 #include "ret.h"
 #include "async/notification.h"
 #include "synthtypes.h"
+#include "audiotypes.h"
 
 namespace mu::audio {
 class IAudioConfiguration : MODULE_EXPORT_INTERFACE
 {
     INTERFACE_ID(IAudioConfiguration)
+
 public:
     virtual ~IAudioConfiguration() = default;
+
+    virtual bool isAudioSystemAvailable(AudioSystemType type) const = 0;
+
+    virtual AudioSystemType currentAudioSystem() const = 0;
+    virtual void setCurrentAudioSystem(AudioSystemType type) = 0;
 
     virtual unsigned int driverBufferSize() const = 0; // samples
 

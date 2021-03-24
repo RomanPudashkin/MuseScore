@@ -41,6 +41,8 @@ Column {
         width: parent.width
         spacing: 4
 
+        enabled: root.useAlsaAudio
+
         Row {
             width: parent.width
             height: childrenRect.height

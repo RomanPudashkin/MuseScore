@@ -38,6 +38,7 @@ ColumnLayout {
 
         spacing: 4
         interactive: false
+        enabled: root.usePortAudio
 
         model: [
             { text: qsTrc("appshell", "API"), currentIndex: root.configuration.apiIndex, possibleValues: root.configuration.availableApiList },
@@ -89,6 +90,7 @@ ColumnLayout {
         Layout.topMargin: 4
 
         spacing: 0
+        enabled: root.usePortAudio
 
         StyledTextLabel {
             anchors.verticalCenter: parent.verticalCenter

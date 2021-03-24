@@ -22,6 +22,7 @@
 #include "log.h"
 
 using namespace mu::appshell;
+using namespace mu::audio;
 
 // ALSA Audio configuration keys:
 static const QString DEVICE_NAME_KEY("deviceName");
@@ -54,16 +55,14 @@ IOPreferencesModel::IOPreferencesModel(QObject* parent)
 {
 }
 
-bool IOPreferencesModel::usePulseAudio() const
+bool IOPreferencesModel::isPulseAudioUsed() const
 {
-    NOT_IMPLEMENTED;
-    return false;
+    return isAudioSystemUsed(AudioSystemType::PulseAudio);
 }
 
-bool IOPreferencesModel::useAlsaAudio() const
+bool IOPreferencesModel::isAlsaAudioUsed() const
 {
-    NOT_IMPLEMENTED;
-    return false;
+    return isAudioSystemUsed(AudioSystemType::AlsaAudio);
 }
 
 QVariant IOPreferencesModel::alsaAudioConfiguration() const
@@ -81,10 +80,9 @@ QVariant IOPreferencesModel::alsaAudioConfiguration() const
     return configuration;
 }
 
-bool IOPreferencesModel::usePortAudio() const
+bool IOPreferencesModel::isPortAudioUsed() const
 {
-    NOT_IMPLEMENTED;
-    return false;
+    return isAudioSystemUsed(AudioSystemType::PortAudio);
 }
 
 QVariant IOPreferencesModel::portAudioConfiguration() const
@@ -106,10 +104,9 @@ QVariant IOPreferencesModel::portAudioConfiguration() const
     return configuration;
 }
 
-bool IOPreferencesModel::useJaskAudioServer() const
+bool IOPreferencesModel::isJaskAudioServerUsed() const
 {
-    NOT_IMPLEMENTED;
-    return false;
+    return isAudioSystemUsed(AudioSystemType::JackAudioServer);
 }
 
 QVariant IOPreferencesModel::jackAudioServerConfiguration() const
@@ -129,41 +126,52 @@ QVariant IOPreferencesModel::jackAudioServerConfiguration() const
 
 bool IOPreferencesModel::isPulseAudioAvailable() const
 {
-    NOT_IMPLEMENTED;
-    return true;
+    return isAudioSystemAvailable(AudioSystemType::PulseAudio);
 }
 
 bool IOPreferencesModel::isAlsaAudioAvailable() const
 {
-    NOT_IMPLEMENTED;
-    return true;
+    return isAudioSystemAvailable(AudioSystemType::AlsaAudio);
+}
+
+bool IOPreferencesModel::isPortAudioAvailable() const
+{
+    return isAudioSystemAvailable(AudioSystemType::PortAudio);
+}
+
+bool IOPreferencesModel::isJackAudioServerAvailable() const
+{
+    return isAudioSystemAvailable(AudioSystemType::JackAudioServer);
+}
+
+bool IOPreferencesModel::isAudioSystemAvailable(AudioSystemType type) const
+{
+    return audioConfiguration()->isAudioSystemAvailable(type);
+}
+
+bool IOPreferencesModel::isAudioSystemUsed(audio::AudioSystemType type) const
+{
+    return audioConfiguration()->currentAudioSystem() == type;
+}
+
+void IOPreferencesModel::setUsedAudioSystem(const QString& audioSystemName)
+{
+    static const QMap<QString, AudioSystemType> types {
+        { "AlsaAudio", AudioSystemType::AlsaAudio },
+        { "PortAudio", AudioSystemType::PortAudio },
+        { "PulseAudio", AudioSystemType::PulseAudio },
+        { "JackAudioServer", AudioSystemType::JackAudioServer }
+    };
+
+    if (types.contains(audioSystemName)) {
+        audioConfiguration()->setCurrentAudioSystem(types[audioSystemName]);
+        emit usedAudioSystemChanged();
+    }
 }
 
 void IOPreferencesModel::restartAudioAndMidiDevices()
 {
     NOT_IMPLEMENTED;
-}
-
-void IOPreferencesModel::setUsePulseAudio(bool value)
-{
-    NOT_IMPLEMENTED;
-
-    if (value == usePulseAudio()) {
-        return;
-    }
-
-    emit usePulseAudioChanged(value);
-}
-
-void IOPreferencesModel::setUseAlsaAudio(bool value)
-{
-    NOT_IMPLEMENTED;
-
-    if (value == useAlsaAudio()) {
-        return;
-    }
-
-    emit useAlsaAudioChanged(value);
 }
 
 void IOPreferencesModel::setAlsaAudioConfiguration(const QVariant& configuration)
@@ -177,17 +185,6 @@ void IOPreferencesModel::setAlsaAudioConfiguration(const QVariant& configuration
     emit alsaAudioConfigurationChanged(configuration);
 }
 
-void IOPreferencesModel::setUsePortAudio(bool value)
-{
-    NOT_IMPLEMENTED;
-
-    if (value == usePortAudio()) {
-        return;
-    }
-
-    emit usePortAudioChanged(value);
-}
-
 void IOPreferencesModel::setPortAudioConfiguration(const QVariant& configuration)
 {
     NOT_IMPLEMENTED;
@@ -197,17 +194,6 @@ void IOPreferencesModel::setPortAudioConfiguration(const QVariant& configuration
     }
 
     emit portAudioConfigurationChanged(configuration);
-}
-
-void IOPreferencesModel::setJackAudioServer(bool value)
-{
-    NOT_IMPLEMENTED;
-
-    if (value == useJaskAudioServer()) {
-        return;
-    }
-
-    emit useJackAudioServerChanged(value);
 }
 
 void IOPreferencesModel::setJackAudioServerConfiguration(const QVariant& configuration)

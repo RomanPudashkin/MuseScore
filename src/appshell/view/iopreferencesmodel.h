@@ -21,57 +21,65 @@
 
 #include <QObject>
 
+#include "modularity/ioc.h"
+#include "audio/iaudioconfiguration.h"
+
 namespace mu::appshell {
 class IOPreferencesModel : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool usePulseAudio READ usePulseAudio WRITE setUsePulseAudio NOTIFY usePulseAudioChanged)
+    INJECT(appshell, audio::IAudioConfiguration, audioConfiguration)
 
-    Q_PROPERTY(bool useAlsaAudio READ useAlsaAudio WRITE setUseAlsaAudio NOTIFY useAlsaAudioChanged)
+    Q_PROPERTY(bool isPulseAudioUsed READ isPulseAudioUsed NOTIFY usedAudioSystemChanged)
+
+    Q_PROPERTY(bool isAlsaAudioUsed READ isAlsaAudioUsed NOTIFY usedAudioSystemChanged)
     Q_PROPERTY(QVariant alsaAudioConfiguration READ alsaAudioConfiguration WRITE setAlsaAudioConfiguration NOTIFY alsaAudioConfigurationChanged)
 
-    Q_PROPERTY(bool usePortAudio READ usePortAudio WRITE setUsePortAudio NOTIFY usePortAudioChanged)
+    Q_PROPERTY(bool isPortAudioUsed READ isPortAudioUsed NOTIFY usedAudioSystemChanged)
     Q_PROPERTY(QVariant portAudioConfiguration READ portAudioConfiguration WRITE setPortAudioConfiguration NOTIFY portAudioConfigurationChanged)
 
-    Q_PROPERTY(bool useJaskAudioServer READ useJaskAudioServer WRITE setJackAudioServer NOTIFY useJackAudioServerChanged)
+    Q_PROPERTY(bool isJaskAudioServerUsed READ isJaskAudioServerUsed NOTIFY usedAudioSystemChanged)
     Q_PROPERTY(QVariant jackAudioServerConfiguration READ jackAudioServerConfiguration WRITE setJackAudioServerConfiguration NOTIFY jackAudioServerConfigurationChanged)
 
 public:
     explicit IOPreferencesModel(QObject* parent = nullptr);
 
-    bool usePulseAudio() const;
+    bool isPulseAudioUsed() const;
 
-    bool useAlsaAudio() const;
+    bool isAlsaAudioUsed() const;
     QVariant alsaAudioConfiguration() const;
 
-    bool usePortAudio() const;
+    bool isPortAudioUsed() const;
     QVariant portAudioConfiguration() const;
 
-    bool useJaskAudioServer() const;
+    bool isJaskAudioServerUsed() const;
     QVariant jackAudioServerConfiguration() const;
 
     Q_INVOKABLE bool isPulseAudioAvailable() const;
     Q_INVOKABLE bool isAlsaAudioAvailable() const;
+    Q_INVOKABLE bool isPortAudioAvailable() const;
+    Q_INVOKABLE bool isJackAudioServerAvailable() const;
+
+    Q_INVOKABLE void setUsedAudioSystem(const QString& audioSystemName);
     Q_INVOKABLE void restartAudioAndMidiDevices();
 
 public slots:
-    void setUsePulseAudio(bool value);
-    void setUseAlsaAudio(bool value);
     void setAlsaAudioConfiguration(const QVariant& configuration);
-    void setUsePortAudio(bool value);
     void setPortAudioConfiguration(const QVariant& configuration);
-    void setJackAudioServer(bool value);
     void setJackAudioServerConfiguration(const QVariant& configuration);
 
 signals:
-    void usePulseAudioChanged(bool value);
-    void useAlsaAudioChanged(bool value);
+    void usedAudioSystemChanged();
+
     void alsaAudioConfigurationChanged(const QVariant& configuration);
-    void usePortAudioChanged(bool value);
     void portAudioConfigurationChanged(const QVariant& configuration);
-    void useJackAudioServerChanged(bool value);
     void jackAudioServerConfigurationChanged(const QVariant& configuration);
+
+private:
+    bool isAudioSystemAvailable(audio::AudioSystemType type) const;
+    bool isAudioSystemUsed(audio::AudioSystemType type) const;
+    void setUsedAudioSystem(audio::AudioSystemType type);
 };
 }
 

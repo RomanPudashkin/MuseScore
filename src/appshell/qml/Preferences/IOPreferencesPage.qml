@@ -25,56 +25,81 @@ PreferencesPage {
         property int firstColumnWidth: 220
 
         RoundedRadioButton {
+            id: pulseAudioSection
+
             width: parent.width
 
             visible: ioModel.isPulseAudioAvailable()
-            checked: ioModel.usePulseAudio
+            checked: ioModel.isPulseAudioUsed
+
             text: qsTrc("appshell", "PulseAudio")
             font: ui.theme.bodyBoldFont
 
             onClicked: {
-                ioModel.usePulseAudio = !checked
+                ioModel.setUsedAudioSystem("PulseAudio")
             }
         }
 
-        SeparatorLine { visible: ioModel.isPulseAudioAvailable() }
+        SeparatorLine { visible: pulseAudioSection.visible }
 
         PortAudioSection {
-            usePortAudio: ioModel.usePortAudio
+            id: portAudioSection
+
+            visible: ioModel.isPortAudioAvailable()
+            usePortAudio: ioModel.isPortAudioUsed
+
             configuration: ioModel.portAudioConfiguration
             firstColumnWidth: content.firstColumnWidth
+
+            onUsePortAudioRequsted: {
+                ioModel.setUsedAudioSystem("PortAudio")
+            }
 
             onConfigurationChangeRequested: {
                 ioModel.portAudioConfiguration = newConfiguration
             }
         }
 
-        SeparatorLine {}
+        SeparatorLine { visible: portAudioSection.visible }
 
         AlsaAudioSection {
-            useAlsaAudio: ioModel.useAlsaAudio
+            id: alsaAudioSection
+
+            visible: ioModel.isAlsaAudioAvailable()
+            useAlsaAudio: ioModel.isAlsaAudioUsed
+
             configuration: ioModel.alsaAudioConfiguration
             firstColumnWidth: content.firstColumnWidth
 
-            visible: ioModel.isAlsaAudioAvailable()
+            onUseAlsaAudioRequsted: {
+                ioModel.setUsedAudioSystem("AlsaAudio")
+            }
 
             onConfigurationChangeRequested: {
                 ioModel.alsaAudioConfiguration = newConfiguration
             }
         }
 
-        SeparatorLine { visible: ioModel.isAlsaAudioAvailable() }
+        SeparatorLine { visible: alsaAudioSection.visible }
 
         JackAudioServerSection {
-            useJackAudioServer: ioModel.useJaskAudioServer
+            id: jackAudioServerSection
+
+            visible: ioModel.isJackAudioServerAvailable()
+            useJackAudioServer: ioModel.isJaskAudioServerUsed
+
             configuration: ioModel.jackAudioServerConfiguration
+
+            onUseJackAudioServerRequested: {
+                ioModel.setUsedAudioSystem("JackAudioServer")
+            }
 
             onConfigurationChangeRequsted: {
                 ioModel.jackAudioServerConfiguration = newConfiguration
             }
         }
 
-        SeparatorLine {}
+        SeparatorLine { visible: jackAudioServerSection.visible }
 
         AudioEngineSection {
             onRestartAudioAndMidiDevicesRequested: ioModel.restartAudioAndMidiDevices()
