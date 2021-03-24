@@ -19,7 +19,7 @@ Column {
     RoundedRadioButton {
         id: useJackAudioServerRadioButton
 
-        implicitWidth: parent.width
+        width: parent.width
 
         text: qsTrc("appshell", "JACK Audio Server")
         font: ui.theme.bodyBoldFont
@@ -33,19 +33,36 @@ Column {
         enabled: root.useJackAudioServer
 
         columns: 3
-
         rowSpacing: 22
         columnSpacing: 100
 
         Repeater {
-            anchors.fill: parent
-
             model: [
-                { text: qsTrc("appshell", "Use JACK audio"), value: root.configuration.useJackAudio },
-                { text: qsTrc("appshell", "Use JACK MIDI"), value: root.configuration.useJackMidi },
-                { text: qsTrc("appshell", "Remember last connection(s)"), value: root.configuration.rememberLastConnections },
-                { text: qsTrc("appshell", "Use JACK transport"), value: root.configuration.useJackTransport },
-                { text: qsTrc("appshell", "Timebase master"), value: root.configuration.useTimeBaseMaster }
+                {
+                    text: qsTrc("appshell", "Use JACK audio"),
+                    value: root.configuration.useJackAudio,
+                    name: "useJackAudio"
+                },
+                {
+                    text: qsTrc("appshell", "Use JACK MIDI"),
+                    value: root.configuration.useJackMidi,
+                    name: "useJackMidi"
+                },
+                {
+                    text: qsTrc("appshell", "Remember last connection(s)"),
+                    value: root.configuration.rememberLastConnections,
+                    name: "rememberLastConnections"
+                },
+                {
+                    text: qsTrc("appshell", "Use JACK transport"),
+                    value: root.configuration.useJackTransport,
+                    name: "useJackTransport"
+                },
+                {
+                    text: qsTrc("appshell", "Timebase master"),
+                    value: root.configuration.useTimeBaseMaster,
+                    name: "useTimeBaseMaster"
+                }
             ]
 
             CheckBox {
@@ -56,22 +73,8 @@ Column {
                 checked: modelData.value
 
                 onClicked: {
-                    var newConfiguration = root.configuration
-                    var newValue = !checked
-
-                    if (model.index === 0) {
-                        newConfiguration.useJackAudio = newValue
-                    } else if (model.index === 1) {
-                        newConfiguration.useJackMidi = newValue
-                    } else if (model.index === 2) {
-                        newConfiguration.rememberLastConnections = newValue
-                    } else if (model.index === 3) {
-                        newConfiguration.useJackTransport = newValue
-                    } else if (model.index === 4) {
-                        newConfiguration.useTimeBaseMaster = newValue
-                    }
-
-                    root.configurationChangeRequsted(newConfiguration)
+                    root.configuration[modelData.name] = !checked
+                    root.configurationChangeRequsted(root.configuration)
                 }
             }
         }

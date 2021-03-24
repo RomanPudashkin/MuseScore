@@ -18,16 +18,10 @@ Column {
     width: parent.width
     spacing: 22
 
-    QtObject {
-        id: privateProperties
-
-        readonly property int fieldWidth: 110
-    }
-
     RoundedRadioButton {
         id: useAlsaAudioRadioButton
 
-        implicitWidth: parent.width
+        width: parent.width
 
         text: qsTrc("appshell", "ALSA Audio")
         font: ui.theme.bodyBoldFont
@@ -44,9 +38,6 @@ Column {
         enabled: root.useAlsaAudio
 
         Row {
-            width: parent.width
-            height: childrenRect.height
-
             spacing: 0
 
             StyledTextLabel {
@@ -59,16 +50,20 @@ Column {
             }
 
             TextInputField {
-                width: privateProperties.fieldWidth
+                id: deviceNameField
+
+                width: 110
 
                 currentText: root.configuration.deviceName
+
+                onCurrentTextEdited: {
+                    root.configuration.deviceName = newTextValue
+                    root.configurationChangeRequested(root.configuration)
+                }
             }
         }
 
         Row {
-            width: parent.width
-            height: childrenRect.height
-
             spacing: 0
 
             StyledTextLabel {
@@ -84,10 +79,15 @@ Column {
                 spacing: 4
 
                 StyledComboBox {
-                    width: privateProperties.fieldWidth
+                    width: deviceNameField.width
 
                     currentIndex: indexOfValue(root.configuration.sampleRateHz)
                     model: root.configuration.availableSampleRateList
+
+                    onAccepted: {
+                        root.configuration.sampleRateHz = currentValue
+                        root.configurationChangeRequested(root.configuration)
+                    }
                 }
 
                 StyledTextLabel {
@@ -99,9 +99,6 @@ Column {
         }
 
         Row {
-            width: parent.width
-            height: childrenRect.height
-
             spacing: 0
 
             StyledTextLabel {
@@ -114,16 +111,22 @@ Column {
             }
 
             IncrementalPropertyControl {
-                width: 75
+                id: fragmentsNumberField
+
+                width: 80
 
                 currentValue: root.configuration.fragmentsNumber
+                decimals: 0
+                step: 1
+
+                onValueEdited: {
+                    root.configuration.fragmentsNumber = newValue
+                    root.configurationChangeRequested(root.configuration)
+                }
             }
         }
 
         Row {
-            width: parent.width
-            height: childrenRect.height
-
             spacing: 0
 
             StyledTextLabel {
@@ -136,10 +139,15 @@ Column {
             }
 
             StyledComboBox {
-                width: privateProperties.fieldWidth
+                width: fragmentsNumberField.width
 
                 currentIndex: indexOfValue(root.configuration.periodSize)
                 model: root.configuration.availablePeriodSizeList
+
+                onAccepted: {
+                    root.configuration.periodSize = currentValue
+                    root.configurationChangeRequested(root.configuration)
+                }
             }
         }
     }

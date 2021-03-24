@@ -18,8 +18,6 @@ PreferencesPage {
         id: content
 
         width: parent.width
-        height: childrenRect.height
-
         spacing: 24
 
         property int firstColumnWidth: 220
@@ -47,8 +45,8 @@ PreferencesPage {
 
             visible: ioModel.isPortAudioAvailable()
             usePortAudio: ioModel.isPortAudioUsed
-
             configuration: ioModel.portAudioConfiguration
+
             firstColumnWidth: content.firstColumnWidth
 
             onUsePortAudioRequsted: {
@@ -67,8 +65,8 @@ PreferencesPage {
 
             visible: ioModel.isAlsaAudioAvailable()
             useAlsaAudio: ioModel.isAlsaAudioUsed
-
             configuration: ioModel.alsaAudioConfiguration
+
             firstColumnWidth: content.firstColumnWidth
 
             onUseAlsaAudioRequsted: {
@@ -87,7 +85,6 @@ PreferencesPage {
 
             visible: ioModel.isJackAudioServerAvailable()
             useJackAudioServer: ioModel.isJaskAudioServerUsed
-
             configuration: ioModel.jackAudioServerConfiguration
 
             onUseJackAudioServerRequested: {
@@ -102,7 +99,9 @@ PreferencesPage {
         SeparatorLine { visible: jackAudioServerSection.visible }
 
         AudioEngineSection {
-            onRestartAudioAndMidiDevicesRequested: ioModel.restartAudioAndMidiDevices()
+            onRestartAudioAndMidiDevicesRequested: {
+                ioModel.restartAudioAndMidiDevices()
+            }
         }
     }
 }

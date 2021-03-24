@@ -64,6 +64,7 @@ PreferencesPage {
 
                 currentValue: noteInputModel.delayBetweenNotesInRealTimeModeMilliseconds
                 measureUnitsSymbol: qsTrc("appshell", "ms")
+                decimals: 0
                 step: 1
 
                 onValueEdited: {
@@ -103,6 +104,7 @@ PreferencesPage {
 
                 currentValue: noteInputModel.notePlayDurationMilliseconds
                 measureUnitsSymbol: qsTrc("appshell", "ms")
+                decimals: 0
                 step: 1
 
                 onValueEdited: {

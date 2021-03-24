@@ -20,7 +20,7 @@ ColumnLayout {
     RoundedRadioButton {
         id: usePortAudioRadioButton
 
-        implicitWidth: parent.width
+        Layout.fillWidth: true
 
         text: qsTrc("appshell", "PortAudio")
         font: ui.theme.bodyBoldFont
@@ -33,18 +33,38 @@ ColumnLayout {
     ListView {
         Layout.topMargin: 18
 
-        width: parent.width
-        height: contentHeight
+        Layout.fillWidth: true
+        Layout.preferredHeight: contentHeight
 
         spacing: 4
         interactive: false
         enabled: root.usePortAudio
 
         model: [
-            { text: qsTrc("appshell", "API"), value: root.configuration.apiName, allValues: root.configuration.availableApiList },
-            { text: qsTrc("appshell", "Device"), value: root.configuration.deviceName, allValues: root.configuration.availableDeviceList },
-            { text: qsTrc("appshell", "MIDI input"), value: root.configuration.midiInput, allValues: root.configuration.availableMidiInputList },
-            { text: qsTrc("appshell", "MIDI output"), value: root.configuration.midiOutput, allValues: root.configuration.availableMidiOutputList }
+            {
+                text: qsTrc("appshell", "API"),
+                value: root.configuration.apiName,
+                name: "apiName",
+                allValues: root.configuration.availableApiList
+            },
+            {
+                text: qsTrc("appshell", "Device"),
+                value: root.configuration.deviceName,
+                name: "deviceName",
+                allValues: root.configuration.availableDeviceList
+            },
+            {
+                text: qsTrc("appshell", "MIDI input"),
+                value: root.configuration.midiInput,
+                name: "midiInput",
+                allValues: root.configuration.availableMidiInputList
+            },
+            {
+                text: qsTrc("appshell", "MIDI output"),
+                value: root.configuration.midiOutput,
+                name: "midiOutput",
+                allValues: root.configuration.availableMidiOutputList
+            }
         ]
 
         delegate: Row {
@@ -67,20 +87,9 @@ ColumnLayout {
                 currentIndex: indexOfValue(modelData.value)
                 model: modelData.allValues
 
-                onValueChanged: {
-                    var newConfiguration = root.configuration
-
-                    if (model.index === 0) {
-                        newConfiguration.apiName = currentValue
-                    } else if (model.index === 1) {
-                        newConfiguration.deviceName = currentValue
-                    } else if (model.index === 2) {
-                        newConfiguration.midiInput = currentValue
-                    } else if (model.index === 3) {
-                        newConfiguration.midiOutput = currentValue
-                    }
-
-                    root.configurationChangeRequested(newConfiguration)
+                onAccepted: {
+                    root.configuration[modelData.name] = currentValue
+                    root.configurationChangeRequested(root.configuration)
                 }
             }
         }
@@ -110,9 +119,8 @@ ColumnLayout {
             currentValue: root.configuration.midiOutputLatencyMilliseconds
 
             onValueEdited: {
-                var newConfiguration = root.configuration
-                newConfiguration.midiOutputLatencyMilliseconds = newValue
-                root.configurationChangeRequested(newConfiguration)
+                root.configuration.midiOutputLatencyMilliseconds = newValue
+                root.configurationChangeRequested(root.configuration)
             }
         }
     }
