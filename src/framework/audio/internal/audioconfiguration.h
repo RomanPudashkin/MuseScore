@@ -38,6 +38,18 @@ public:
     AudioSystemType currentAudioSystem() const override;
     void setCurrentAudioSystem(AudioSystemType type) override;
 
+    AlsaAudioConfiguration alsaAudioConfiguration() const override;
+    void setAlsaAudioConfiguration(const AlsaAudioConfiguration& configuration) override;
+
+    std::vector<int> availableAlsaSampleRates() const override;
+    std::vector<int> availableAlsaPeriodSizes() const override;
+
+    JackAudioServerConfiguration jackAudioServerConfiguration() const override;
+    void setJackAudioServerConfiguration(const JackAudioServerConfiguration& configuration) override;
+
+    PortAudioConfiguration portAudioConfiguration() const override;
+    void setPortAudioConfiguration(const PortAudioConfiguration& configuration) override;
+
     unsigned int driverBufferSize() const override;
 
     std::vector<io::path> soundFontPaths() const override;

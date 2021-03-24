@@ -86,7 +86,8 @@ Column {
                 StyledComboBox {
                     width: privateProperties.fieldWidth
 
-                    currentIndex: root.configuration.sampleRateIndex
+                    currentIndex: indexOfValue(root.configuration.sampleRateHz)
+                    model: root.configuration.availableSampleRateList
                 }
 
                 StyledTextLabel {
@@ -137,7 +138,8 @@ Column {
             StyledComboBox {
                 width: privateProperties.fieldWidth
 
-                currentIndex: root.configuration.periodSizeIndex
+                currentIndex: indexOfValue(root.configuration.periodSize)
+                model: root.configuration.availablePeriodSizeList
             }
         }
     }

@@ -26,17 +26,17 @@ using namespace mu::audio;
 
 // ALSA Audio configuration keys:
 static const QString DEVICE_NAME_KEY("deviceName");
-static const QString SAMPLE_RATE_INDEX("sampleRateIndex");
+static const QString SAMPLE_RATE_KEY("sampleRateHz");
 static const QString FRAGMENTS_NUMBER_KEY("fragmentsNumber");
-static const QString PERIOD_SIZE_INDEX_KEY("periodSizeIndex");
+static const QString PERIOD_SIZE_KEY("periodSize");
 static const QString AVAILABLE_SAMPLE_RATE_LIST_KEY("availableSampleRateList");
 static const QString AVAILABLE_PERIOD_SIZE_LIST_KEY("availablePeriodSizeList");
 
 // PortAudio configuration keys:
 static const QString API_INDEX_KEY("apiIndex");
 static const QString DEVICE_INDEX_KEY("deviceIndex");
-static const QString MIDI_INPUT_INDEX_KEY("midiInputIndex");
-static const QString MIDI_OUTPUT_INDEX_KEY("midiOutputIndex");
+static const QString MIDI_INPUT_KEY("midiInput");
+static const QString MIDI_OUTPUT_KEY("midiOutput");
 static const QString MIDI_OUTPUT_LATENCY_KEY("midiOutputLatencyMilliseconds");
 static const QString AVAILABLE_API_LIST_KEY("availableApiList");
 static const QString AVAILABLE_DEVICE_LIST_KEY("availableDeviceList");
@@ -67,17 +67,27 @@ bool IOPreferencesModel::isAlsaAudioUsed() const
 
 QVariant IOPreferencesModel::alsaAudioConfiguration() const
 {
-    NOT_IMPLEMENTED;
+    AlsaAudioConfiguration configuration = audioConfiguration()->alsaAudioConfiguration();
 
-    QVariantMap configuration;
-    configuration[DEVICE_NAME_KEY] = QString();
-    configuration[SAMPLE_RATE_INDEX] = 0;
-    configuration[FRAGMENTS_NUMBER_KEY] = 0;
-    configuration[PERIOD_SIZE_INDEX_KEY] = 0;
-    configuration[AVAILABLE_SAMPLE_RATE_LIST_KEY] = QStringList();
-    configuration[AVAILABLE_PERIOD_SIZE_LIST_KEY] = QStringList();
+    QStringList sampleRateList;
+    for (int sampleRate : audioConfiguration()->availableAlsaSampleRates()) {
+        sampleRateList << QString::number(sampleRate);
+    }
 
-    return configuration;
+    QStringList periodSizeList;
+    for (int periodSize : audioConfiguration()->availableAlsaPeriodSizes()) {
+        periodSizeList << QString::number(periodSize);
+    }
+
+    QVariantMap obj;
+    obj[DEVICE_NAME_KEY] = QString::fromStdString(configuration.deviceName);
+    obj[FRAGMENTS_NUMBER_KEY] = configuration.fragmentCount;
+    obj[PERIOD_SIZE_KEY] = configuration.periodSize;
+    obj[SAMPLE_RATE_KEY] = configuration.sampleRateHz;
+    obj[AVAILABLE_SAMPLE_RATE_LIST_KEY] = sampleRateList;
+    obj[AVAILABLE_PERIOD_SIZE_LIST_KEY] = periodSizeList;
+
+    return obj;
 }
 
 bool IOPreferencesModel::isPortAudioUsed() const
@@ -87,21 +97,20 @@ bool IOPreferencesModel::isPortAudioUsed() const
 
 QVariant IOPreferencesModel::portAudioConfiguration() const
 {
-    NOT_IMPLEMENTED;
+    PortAudioConfiguration configuration = audioConfiguration()->portAudioConfiguration();
 
-    QVariantMap configuration;
+    QVariantMap obj;
+    obj[API_INDEX_KEY] = 0; // not implemented
+    obj[DEVICE_INDEX_KEY] = 0; // not implemented
+    obj[MIDI_INPUT_KEY] = QString::fromStdString(configuration.midiInputDeviceName);
+    obj[MIDI_OUTPUT_KEY] = QString::fromStdString(configuration.midiOutputDeviceName);
+    obj[MIDI_OUTPUT_LATENCY_KEY] = configuration.midiOutputLatencyMilliseconds;
+    obj[AVAILABLE_API_LIST_KEY] = QStringList(); // not implemented
+    obj[AVAILABLE_DEVICE_LIST_KEY] = QStringList(); // not implemented
+    obj[AVAILABLE_MIDI_INPUT_LIST_KEY] = QStringList(); // not implemented
+    obj[AVAILABLE_MIDI_OUTPUT_LIST_KEY] = QStringList(); // not implemented
 
-    configuration[API_INDEX_KEY] = 0;
-    configuration[DEVICE_INDEX_KEY] = 0;
-    configuration[MIDI_INPUT_INDEX_KEY] = 0;
-    configuration[MIDI_OUTPUT_INDEX_KEY] = 0;
-    configuration[MIDI_OUTPUT_LATENCY_KEY] = 0;
-    configuration[AVAILABLE_API_LIST_KEY] = QStringList();
-    configuration[AVAILABLE_DEVICE_LIST_KEY] = QStringList();
-    configuration[AVAILABLE_MIDI_INPUT_LIST_KEY] = QStringList();
-    configuration[AVAILABLE_MIDI_OUTPUT_LIST_KEY] = QStringList();
-
-    return configuration;
+    return obj;
 }
 
 bool IOPreferencesModel::isJaskAudioServerUsed() const
@@ -111,17 +120,16 @@ bool IOPreferencesModel::isJaskAudioServerUsed() const
 
 QVariant IOPreferencesModel::jackAudioServerConfiguration() const
 {
-    NOT_IMPLEMENTED;
+    JackAudioServerConfiguration configuration = audioConfiguration()->jackAudioServerConfiguration();
 
-    QVariantMap configuration;
+    QVariantMap obj;
+    obj[USE_JACK_AUDIO_KEY] = configuration.useJackAudio;
+    obj[USE_JACK_MIDI_KEY] = configuration.useJackMidi;
+    obj[USE_JACK_TRANSPORT_KEY] = configuration.useJackTransport;
+    obj[USE_TIMEBASE_MASTER_KEY] = configuration.useTimebaseMaster;
+    obj[REMEMBER_LAST_CONNECTIONS_KEY] = configuration.rememberLastConnections;
 
-    configuration[USE_JACK_AUDIO_KEY] = false;
-    configuration[USE_JACK_MIDI_KEY] = false;
-    configuration[USE_JACK_TRANSPORT_KEY] = false;
-    configuration[USE_TIMEBASE_MASTER_KEY] = false;
-    configuration[REMEMBER_LAST_CONNECTIONS_KEY] = false;
-
-    return configuration;
+    return obj;
 }
 
 bool IOPreferencesModel::isPulseAudioAvailable() const
@@ -176,33 +184,54 @@ void IOPreferencesModel::restartAudioAndMidiDevices()
 
 void IOPreferencesModel::setAlsaAudioConfiguration(const QVariant& configuration)
 {
-    NOT_IMPLEMENTED;
-
     if (configuration == alsaAudioConfiguration() || configuration.isNull()) {
         return;
     }
 
+    QVariantMap map = configuration.toMap();
+
+    AlsaAudioConfiguration result;
+    result.deviceName = map[DEVICE_NAME_KEY].toString().toStdString();
+    result.fragmentCount = map[FRAGMENTS_NUMBER_KEY].toInt();
+    result.periodSize = map[PERIOD_SIZE_KEY].toInt();
+    result.sampleRateHz = map[SAMPLE_RATE_KEY].toInt();
+
+    audioConfiguration()->setAlsaAudioConfiguration(result);
     emit alsaAudioConfigurationChanged(configuration);
 }
 
 void IOPreferencesModel::setPortAudioConfiguration(const QVariant& configuration)
 {
-    NOT_IMPLEMENTED;
-
     if (configuration == portAudioConfiguration() || configuration.isNull()) {
         return;
     }
 
+    QVariantMap map = configuration.toMap();
+
+    PortAudioConfiguration result;
+    result.midiInputDeviceName = map[MIDI_INPUT_KEY].toString().toStdString();
+    result.midiOutputDeviceName = map[MIDI_OUTPUT_KEY].toString().toStdString();
+    result.midiOutputLatencyMilliseconds = map[MIDI_OUTPUT_LATENCY_KEY].toInt();
+
+    audioConfiguration()->setPortAudioConfiguration(result);
     emit portAudioConfigurationChanged(configuration);
 }
 
 void IOPreferencesModel::setJackAudioServerConfiguration(const QVariant& configuration)
 {
-    NOT_IMPLEMENTED;
-
     if (configuration == jackAudioServerConfiguration() || configuration.isNull()) {
         return;
     }
 
+    QVariantMap map = configuration.toMap();
+
+    JackAudioServerConfiguration result;
+    result.useJackAudio = map[USE_JACK_AUDIO_KEY].toBool();
+    result.useJackMidi = map[USE_JACK_MIDI_KEY].toBool();
+    result.useJackTransport = map[USE_JACK_TRANSPORT_KEY].toBool();
+    result.useTimebaseMaster = map[USE_TIMEBASE_MASTER_KEY].toBool();
+    result.rememberLastConnections = map[REMEMBER_LAST_CONNECTIONS_KEY].toBool();
+
+    audioConfiguration()->setJackAudioServerConfiguration(result);
     emit jackAudioServerConfigurationChanged(configuration);
 }

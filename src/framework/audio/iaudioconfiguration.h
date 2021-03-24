@@ -39,6 +39,18 @@ public:
     virtual AudioSystemType currentAudioSystem() const = 0;
     virtual void setCurrentAudioSystem(AudioSystemType type) = 0;
 
+    virtual AlsaAudioConfiguration alsaAudioConfiguration() const = 0;
+    virtual void setAlsaAudioConfiguration(const AlsaAudioConfiguration& configuration) = 0;
+
+    virtual std::vector<int> availableAlsaSampleRates() const = 0;
+    virtual std::vector<int> availableAlsaPeriodSizes() const = 0;
+
+    virtual JackAudioServerConfiguration jackAudioServerConfiguration() const = 0;
+    virtual void setJackAudioServerConfiguration(const JackAudioServerConfiguration& configuration) = 0;
+
+    virtual PortAudioConfiguration portAudioConfiguration() const = 0;
+    virtual void setPortAudioConfiguration(const PortAudioConfiguration& configuration) = 0;
+
     virtual unsigned int driverBufferSize() const = 0; // samples
 
     // synthesizers
