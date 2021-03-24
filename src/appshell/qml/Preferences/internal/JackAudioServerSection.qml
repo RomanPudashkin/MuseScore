@@ -21,12 +21,8 @@ Column {
 
         implicitWidth: parent.width
 
-        StyledTextLabel {
-            text: qsTrc("appshell", "JACK Audio Server")
-            font: ui.theme.bodyBoldFont
-
-            horizontalAlignment: Qt.AlignLeft
-        }
+        text: qsTrc("appshell", "JACK Audio Server")
+        font: ui.theme.bodyBoldFont
 
         onClicked: {
             root.useJackAudioServerRequested()

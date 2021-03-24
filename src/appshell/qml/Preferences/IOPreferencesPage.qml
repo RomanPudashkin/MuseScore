@@ -27,15 +27,10 @@ PreferencesPage {
         RoundedRadioButton {
             width: parent.width
 
-            checked: ioModel.usePulseAudio
             visible: ioModel.isPulseAudioAvailable()
-
-            StyledTextLabel {
-                text: qsTrc("appshell", "PulseAudio")
-                font: ui.theme.bodyBoldFont
-
-                horizontalAlignment: Qt.AlignLeft
-            }
+            checked: ioModel.usePulseAudio
+            text: qsTrc("appshell", "PulseAudio")
+            font: ui.theme.bodyBoldFont
 
             onClicked: {
                 ioModel.usePulseAudio = !checked

@@ -29,12 +29,8 @@ Column {
 
         implicitWidth: parent.width
 
-        StyledTextLabel {
-            text: qsTrc("appshell", "ALSA Audio")
-            font: ui.theme.bodyBoldFont
-
-            horizontalAlignment: Qt.AlignLeft
-        }
+        text: qsTrc("appshell", "ALSA Audio")
+        font: ui.theme.bodyBoldFont
 
         onClicked: {
             root.useAlsaAudioRequsted()

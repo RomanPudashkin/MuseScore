@@ -22,12 +22,8 @@ ColumnLayout {
 
         implicitWidth: parent.width
 
-        StyledTextLabel {
-            text: qsTrc("appshell", "PortAudio")
-            font: ui.theme.bodyBoldFont
-
-            horizontalAlignment: Qt.AlignLeft
-        }
+        text: qsTrc("appshell", "PortAudio")
+        font: ui.theme.bodyBoldFont
 
         onClicked: {
             root.usePortAudioRequsted()
