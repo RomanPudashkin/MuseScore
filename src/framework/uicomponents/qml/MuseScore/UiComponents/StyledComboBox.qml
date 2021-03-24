@@ -20,6 +20,10 @@ ComboBox {
 
         // Simple models (like JS array) with single predefined role name - modelData
         if (model[index] !== undefined) {
+            if (model[index][roleName] === undefined) {
+                return model[index]
+            }
+
             return model[index][roleName]
         }
 

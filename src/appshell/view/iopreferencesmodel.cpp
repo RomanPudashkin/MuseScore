@@ -33,8 +33,7 @@ static const QString AVAILABLE_SAMPLE_RATE_LIST_KEY("availableSampleRateList");
 static const QString AVAILABLE_PERIOD_SIZE_LIST_KEY("availablePeriodSizeList");
 
 // PortAudio configuration keys:
-static const QString API_INDEX_KEY("apiIndex");
-static const QString DEVICE_INDEX_KEY("deviceIndex");
+static const QString API_NAME_KEY("apiName");
 static const QString MIDI_INPUT_KEY("midiInput");
 static const QString MIDI_OUTPUT_KEY("midiOutput");
 static const QString MIDI_OUTPUT_LATENCY_KEY("midiOutputLatencyMilliseconds");
@@ -100,8 +99,8 @@ QVariant IOPreferencesModel::portAudioConfiguration() const
     PortAudioConfiguration configuration = audioConfiguration()->portAudioConfiguration();
 
     QVariantMap obj;
-    obj[API_INDEX_KEY] = 0; // not implemented
-    obj[DEVICE_INDEX_KEY] = 0; // not implemented
+    obj[API_NAME_KEY] = QString(); // not implemented
+    obj[DEVICE_NAME_KEY] = QString(); // not implemented
     obj[MIDI_INPUT_KEY] = QString::fromStdString(configuration.midiInputDeviceName);
     obj[MIDI_OUTPUT_KEY] = QString::fromStdString(configuration.midiOutputDeviceName);
     obj[MIDI_OUTPUT_LATENCY_KEY] = configuration.midiOutputLatencyMilliseconds;

@@ -41,10 +41,10 @@ ColumnLayout {
         enabled: root.usePortAudio
 
         model: [
-            { text: qsTrc("appshell", "API"), currentIndex: root.configuration.apiIndex, possibleValues: root.configuration.availableApiList },
-            { text: qsTrc("appshell", "Device"), currentIndex: root.configuration.deviceIndex, possibleValues: root.configuration.availableDeviceList },
-            { text: qsTrc("appshell", "MIDI input"), currentIndex: root.configuration.midiInputIndex, possibleValues: root.configuration.availableMidiInputList },
-            { text: qsTrc("appshell", "MIDI output"), currentIndex: root.configuration.midiOutputIndex, possibleValues: root.configuration.availableMidiOutputList }
+            { text: qsTrc("appshell", "API"), value: root.configuration.apiName, allValues: root.configuration.availableApiList },
+            { text: qsTrc("appshell", "Device"), value: root.configuration.deviceName, allValues: root.configuration.availableDeviceList },
+            { text: qsTrc("appshell", "MIDI input"), value: root.configuration.midiInput, allValues: root.configuration.availableMidiInputList },
+            { text: qsTrc("appshell", "MIDI output"), value: root.configuration.midiOutput, allValues: root.configuration.availableMidiOutputList }
         ]
 
         delegate: Row {
@@ -64,20 +64,20 @@ ColumnLayout {
             StyledComboBox {
                 width: 210
 
-                currentIndex: modelData.currentIndex
-                model: modelData.possibleValues
+                currentIndex: indexOfValue(modelData.value)
+                model: modelData.allValues
 
                 onValueChanged: {
                     var newConfiguration = root.configuration
 
                     if (model.index === 0) {
-                        newConfiguration.apiIndex = currentIndex
+                        newConfiguration.apiName = currentValue
                     } else if (model.index === 1) {
-                        newConfiguration.deviceIndex = currentIndex
+                        newConfiguration.deviceName = currentValue
                     } else if (model.index === 2) {
-                        newConfiguration.midiInputIndex = currentIndex
+                        newConfiguration.midiInput = currentValue
                     } else if (model.index === 3) {
-                        newConfiguration.midiOutputIndex = currentIndex
+                        newConfiguration.midiOutput = currentValue
                     }
 
                     root.configurationChangeRequested(newConfiguration)
