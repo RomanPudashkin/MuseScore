@@ -55,11 +55,6 @@ static const Settings::Key JACK_AUDIO_SERVER_USE_JACK_AUDIO_KEY("audio", "io/jac
 static const Settings::Key JACK_AUDIO_SERVER_USE_JACK_MIDI_KEY("audio", "io/jack/useJackMIDI");
 static const Settings::Key JACK_AUDIO_SERVER_USE_JACK_TRANSPORT_KEY("audio", "io/jack/useJackTransport");
 
-static const Settings::Key PORT_AUDIO_DEVICE_INDEX_KEY("audio", "io/portAudio/device");
-static const Settings::Key PORT_AUDIO_INPUT_DEVICE_NAME_KEY("audio", "io/portMidi/inputDevice");
-static const Settings::Key PORT_AUDIO_OUTPUT_DEVICE_NAME_KEY("audio", "io/portMidi/outputDevice");
-static const Settings::Key PORT_AUDIO_OUTPUT_LATENCY_KEY("audio", "io/portMidi/io/portMidi/outputLatencyMilliseconds");
-
 void AudioConfiguration::init()
 {
     settings()->setDefaultValue(CURRENT_AUDIO_SYSTEM_KEY, Val(static_cast<int>(defaultAudioSystem())));
@@ -71,8 +66,6 @@ void AudioConfiguration::init()
     settings()->setDefaultValue(ALSA_AUDIO_SAMPLE_RATE_KEY, Val(48000));
 
     settings()->setDefaultValue(JACK_AUDIO_SERVER_REMEMBER_LASTE_CONNECTIONS_KEY, Val(true));
-
-    settings()->setDefaultValue(PORT_AUDIO_OUTPUT_LATENCY_KEY, Val(0));
 }
 
 AudioSystemType AudioConfiguration::defaultAudioSystem() const
@@ -83,7 +76,7 @@ AudioSystemType AudioConfiguration::defaultAudioSystem() const
         }
     }
 
-    return AudioSystemType::PortAudio;
+    return AudioSystemType::JackAudioServer;
 }
 
 int AudioConfiguration::defaultAudioBufferSize() const
@@ -102,12 +95,6 @@ bool AudioConfiguration::isAudioSystemAvailable(AudioSystemType type) const
     switch (type) {
     case AudioSystemType::AlsaAudio:
 #ifndef USE_ALSA
-        return true;
-#else
-        return false;
-#endif
-    case AudioSystemType::PortAudio:
-#ifdef USE_PORTAUDIO
         return true;
 #else
         return false;
@@ -203,25 +190,6 @@ void AudioConfiguration::setJackAudioServerConfiguration(const JackAudioServerCo
     settings()->setValue(JACK_AUDIO_SERVER_USE_JACK_TRANSPORT_KEY, Val(configuration.useJackTransport));
     settings()->setValue(JACK_AUDIO_SERVER_TIMEBASE_MASTER_KEY, Val(configuration.useTimebaseMaster));
     settings()->setValue(JACK_AUDIO_SERVER_REMEMBER_LASTE_CONNECTIONS_KEY, Val(configuration.rememberLastConnections));
-}
-
-PortAudioConfiguration AudioConfiguration::portAudioConfiguration() const
-{
-    PortAudioConfiguration configuration;
-    configuration.deviceIndex = settings()->value(PORT_AUDIO_DEVICE_INDEX_KEY).toInt();
-    configuration.midiInputDeviceName = settings()->value(PORT_AUDIO_INPUT_DEVICE_NAME_KEY).toString();
-    configuration.midiOutputDeviceName = settings()->value(PORT_AUDIO_OUTPUT_DEVICE_NAME_KEY).toString();
-    configuration.midiOutputLatencyMilliseconds = settings()->value(PORT_AUDIO_OUTPUT_LATENCY_KEY).toInt();
-
-    return configuration;
-}
-
-void AudioConfiguration::setPortAudioConfiguration(const PortAudioConfiguration& configuration)
-{
-    settings()->setValue(PORT_AUDIO_DEVICE_INDEX_KEY, Val(configuration.deviceIndex));
-    settings()->setValue(PORT_AUDIO_INPUT_DEVICE_NAME_KEY, Val(configuration.midiInputDeviceName));
-    settings()->setValue(PORT_AUDIO_OUTPUT_DEVICE_NAME_KEY, Val(configuration.midiOutputDeviceName));
-    settings()->setValue(PORT_AUDIO_OUTPUT_LATENCY_KEY, Val(configuration.midiOutputLatencyMilliseconds));
 }
 
 unsigned int AudioConfiguration::driverBufferSize() const

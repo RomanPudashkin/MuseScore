@@ -47,9 +47,6 @@ public:
     JackAudioServerConfiguration jackAudioServerConfiguration() const override;
     void setJackAudioServerConfiguration(const JackAudioServerConfiguration& configuration) override;
 
-    PortAudioConfiguration portAudioConfiguration() const override;
-    void setPortAudioConfiguration(const PortAudioConfiguration& configuration) override;
-
     unsigned int driverBufferSize() const override;
 
     std::vector<io::path> soundFontPaths() const override;

@@ -32,16 +32,6 @@ static const QString PERIOD_SIZE_KEY("periodSize");
 static const QString AVAILABLE_SAMPLE_RATE_LIST_KEY("availableSampleRateList");
 static const QString AVAILABLE_PERIOD_SIZE_LIST_KEY("availablePeriodSizeList");
 
-// PortAudio configuration keys:
-static const QString API_NAME_KEY("apiName");
-static const QString MIDI_INPUT_KEY("midiInput");
-static const QString MIDI_OUTPUT_KEY("midiOutput");
-static const QString MIDI_OUTPUT_LATENCY_KEY("midiOutputLatencyMilliseconds");
-static const QString AVAILABLE_API_LIST_KEY("availableApiList");
-static const QString AVAILABLE_DEVICE_LIST_KEY("availableDeviceList");
-static const QString AVAILABLE_MIDI_INPUT_LIST_KEY("availableMidiInputList");
-static const QString AVAILABLE_MIDI_OUTPUT_LIST_KEY("availableMidiOutputList");
-
 // JACK Audio Server configuration keys:
 static const QString USE_JACK_AUDIO_KEY("useJackAudio");
 static const QString USE_JACK_TRANSPORT_KEY("useJackTransport");
@@ -89,29 +79,6 @@ QVariant IOPreferencesModel::alsaAudioConfiguration() const
     return obj;
 }
 
-bool IOPreferencesModel::isPortAudioUsed() const
-{
-    return isAudioSystemUsed(AudioSystemType::PortAudio);
-}
-
-QVariant IOPreferencesModel::portAudioConfiguration() const
-{
-    PortAudioConfiguration configuration = audioConfiguration()->portAudioConfiguration();
-
-    QVariantMap obj;
-    obj[API_NAME_KEY] = QString(); // not implemented
-    obj[DEVICE_NAME_KEY] = QString(); // not implemented
-    obj[MIDI_INPUT_KEY] = QString::fromStdString(configuration.midiInputDeviceName);
-    obj[MIDI_OUTPUT_KEY] = QString::fromStdString(configuration.midiOutputDeviceName);
-    obj[MIDI_OUTPUT_LATENCY_KEY] = configuration.midiOutputLatencyMilliseconds;
-    obj[AVAILABLE_API_LIST_KEY] = QStringList(); // not implemented
-    obj[AVAILABLE_DEVICE_LIST_KEY] = QStringList(); // not implemented
-    obj[AVAILABLE_MIDI_INPUT_LIST_KEY] = QStringList(); // not implemented
-    obj[AVAILABLE_MIDI_OUTPUT_LIST_KEY] = QStringList(); // not implemented
-
-    return obj;
-}
-
 bool IOPreferencesModel::isJaskAudioServerUsed() const
 {
     return isAudioSystemUsed(AudioSystemType::JackAudioServer);
@@ -141,11 +108,6 @@ bool IOPreferencesModel::isAlsaAudioAvailable() const
     return isAudioSystemAvailable(AudioSystemType::AlsaAudio);
 }
 
-bool IOPreferencesModel::isPortAudioAvailable() const
-{
-    return isAudioSystemAvailable(AudioSystemType::PortAudio);
-}
-
 bool IOPreferencesModel::isJackAudioServerAvailable() const
 {
     return isAudioSystemAvailable(AudioSystemType::JackAudioServer);
@@ -165,7 +127,6 @@ void IOPreferencesModel::setUsedAudioSystem(const QString& audioSystemName)
 {
     static const QMap<QString, AudioSystemType> types {
         { "AlsaAudio", AudioSystemType::AlsaAudio },
-        { "PortAudio", AudioSystemType::PortAudio },
         { "PulseAudio", AudioSystemType::PulseAudio },
         { "JackAudioServer", AudioSystemType::JackAudioServer }
     };
@@ -197,23 +158,6 @@ void IOPreferencesModel::setAlsaAudioConfiguration(const QVariant& configuration
 
     audioConfiguration()->setAlsaAudioConfiguration(result);
     emit alsaAudioConfigurationChanged(configuration);
-}
-
-void IOPreferencesModel::setPortAudioConfiguration(const QVariant& configuration)
-{
-    if (configuration == portAudioConfiguration() || configuration.isNull()) {
-        return;
-    }
-
-    QVariantMap map = configuration.toMap();
-
-    PortAudioConfiguration result;
-    result.midiInputDeviceName = map[MIDI_INPUT_KEY].toString().toStdString();
-    result.midiOutputDeviceName = map[MIDI_OUTPUT_KEY].toString().toStdString();
-    result.midiOutputLatencyMilliseconds = map[MIDI_OUTPUT_LATENCY_KEY].toInt();
-
-    audioConfiguration()->setPortAudioConfiguration(result);
-    emit portAudioConfigurationChanged(configuration);
 }
 
 void IOPreferencesModel::setJackAudioServerConfiguration(const QVariant& configuration)

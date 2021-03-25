@@ -48,9 +48,6 @@ public:
     virtual JackAudioServerConfiguration jackAudioServerConfiguration() const = 0;
     virtual void setJackAudioServerConfiguration(const JackAudioServerConfiguration& configuration) = 0;
 
-    virtual PortAudioConfiguration portAudioConfiguration() const = 0;
-    virtual void setPortAudioConfiguration(const PortAudioConfiguration& configuration) = 0;
-
     virtual unsigned int driverBufferSize() const = 0; // samples
 
     // synthesizers

@@ -36,9 +36,6 @@ class IOPreferencesModel : public QObject
     Q_PROPERTY(bool isAlsaAudioUsed READ isAlsaAudioUsed NOTIFY usedAudioSystemChanged)
     Q_PROPERTY(QVariant alsaAudioConfiguration READ alsaAudioConfiguration WRITE setAlsaAudioConfiguration NOTIFY alsaAudioConfigurationChanged)
 
-    Q_PROPERTY(bool isPortAudioUsed READ isPortAudioUsed NOTIFY usedAudioSystemChanged)
-    Q_PROPERTY(QVariant portAudioConfiguration READ portAudioConfiguration WRITE setPortAudioConfiguration NOTIFY portAudioConfigurationChanged)
-
     Q_PROPERTY(bool isJaskAudioServerUsed READ isJaskAudioServerUsed NOTIFY usedAudioSystemChanged)
     Q_PROPERTY(QVariant jackAudioServerConfiguration READ jackAudioServerConfiguration WRITE setJackAudioServerConfiguration NOTIFY jackAudioServerConfigurationChanged)
 
@@ -50,15 +47,11 @@ public:
     bool isAlsaAudioUsed() const;
     QVariant alsaAudioConfiguration() const;
 
-    bool isPortAudioUsed() const;
-    QVariant portAudioConfiguration() const;
-
     bool isJaskAudioServerUsed() const;
     QVariant jackAudioServerConfiguration() const;
 
     Q_INVOKABLE bool isPulseAudioAvailable() const;
     Q_INVOKABLE bool isAlsaAudioAvailable() const;
-    Q_INVOKABLE bool isPortAudioAvailable() const;
     Q_INVOKABLE bool isJackAudioServerAvailable() const;
 
     Q_INVOKABLE void setUsedAudioSystem(const QString& audioSystemName);
@@ -66,14 +59,12 @@ public:
 
 public slots:
     void setAlsaAudioConfiguration(const QVariant& configuration);
-    void setPortAudioConfiguration(const QVariant& configuration);
     void setJackAudioServerConfiguration(const QVariant& configuration);
 
 signals:
     void usedAudioSystemChanged();
 
     void alsaAudioConfigurationChanged(const QVariant& configuration);
-    void portAudioConfigurationChanged(const QVariant& configuration);
     void jackAudioServerConfigurationChanged(const QVariant& configuration);
 
 private:

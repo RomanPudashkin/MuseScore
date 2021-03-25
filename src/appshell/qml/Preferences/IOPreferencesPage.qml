@@ -40,26 +40,6 @@ PreferencesPage {
 
         SeparatorLine { visible: pulseAudioSection.visible }
 
-        PortAudioSection {
-            id: portAudioSection
-
-            visible: ioModel.isPortAudioAvailable()
-            usePortAudio: ioModel.isPortAudioUsed
-            configuration: ioModel.portAudioConfiguration
-
-            firstColumnWidth: content.firstColumnWidth
-
-            onUsePortAudioRequsted: {
-                ioModel.setUsedAudioSystem("PortAudio")
-            }
-
-            onConfigurationChangeRequested: {
-                ioModel.portAudioConfiguration = newConfiguration
-            }
-        }
-
-        SeparatorLine { visible: portAudioSection.visible }
-
         AlsaAudioSection {
             id: alsaAudioSection
 
