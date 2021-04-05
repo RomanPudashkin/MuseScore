@@ -27,6 +27,7 @@
 #include <QDockWidget>
 #include <QStatusBar>
 #include <QMenuBar>
+#include <QProxyStyle>
 
 #include "log.h"
 #include "eventswatcher.h"
@@ -36,13 +37,20 @@
 
 using namespace mu::dock;
 using namespace mu::uicomponents;
+using namespace mu::ui;
 
-static const QString WINDOW_QSS = QString("QMainWindow { background: %1; } "
-                                          "QMainWindow::separator { background: %2; width: 1px; } "
-                                          "QTabBar::tab { background: %1; border: 2px solid; padding: 2px; }"
-                                          "QTabBar::tab:selected { border-color: #9B9B9B; border-bottom-color: #C2C7CB; }");
+class ProxyStyle: public QProxyStyle
+{
+private:
+    void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override
+    {
+        if (element == QStyle::PE_FrameTabBarBase) {
+            return;
+        }
 
-static const QString STATUS_QSS = QString("QStatusBar { background: %1; border-top: 1px solid %2; } QStatusBar::item { border: 0 }");
+        QProxyStyle::drawPrimitive(element, option, painter, widget);
+    }
+};
 
 static void addMenu(QMenu* menu, QMenuBar* menuBar)
 {
@@ -63,6 +71,8 @@ DockWindow::DockWindow(QQuickItem* parent)
     m_window->setMinimumSize(800, 600);
     setWidth(1024);
     setHeight(800);
+
+    m_window->setStyle(new ProxyStyle());
 
     m_eventsWatcher = new EventsWatcher(this);
     m_window->installEventFilter(m_eventsWatcher);
@@ -105,6 +115,31 @@ void DockWindow::componentComplete()
     m_window->show();
 
     m_isComponentComplete = true;
+}
+
+QString DockWindow::buildWindowQss() const
+{
+    auto values = configuration()->currentTheme().values;
+    QString tabsBackgroundColor = values[BACKGROUND_SECONDARY_COLOR].toString();
+
+    return QString("QMainWindow { background: %1; } "
+                   "QMainWindow::separator { background: %2; width: 1px; }"
+                   "QTabBar { background: %3; border: 1px solid %2; }"
+                   "QTabBar::tab { height: 35px; width: 80px; background: %3; border: 1px solid %2; border-left: 0; padding: 0; }"
+                   "QTabBar::tab:selected { background: %1; border-bottom-color: transparent; font-weight: bold; }"
+                   "QTabBar::tear { width: 0; }"
+                   "QTabBar::scroller { width: 0; }")
+            .arg(m_color.name())
+            .arg(m_borderColor.name())
+            .arg(tabsBackgroundColor);
+
+}
+
+QString DockWindow::buildStatusBarQss() const
+{
+    return QString("QStatusBar { background: %1; border-top: 1px solid %2; } QStatusBar::item { border: 0 }")
+            .arg(m_color.name())
+            .arg(m_borderColor.name());
 }
 
 void DockWindow::onMainWindowEvent(QEvent* event)
@@ -287,8 +322,12 @@ void DockWindow::showPage(DockPage* page)
 
 void DockWindow::updateStyle()
 {
-    m_window->setStyleSheet(WINDOW_QSS.arg(m_color.name()).arg(m_borderColor.name()));
-    m_statusbar->setStyleSheet(STATUS_QSS.arg(m_color.name()).arg(m_borderColor.name()));
+    QString windowQss = buildWindowQss();
+    QString statusBarQss = buildStatusBarQss();
+
+    m_window->setStyleSheet(windowQss);
+    m_statusbar->setStyleSheet(statusBarQss);
+
     configuration()->applyPlatformStyle(m_window);
 }
 

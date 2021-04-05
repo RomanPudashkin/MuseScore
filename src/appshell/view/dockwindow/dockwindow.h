@@ -94,6 +94,9 @@ private slots:
 private:
     void componentComplete() override;
 
+    QString buildWindowQss() const;
+    QString buildStatusBarQss() const;
+
     DockPage* page(const QString& uri) const;
     DockPage* currentPage() const;
 
