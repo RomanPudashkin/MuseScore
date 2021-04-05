@@ -71,8 +71,8 @@ DockWindow::DockWindow(QQuickItem* parent)
     m_central = new QStackedWidget(m_window);
     m_window->setCentralWidget(m_central);
 
-    m_window->setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::West);
-    m_window->setTabPosition(Qt::RightDockWidgetArea, QTabWidget::East);
+    m_window->setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::North);
+    m_window->setTabPosition(Qt::RightDockWidgetArea, QTabWidget::North);
     m_window->setAnimated(false);
 
     m_statusbar = new QStatusBar(m_window);
