@@ -1,10 +1,9 @@
 import QtQuick 2.15
 
-Item {
-    id: root
+import com.kdab.dockwidgets 1.0 as KDDW
 
-    property string title: ""
-    property string uniqueName: ""
+KDDW.DockWidget {
+    id: root
 
     property int minimumWidth: 0
     property int minimumHeight: 0
@@ -14,9 +13,13 @@ Item {
     property bool floatable: true
     property bool closable: true
 
-    property string tabifyPanelName: ""
-
-    default property Component content
+    property var tabifyPanels: []
 
     signal closed()
+
+    function tabify() {
+        for (var i in tabifyPanels) {
+            addDockWidgetAsTab(tabifyPanels[i].dockWidget)
+        }
+    }
 }

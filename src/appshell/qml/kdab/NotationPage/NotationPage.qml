@@ -89,8 +89,6 @@ DockPage {
             width: defaultPanelWidth
             minimumWidth: minimumPanelWidth
 
-            tabifyPanelName: "palettePanel"
-
             floatable: true
             closable: true
 
@@ -111,7 +109,7 @@ DockPage {
             width: defaultPanelWidth
             minimumWidth: minimumPanelWidth
 
-            tabifyPanelName: "instrumentsPanel"
+            tabifyPanels: [ instrumentsPanel, palettePanel ]
 
             floatable: true
             closable: true

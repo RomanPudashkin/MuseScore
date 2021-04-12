@@ -30,28 +30,6 @@ Page {
 
         anchors.fill: parent
 
-        Repeater {
-            model: root.panels
-
-            delegate: KDDW.DockWidget {
-                id: panel
-
-                uniqueName: modelData.uniqueName
-
-                Loader {
-                    sourceComponent: modelData.content
-                }
-
-                Component.onCompleted: {
-                    Qt.callLater(init)
-                }
-
-                function init() {
-                    layout.addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)
-                }
-            }
-        }
-
         KDDW.DockWidget {
             id: centralDock
 
@@ -65,6 +43,13 @@ Page {
         }
 
         Component.onCompleted: {
+            for (var i in root.panels) {
+                var panel = root.panels[i]
+                panel.parent = layout
+                addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)
+                panel.tabify()
+            }
+
             addDockWidget(centralDock, KDDW.KDDockWidgets.Location_OnRight)
         }
     }
