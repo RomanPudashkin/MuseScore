@@ -109,7 +109,7 @@ DockPage {
             width: defaultPanelWidth
             minimumWidth: minimumPanelWidth
 
-            tabifyPanels: [ instrumentsPanel, palettePanel ]
+            tabs: [ instrumentsPanel, palettePanel ]
 
             floatable: true
             closable: true

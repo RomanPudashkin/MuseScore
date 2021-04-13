@@ -44,17 +44,15 @@ DockPage {
 
             uniqueName: "devtoolsPanel"
 
-            width: 292
             minimumWidth: 200
+            maximumWidth: 292
 
             Rectangle {
                 anchors.fill: parent
                 color: ui.theme.backgroundPrimaryColor
 
                 DevToolsMenu {
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors.fill: parent
 
                     model: [
                         { "name": "settings", "title": "Settings" },

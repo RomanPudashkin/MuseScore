@@ -13,13 +13,21 @@ KDDW.DockWidget {
     property bool floatable: true
     property bool closable: true
 
-    property var tabifyPanels: []
+    property var tabs: []
 
     signal closed()
 
-    function tabify() {
-        for (var i in tabifyPanels) {
-            addDockWidgetAsTab(tabifyPanels[i].dockWidget)
+    function init() {
+        var minWidth = minimumWidth > 0 ? minimumWidth : minimumSize.width
+        var minHeight = minimumHeight > 0 ? minimumHeight : minimumSize.height
+        var maxWidth = maximumWidth > 0 ? maximumWidth : maximumSize.width
+        var maxHeight = maximumHeight > 0 ? maximumHeight : maximumSize.height
+
+        minimumSize = Qt.size(minWidth, minHeight)
+        maximumSize = Qt.size(maxWidth, maxHeight)
+
+        for (var i in tabs) {
+            addDockWidgetAsTab(tabs[i].dockWidget)
         }
     }
 }

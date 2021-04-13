@@ -42,6 +42,8 @@ class DockWidgetInstantiator : public QQuickItem
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(bool isFocused READ isFocused NOTIFY isFocusedChanged)
     Q_PROPERTY(bool isFloating READ isFloating WRITE setFloating NOTIFY isFloatingChanged)
+    Q_PROPERTY(QSize minimumSize READ minimumSize WRITE setMinimumSize)
+    Q_PROPERTY(QSize maximumSize READ maximumSize WRITE setMaximumSize)
 public:
     QString uniqueName() const;
     void setUniqueName(const QString &);
@@ -58,6 +60,12 @@ public:
     bool isFocused() const;
     bool isFloating() const;
     void setFloating(bool);
+
+    QSize minimumSize() const;
+    void setMinimumSize(QSize size);
+
+    QSize maximumSize() const;
+    void setMaximumSize(QSize size);
 
     Q_INVOKABLE void addDockWidgetAsTab(DockWidgetInstantiator *other,
                                         InitialVisibilityOption = {});

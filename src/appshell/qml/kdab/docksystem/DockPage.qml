@@ -47,7 +47,7 @@ Page {
                 var panel = root.panels[i]
                 panel.parent = layout
                 addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)
-                panel.tabify()
+                panel.init()
             }
 
             addDockWidget(centralDock, KDDW.KDDockWidgets.Location_OnRight)

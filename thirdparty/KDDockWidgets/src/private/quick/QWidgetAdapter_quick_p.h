@@ -123,9 +123,9 @@ public:
     void grabMouse();
     void releaseMouse();
     void releaseKeyboard();
-    void setMinimumSize(QSize);
+    virtual void setMinimumSize(QSize);
     void setMinimumSize(int w, int h);
-    void setMaximumSize(QSize sz);
+    virtual void setMaximumSize(QSize sz);
     void setMaximumSize(int w, int h);
     void updateGeometry();
     void resize(QSize);

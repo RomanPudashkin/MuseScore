@@ -74,6 +74,28 @@ void DockWidgetInstantiator::setFloating(bool is)
         m_dockWidget->setFloating(is);
 }
 
+QSize DockWidgetInstantiator::minimumSize() const
+{
+    return m_dockWidget ? m_dockWidget->minimumSize() : QSize();
+}
+
+void DockWidgetInstantiator::setMinimumSize(QSize size)
+{
+    if (m_dockWidget)
+        m_dockWidget->setMinimumSize(size);
+}
+
+QSize DockWidgetInstantiator::maximumSize() const
+{
+    return m_dockWidget ? m_dockWidget->maximumSize() : QSize();
+}
+
+void DockWidgetInstantiator::setMaximumSize(QSize size)
+{
+    if (m_dockWidget)
+        m_dockWidget->setMaximumSize(size);
+}
+
 void DockWidgetInstantiator::addDockWidgetAsTab(DockWidgetInstantiator *other,
                                                 InitialVisibilityOption option)
 {
