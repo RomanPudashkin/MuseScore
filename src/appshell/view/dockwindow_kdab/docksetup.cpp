@@ -40,6 +40,20 @@ public:
 
 using namespace mu::dock;
 
+bool tabbingAllowed(const QVector<KDDockWidgets::DockWidgetBase*>& source,
+                    const QVector<KDDockWidgets::DockWidgetBase*>& target)
+{
+    UNUSED(source);
+
+    for (const KDDockWidgets::DockWidgetBase* dock: target) {
+        if (dock->uniqueName().contains("central")) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void DockSetup::setup(QQmlEngine* engine)
 {
     qRegisterMetaType<DropIndicators*>();
@@ -51,4 +65,5 @@ void DockSetup::setup(QQmlEngine* engine)
             | KDDockWidgets::Config::Flag_HideTitleBarWhenTabsVisible;
 
     KDDockWidgets::Config::self().setFlags(flags);
+    KDDockWidgets::Config::self().setTabbingAllowedFunc(tabbingAllowed);
 }

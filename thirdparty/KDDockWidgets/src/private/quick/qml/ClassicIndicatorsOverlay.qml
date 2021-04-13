@@ -84,6 +84,7 @@ Item {
             id: centerIndicator
             indicatorType: DropIndicatorOverlayInterface.DropLocation_Center
             anchors.centerIn: parent
+            visible: _window.classicIndicators.tabIndicatorVisible
         }
 
         ClassicIndicator {
