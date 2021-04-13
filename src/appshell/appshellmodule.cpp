@@ -32,7 +32,6 @@
 #include "internal/notationpagestate.h"
 
 #include "view/devtools/settingslistmodel.h"
-#include "view/dockwindow/docksetup.h"
 #include "view/appmenumodel.h"
 #include "view/notationpagemodel.h"
 #include "view/aboutmodel.h"
@@ -50,6 +49,10 @@
 #include "view/preferences/importpreferencesmodel.h"
 #include "view/preferences/iopreferencesmodel.h"
 #include "view/preferences/commonaudioapiconfigurationmodel.h"
+
+#ifndef KDAB_DOCKWIDGETS
+#include "view/dockwindow/docksetup.h"
+#endif
 
 using namespace mu::appshell;
 using namespace mu::framework;
@@ -107,7 +110,9 @@ void AppShellModule::registerResources()
 
 void AppShellModule::registerUiTypes()
 {
+#ifndef KDAB_DOCKWIDGETS
     dock::DockSetup::registerQmlTypes();
+#endif
 
     qmlRegisterType<SettingListModel>("MuseScore.Preferences", 1, 0, "SettingListModel");
     qmlRegisterType<PreferencesModel>("MuseScore.Preferences", 1, 0, "PreferencesModel");
