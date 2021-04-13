@@ -17,6 +17,18 @@ KDDW.DockWidget {
 
     signal closed()
 
+    QtObject {
+        id: properties
+
+        objectName: "properties"
+
+        readonly property int allowedAreas: Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea
+    }
+
+    Component.onCompleted: {
+        dockWidget.data.push(properties)
+    }
+
     function init() {
         var minWidth = minimumWidth > 0 ? minimumWidth : minimumSize.width
         var minHeight = minimumHeight > 0 ? minimumHeight : minimumSize.height

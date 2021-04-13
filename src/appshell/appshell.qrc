@@ -69,6 +69,8 @@
         <file>qml/kdab/Window.qml</file>
         <file>qml/kdab/docksystem/DockPage.qml</file>
         <file>qml/kdab/docksystem/DockPanel.qml</file>
+        <file>qml/kdab/docksystem/DropIndicators.qml</file>
+        <file>qml/kdab/docksystem/DropIndicator.qml</file>
         <file>qml/kdab/HomePage/HomePage.qml</file>
         <file>qml/kdab/NotationPage/NotationPage.qml</file>
         <file>qml/kdab/PublishPage/PublishPage.qml</file>

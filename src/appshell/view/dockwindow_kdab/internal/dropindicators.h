@@ -1,0 +1,90 @@
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2021 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+
+#ifndef MU_DOCK_DROPINDICATORS_H
+#define MU_DOCK_DROPINDICATORS_H
+
+#include <QObject>
+
+#include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
+
+namespace KDDockWidgets {
+class WidgetOrQuick;
+}
+
+namespace mu::dock {
+class IndicatorsWindow;
+class DropIndicators : public KDDockWidgets::DropIndicatorOverlayInterface
+{
+    Q_OBJECT
+
+    Q_PROPERTY(bool outterLeftIndicatorVisible READ outterLeftIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool outterRightIndicatorVisible READ outterRightIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool outterTopIndicatorVisible READ outterTopIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool outterBottomIndicatorVisible READ outterBottomIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+
+    Q_PROPERTY(bool centralIndicatorVisible READ centralIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+
+    Q_PROPERTY(bool innerLeftIndicatorVisible READ innerLeftIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool innerRightIndicatorVisible READ innerRightIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool innerTopIndicatorVisible READ innerTopIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+    Q_PROPERTY(bool innerBottomIndicatorVisible READ innerBottomIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+
+public:
+    explicit DropIndicators(KDDockWidgets::DropArea* dropArea);
+    ~DropIndicators() override;
+
+    DropLocation hover_impl(QPoint globalPos) override;
+    QPoint posForIndicator(DropLocation) const override;
+
+    bool outterLeftIndicatorVisible() const;
+    bool outterRightIndicatorVisible() const;
+    bool outterTopIndicatorVisible() const;
+    bool outterBottomIndicatorVisible() const;
+
+    bool centralIndicatorVisible() const;
+
+    bool innerLeftIndicatorVisible() const;
+    bool innerRightIndicatorVisible() const;
+    bool innerTopIndicatorVisible() const;
+    bool innerBottomIndicatorVisible() const;
+
+signals:
+    void indicatorsVisibilityChanged();
+
+private:
+    friend class IndicatorsWindow;
+
+    void setDropLocation(DropLocation);
+    void updateWindowPosition();
+
+    bool onResize(QSize newSize) override;
+    void updateVisibility() override;
+
+    bool hoveringOverCetralDock() const;
+    bool isAreaAllowed(Qt::DockWidgetArea area) const;
+
+    KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
+    IndicatorsWindow* m_indicatorsWindow = nullptr;
+
+    Qt::DockWidgetAreas m_allowedAreasForDraggedDock;
+};
+}
+
+#endif // MU_DOCK_DROPINDICATORS_H

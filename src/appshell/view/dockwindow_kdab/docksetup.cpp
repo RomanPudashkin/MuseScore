@@ -19,14 +19,32 @@
 
 #include "docksetup.h"
 
+#include "internal/dropindicators.h"
+
 #include "thirdparty/KDDockWidgets/src/Config.h"
+#include "thirdparty/KDDockWidgets/src/DockWidgetBase.h"
+#include "thirdparty/KDDockWidgets/src/FrameworkWidgetFactory.h"
 
 #include <QQmlEngine>
+
+namespace mu::dock {
+class DockWidgetFactory : public KDDockWidgets::DefaultWidgetFactory
+{
+public:
+    KDDockWidgets::DropIndicatorOverlayInterface* createDropIndicatorOverlay(KDDockWidgets::DropArea* dropArea) const override
+    {
+        return new DropIndicators(dropArea);
+    }
+};
+}
 
 using namespace mu::dock;
 
 void DockSetup::setup(QQmlEngine* engine)
 {
+    qRegisterMetaType<DropIndicators*>();
+
+    KDDockWidgets::Config::self().setFrameworkWidgetFactory(new DockWidgetFactory());
     KDDockWidgets::Config::self().setQmlEngine(engine);
 
     auto flags = KDDockWidgets::Config::self().flags()
