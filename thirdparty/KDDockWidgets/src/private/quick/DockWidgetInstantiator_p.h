@@ -89,6 +89,7 @@ public:
     Q_INVOKABLE void raise();
     Q_INVOKABLE void moveToSideBar();
 
+    Q_INVOKABLE void setAffinities(const QStringList &affinities);
 
 protected:
     void classBegin() override;

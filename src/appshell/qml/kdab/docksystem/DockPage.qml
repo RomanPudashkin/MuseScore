@@ -43,7 +43,15 @@ Page {
         }
 
         Component.onCompleted: {
-            for (var i in root.panels) {
+            setAffinities([ root.uniqueName ])
+
+            for (var i = 0; i < root.panels.length; ++i) {
+                root.panels[i].setAffinities([ root.uniqueName ])
+            }
+
+            centralDock.setAffinities([ root.uniqueName ])
+
+            for (i = 0; i < root.panels.length; ++i) {
                 var panel = root.panels[i]
                 panel.parent = layout
                 addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)

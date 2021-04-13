@@ -163,6 +163,12 @@ void DockWidgetInstantiator::moveToSideBar()
         m_dockWidget->moveToSideBar();
 }
 
+void DockWidgetInstantiator::setAffinities(const QStringList &affinities)
+{
+    if (m_dockWidget)
+        m_dockWidget->setAffinities(affinities);
+}
+
 void DockWidgetInstantiator::classBegin()
 {
     // Nothing interesting to do here.
