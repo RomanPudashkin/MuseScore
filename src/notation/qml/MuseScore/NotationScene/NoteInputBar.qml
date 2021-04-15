@@ -12,6 +12,8 @@ Rectangle {
 
     property alias keynav: keynavSub
 
+    color: ui.theme.backgroundPrimaryColor
+
     QtObject {
         id: privatesProperties
 

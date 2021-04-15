@@ -14,6 +14,7 @@ Page {
     property string uri: ""
     property alias uniqueName: layout.uniqueName
 
+    property list<DockToolBar> toolbars
     property list<DockPanel> panels
 
     property alias statusBar: root.footer
@@ -49,6 +50,10 @@ Page {
                 root.panels[i].setAffinities([ root.uniqueName ])
             }
 
+            for (i = 0; i < root.toolbars.length; ++i) {
+                root.toolbars[i].setAffinities([ root.uniqueName ])
+            }
+
             centralDock.setAffinities([ root.uniqueName ])
 
             for (i = 0; i < root.panels.length; ++i) {
@@ -59,6 +64,13 @@ Page {
             }
 
             addDockWidget(centralDock, KDDW.KDDockWidgets.Location_OnRight)
+
+            for (i = 0; i < root.toolbars.length; ++i) {
+                var toolbar = root.toolbars[i]
+                toolbar.parent = layout
+                addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
+                toolbar.init()
+            }
         }
     }
 }

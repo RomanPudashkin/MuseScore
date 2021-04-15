@@ -58,6 +58,29 @@ DockPage {
     readonly property int defaultPanelWidth: 272
     readonly property int minimumPanelWidth: 200
 
+    toolbars: [
+        DockToolBar {
+            id: notationNoteInputBar
+            uniqueName: "notationNoteInputBar"
+
+            title: qsTrc("appshell", "Note Input")
+
+            width: root.width
+            height: 48
+
+            minimumWidth: orientation == Qt.Horizontal ? 900 : 48
+            maximumWidth: orientation == Qt.Horizontal ? root.width : 96
+            minimumHeight: orientation == Qt.Horizontal ? 48 : 0
+            maximumHeight: orientation == Qt.Horizontal ? 48 : root.height
+
+            NoteInputBar {
+                orientation: notationNoteInputBar.orientation
+                keynav.section: noteInputKeyNavSec
+                keynav.order: 1
+            }
+        }
+    ]
+
     panels: [
         DockPanel {
             id: palettePanel
