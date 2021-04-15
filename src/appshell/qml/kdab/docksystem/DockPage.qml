@@ -8,69 +8,67 @@ import com.kdab.dockwidgets 1.0 as KDDW
 
 import "../HomePage"
 
-Page {
+Item {
     id: root
 
     property string uri: ""
-    property alias uniqueName: layout.uniqueName
+    property string uniqueName: ""
 
     property list<DockToolBar> toolbars
     property list<DockPanel> panels
-
-    property alias statusBar: root.footer
     property alias central: central.sourceComponent
+    property list<DockStatusBar> statusbars
 
-    padding: 0
+    KDDW.DockWidget {
+        id: centralDock
 
-    background: Rectangle {
-        color: ui.theme.backgroundPrimaryColor
+        uniqueName: root.uniqueName + "_central"
+
+        Loader {
+            id: central
+
+            anchors.fill: parent
+        }
     }
 
-    contentItem: KDDW.MainWindowLayout {
-        id: layout
-
-        anchors.fill: parent
-
-        KDDW.DockWidget {
-            id: centralDock
-
-            uniqueName: root.uniqueName + "_central"
-
-            Loader {
-                id: central
-
-                anchors.fill: parent
-            }
+    function init(layout) {
+        for (var i = 0; i < root.panels.length; ++i) {
+            var panel = root.panels[i]
+            panel.parent = layout
+            layout.addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)
+            panel.init()
         }
 
-        Component.onCompleted: {
-            setAffinities([ root.uniqueName ])
+        layout.addDockWidget(centralDock, KDDW.KDDockWidgets.Location_OnRight)
 
-            for (var i = 0; i < root.panels.length; ++i) {
-                root.panels[i].setAffinities([ root.uniqueName ])
+        var prevToolbar = null
+        for (i = 0; i < root.toolbars.length; ++i) {
+            var toolbar = root.toolbars[i]
+            toolbar.parent = layout
+
+            if (!prevToolbar) {
+                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
+            } else {
+                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar)
             }
 
-            for (i = 0; i < root.toolbars.length; ++i) {
-                root.toolbars[i].setAffinities([ root.uniqueName ])
+            toolbar.init()
+            prevToolbar = toolbar
+        }
+
+        var prevStatusBar = null
+        for (i = 0; i < root.statusbars.length; ++i) {
+            var statusbar = root.statusbars[i]
+            statusbar.parent = layout
+
+            if (!prevStatusBar) {
+                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnBottom)
+            } else {
+                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnRight, prevStatusBar)
             }
 
-            centralDock.setAffinities([ root.uniqueName ])
-
-            for (i = 0; i < root.panels.length; ++i) {
-                var panel = root.panels[i]
-                panel.parent = layout
-                addDockWidget(panel, KDDW.KDDockWidgets.Location_OnLeft)
-                panel.init()
-            }
-
-            addDockWidget(centralDock, KDDW.KDDockWidgets.Location_OnRight)
-
-            for (i = 0; i < root.toolbars.length; ++i) {
-                var toolbar = root.toolbars[i]
-                toolbar.parent = layout
-                addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
-                toolbar.init()
-            }
+            statusbar.init()
+            prevStatusBar = statusbar
         }
     }
 }

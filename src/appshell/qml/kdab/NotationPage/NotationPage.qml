@@ -155,8 +155,20 @@ DockPage {
         }
     }
 
-    statusBar: NotationStatusBar {
-        color: root.color
-        visible: root.pageModel.isStatusBarVisible
-    }
+    statusbars: [
+        DockStatusBar {
+            id: notationStatusBar
+            uniqueName: "notationStatusBar"
+
+            width: root.width
+            height: 48
+
+            maximumHeight: 48
+
+            NotationStatusBar {
+                color: root.color
+                visible: root.pageModel.isStatusBarVisible
+            }
+        }
+    ]
 }

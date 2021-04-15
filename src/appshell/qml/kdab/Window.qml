@@ -6,11 +6,16 @@ import MuseScore.AppShell 1.0
 import MuseScore.Shortcuts 1.0
 import MuseScore.Ui 1.0
 import MuseScore.UiComponents 1.0
+import MuseScore.Playback 1.0
+import MuseScore.NotationScene 1.0
+
+import com.kdab.dockwidgets 1.0 as KDDW
 
 import "./HomePage"
 import "./NotationPage"
 import "./PublishPage"
 import "./DevTools"
+import "docksystem"
 
 ApplicationWindow {
     id: root
@@ -26,73 +31,200 @@ ApplicationWindow {
         topParent: root
 
         onRequestedDockPage: {
-            pagesStack.currentPageUri = uri
+            currentPageUri = uri
+            mainWindowLayout.clearWindows()
+            mainWindowLayout.showWindows()
         }
     }
 
-    ListView {
-        id: mainToolbar
+    property KeyNavigationSection topToolKeyNavSec: KeyNavigationSection {
+        id: keynavSec
+        name: "TopTool"
+        order: 1
+    }
 
-        anchors.top: parent.top
+    readonly property int toolbarHeight: 48
 
-        width: parent.width
-        height: 30
+    property string currentPageUri: "musescore://home"
+    property bool isNotationPage: currentPageUri === notationPage.uri
 
-        spacing: 8
-        orientation: Qt.Horizontal
+    property var pages: (new Map([
+        [ "musescore://home", homePage ],
+        [ "musescore://notation", notationPage ],
+        [ "musescore://publish", publishPage ],
+        [ "musescore://devtools", devtoolsPage ]
+    ]))
 
-        model: pagesStack.allPagesUri
+    KDDW.MainWindowLayout {
+        id: mainWindowLayout
+        anchors.fill: parent
 
-        delegate: FlatButton {
-            text: modelData
+        uniqueName: "mainWindowLayout"
 
-            onClicked: {
-                api.launcher.open(modelData)
+        Component.onCompleted: {
+            showWindows()
+        }
+
+        function clearWindows() {
+            _kddwDockRegistry.clear();
+        }
+
+        function showWindows() {
+            var page = pages.get(currentPageUri)
+            page.init(mainWindowLayout)
+
+            var prevToolbar = null
+            for (var i = 0; i < toolbars.length; ++i) {
+                var toolbar = toolbars[i]
+                toolbar.parent = mainWindowLayout
+                if (!prevToolbar) {
+                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
+                } else {
+                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar)
+                }
+
+                toolbar.init()
+
+                prevToolbar = toolbar
             }
         }
     }
 
-    StackLayout {
-        id: pagesStack
+    HomePage {
+        id: homePage
 
-        anchors.top: mainToolbar.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        property string currentPageUri: homePage.uri
-
-        currentIndex: allPagesUri.indexOf(currentPageUri)
-
-        property var allPagesUri: [
-            homePage.uri,
-            notationPage.uri,
-            publishPage.uri,
-            devtoolsPage.uri
-        ]
-
-        HomePage {
-            id: homePage
-
-            uri: "musescore://home"
-        }
-
-        NotationPage {
-            id: notationPage
-
-            uri: "musescore://notation"
-        }
-
-        PublishPage {
-            id: publishPage
-
-            uri: "musescore://publish"
-        }
-
-        DevToolsPage {
-            id: devtoolsPage
-
-            uri: "musescore://devtools"
-        }
+        uri: "musescore://home"
     }
+
+    NotationPage {
+        id: notationPage
+
+        uri: "musescore://notation"
+    }
+
+    PublishPage {
+        id: publishPage
+
+        uri: "musescore://publish"
+    }
+
+    DevToolsPage {
+        id: devtoolsPage
+
+        uri: "musescore://devtools"
+    }
+
+    property list<DockToolBar> toolbars: [
+        DockToolBar {
+            id: mainToolBar
+
+            uniqueName: "mainToolBar"
+            minimumWidth: 296
+            minimumHeight: root.toolbarHeight
+
+            title: qsTrc("appshell", "Main Toolbar")
+
+            MainToolBar {
+                keynav.section: topToolKeyNavSec
+                keynav.order: 1
+                currentUri: currentPageUri
+
+                keynav.onActiveChanged: {
+                    if (keynav.active) {
+                        mainToolBar.forceActiveFocus()
+                    }
+                }
+
+                onSelected: {
+                    api.launcher.open(uri)
+                }
+            }
+        },
+
+        DockToolBar {
+            id: notationToolBar
+
+            uniqueName: "notationToolBar"
+            minimumWidth: 192
+            minimumHeight: root.toolbarHeight
+
+            title: qsTrc("appshell", "Notation Toolbar")
+
+            NotationToolBar {
+                id: notationToolBarContent
+
+                keynav.section: topToolKeyNavSec
+                keynav.order: 2
+                keynav.enabled: notationToolBar.visible
+                onActiveFocusRequested: {
+                    if (keynav.active) {
+                        notationToolBar.forceActiveFocus()
+                    }
+                }
+
+                Connections {
+                    target: notationToolBar
+
+                    Component.onCompleted: {
+                        notationPage.pageModel.isNotationToolBarVisible = notationToolBar.visible
+                        notationToolBar.visible = Qt.binding(function() { return root.isNotationPage && notationPage.pageModel.isNotationToolBarVisible })
+                    }
+                }
+            }
+        },
+
+        DockToolBar {
+            id: playbackToolBar
+
+            uniqueName: "playbackToolBar"
+            minimumWidth: /*floating ? 520 : */470
+            minimumHeight: /*floating ? 76 : */root.toolbarHeight
+
+            title: qsTrc("appshell", "Playback Controls")
+
+            PlaybackToolBar {
+                id: playbackToolBarContent
+
+                keynav.section: topToolKeyNavSec
+                keynav.order: 3
+                keynav.enabled: root.isNotationPage
+
+//                floating: playbackToolBar.floating
+
+                Connections {
+                    target: playbackToolBar
+
+                    Component.onCompleted: {
+                        notationPage.pageModel.isPlaybackToolBarVisible = playbackToolBar.visible
+                        playbackToolBar.visible = Qt.binding(function() { return root.isNotationPage && notationPage.pageModel.isPlaybackToolBarVisible})
+                    }
+                }
+            }
+        },
+
+        DockToolBar	{
+            id: undoRedoToolBar
+
+            uniqueName: "undoRedoToolBar"
+            minimumWidth: 72
+            minimumHeight: root.toolbarHeight
+
+            //                movable: false
+
+            title: qsTrc("appshell", "Undo/Redo Toolbar")
+
+            UndoRedoToolBar {
+                id: undoRedoToolBarContent
+
+                Connections {
+                    target: undoRedoToolBar
+
+                    Component.onCompleted: {
+                        notationPage.pageModel.isUndoRedoToolBarVisible = undoRedoToolBar.visible
+                        undoRedoToolBar.visible = Qt.binding(function() { return root.isNotationPage && notationPage.pageModel.isUndoRedoToolBarVisible})
+                    }
+                }
+            }
+        }
+    ]
 }

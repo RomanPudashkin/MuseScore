@@ -10,6 +10,8 @@ Rectangle {
 
     signal activeFocusRequested()
 
+    color: ui.theme.backgroundPrimaryColor
+
     Component.onCompleted: {
         toolbarModel.load()
     }
