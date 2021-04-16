@@ -44,6 +44,7 @@ class DOCKS_EXPORT TitleBar : public QWidgetAdapter
     Q_PROPERTY(bool closeButtonEnabled READ closeButtonEnabled WRITE setCloseButtonEnabled NOTIFY closeButtonEnabledChanged)
     Q_PROPERTY(bool floatButtonVisible READ floatButtonVisible WRITE setFloatButtonVisible NOTIFY floatButtonVisibleChanged)
     Q_PROPERTY(QString floatButtonToolTip READ floatButtonToolTip NOTIFY floatButtonToolTipChanged)
+    Q_PROPERTY(bool isFloating READ isFloating NOTIFY isFloatingChanged)
 public:
     typedef QVector<TitleBar *> List;
 
@@ -118,6 +119,7 @@ Q_SIGNALS:
     void closeButtonEnabledChanged(bool);
     void floatButtonVisibleChanged(bool);
     void floatButtonToolTipChanged(const QString &);
+    void isFloatingChanged();
 
 protected:
 

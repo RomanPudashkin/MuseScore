@@ -6,8 +6,6 @@ import MuseScore.UiComponents 1.0
 
 import com.kdab.dockwidgets 1.0 as KDDW
 
-import "../HomePage"
-
 Item {
     id: root
 
@@ -19,7 +17,7 @@ Item {
     property alias central: central.sourceComponent
     property list<DockStatusBar> statusbars
 
-    KDDW.DockWidget {
+    DockCentral {
         id: centralDock
 
         uniqueName: root.uniqueName + "_central"

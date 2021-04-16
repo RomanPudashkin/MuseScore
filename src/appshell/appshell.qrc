@@ -77,6 +77,8 @@
         <file>qml/kdab/PublishPage/PublishPage.qml</file>
         <file>qml/kdab/DevTools/DevToolsPage.qml</file>
         <file>qml/kdab/docksystem/DockToolBar.qml</file>
+        <file>qml/kdab/docksystem/DockCentral.qml</file>
+        <file>qml/kdab/docksystem/DockTitleBar.qml</file>
         <file>qml/kdab/MainToolBar.qml</file>
         <file>qml/kdab/docksystem/DockStatusBar.qml</file>
     </qresource>
