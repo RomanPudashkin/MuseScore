@@ -142,12 +142,6 @@ bool MainWindowInstantiator::closeDockWidgets(bool force)
     return m_mainWindow && m_mainWindow->closeDockWidgets(force);
 }
 
-void MainWindowInstantiator::setAffinities(const QStringList &affinities)
-{
-    if (m_mainWindow)
-        m_mainWindow->setAffinities(affinities);
-}
-
 void MainWindowInstantiator::classBegin()
 {
     // Nothing interesting to do here.

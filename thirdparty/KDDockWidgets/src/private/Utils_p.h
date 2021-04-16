@@ -21,7 +21,7 @@
 #include <QMouseEvent>
 
 #ifdef KDDOCKWIDGETS_QTQUICK
-# include "quick/TitleBarQuick_p.h"
+# include "private/quick/TitleBarQuick_p.h"
 
 # include <QQuickItem>
 # include <QQuickView>

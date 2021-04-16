@@ -113,7 +113,6 @@ void ClassicIndicators::updateIndicatorsVisibility(bool visible)
 
     Q_EMIT innerIndicatorsVisibleChanged();
     Q_EMIT outterIndicatorsVisibleChanged();
-    Q_EMIT tabIndicatorVisibleChanged();
 }
 
 void ClassicIndicators::raiseIndicators()

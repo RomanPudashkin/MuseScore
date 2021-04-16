@@ -15,6 +15,11 @@
 
 using namespace KDDockWidgets;
 
+DockWidgetInstantiator::DockWidgetInstantiator(QQuickItem *parent)
+    : QQuickItem(parent)
+{
+}
+
 QString DockWidgetInstantiator::uniqueName() const
 {
     return m_uniqueName;
@@ -161,12 +166,6 @@ void DockWidgetInstantiator::moveToSideBar()
 {
     if (m_dockWidget)
         m_dockWidget->moveToSideBar();
-}
-
-void DockWidgetInstantiator::setAffinities(const QStringList &affinities)
-{
-    if (m_dockWidget)
-        m_dockWidget->setAffinities(affinities);
 }
 
 void DockWidgetInstantiator::classBegin()

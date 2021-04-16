@@ -69,7 +69,6 @@ public:
     Q_INVOKABLE SideBar *sideBarForDockWidget(const DockWidgetBase *) const;
     Q_INVOKABLE bool sideBarIsVisible(SideBarLocation) const;
     Q_INVOKABLE bool closeDockWidgets(bool force = false);
-    Q_INVOKABLE void setAffinities(const QStringList &affinities);
 
 protected:
     void classBegin() override;

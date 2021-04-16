@@ -21,7 +21,11 @@
 
 #include "internal/dropindicators.h"
 
-#include "docktypes.h"
+#include "dockpanel.h"
+#include "dockstatusbar.h"
+#include "docktoolbar.h"
+#include "dockcentral.h"
+#include "dockpage.h"
 
 #include "thirdparty/KDDockWidgets/src/Config.h"
 #include "thirdparty/KDDockWidgets/src/DockWidgetBase.h"
@@ -49,8 +53,15 @@ using namespace mu::dock;
 
 void DockSetup::setup(QQmlEngine* engine)
 {
+    qmlRegisterType<DockPanel>("MuseScore.Dock", 1, 0, "DockPanel");
+    qmlRegisterType<DockStatusBar>("MuseScore.Dock", 1, 0, "DockStatusBar");
+    qmlRegisterType<DockToolBar>("MuseScore.Dock", 1, 0, "DockToolBar");
+    qmlRegisterType<DockCentral>("MuseScore.Dock", 1, 0, "DockCentral");
+    qmlRegisterType<DockPage>("MuseScore.Dock", 1, 0, "DockPage");
+
+    qmlRegisterUncreatableType<DockType>("MuseScore.Dock", 1, 0, "DockType", "Cannot create a DockType");
+
     qRegisterMetaType<DropIndicators*>();
-    qmlRegisterUncreatableType<DockType>("MuseScore.Dock", 1, 0, "DockType", "Cannot create a ContainerType");
 
     KDDockWidgets::Config::self().setFrameworkWidgetFactory(new DockWidgetFactory());
     KDDockWidgets::Config::self().setQmlEngine(engine);

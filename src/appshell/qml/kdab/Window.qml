@@ -3,9 +3,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import MuseScore.AppShell 1.0
-import MuseScore.Shortcuts 1.0
+import MuseScore.Dock 1.0
 import MuseScore.Ui 1.0
 import MuseScore.UiComponents 1.0
+
+import MuseScore.Shortcuts 1.0
 import MuseScore.Playback 1.0
 import MuseScore.NotationScene 1.0
 
@@ -16,6 +18,8 @@ import "./NotationPage"
 import "./PublishPage"
 import "./DevTools"
 import "docksystem"
+
+import "../../qml" as DOCKWINDOW
 
 ApplicationWindow {
     id: root
@@ -126,7 +130,7 @@ ApplicationWindow {
 
             title: qsTrc("appshell", "Main Toolbar")
 
-            MainToolBar {
+            DOCKWINDOW.MainToolBar {
                 anchors.verticalCenter: parent.verticalCenter
 
                 keynav.section: topToolKeyNavSec

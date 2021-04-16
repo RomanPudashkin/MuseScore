@@ -2,7 +2,9 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import MuseScore.Ui 1.0
+import MuseScore.Dock 1.0
 import MuseScore.AppShell 1.0
+
 import MuseScore.NotationScene 1.0
 import MuseScore.Palette 1.0
 import MuseScore.Inspector 1.0
@@ -58,7 +60,7 @@ DockPage {
     readonly property int defaultPanelWidth: 272
     readonly property int minimumPanelWidth: 200
 
-    toolbars: [
+    toolBars: [
         DockToolBar {
             id: notationNoteInputBar
             uniqueName: "notationNoteInputBar"
@@ -92,9 +94,6 @@ DockPage {
             width: defaultPanelWidth
             minimumWidth: minimumPanelWidth
 
-            floatable: true
-            closable: true
-
             onClosed: {
                 root.pageModel.isPalettePanelVisible = false
             }
@@ -111,9 +110,6 @@ DockPage {
 
             width: defaultPanelWidth
             minimumWidth: minimumPanelWidth
-
-            floatable: true
-            closable: true
 
             onClosed: {
                 root.pageModel.isInstrumentsPanelVisible = false
@@ -134,9 +130,6 @@ DockPage {
 
             tabs: [ instrumentsPanel, palettePanel ]
 
-            floatable: true
-            closable: true
-
             onClosed: {
                 root.pageModel.isInspectorPanelVisible = false
             }
@@ -155,7 +148,7 @@ DockPage {
         }
     }
 
-    statusbars: [
+    statusBars: [
         DockStatusBar {
             id: notationStatusBar
             uniqueName: "notationStatusBar"
