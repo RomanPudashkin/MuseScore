@@ -14,14 +14,14 @@
 
 #include "Config.h"
 #include "Frame_p.h"
-#include "../QWidgetAdapter.h"
+#include "QWidgetAdapter.h"
 
 #include <QScreen>
 #include <QWindow>
 #include <QMouseEvent>
 
 #ifdef KDDOCKWIDGETS_QTQUICK
-# include "../private/quick/TitleBarQuick_p.h"
+# include "quick/TitleBarQuick_p.h"
 
 # include <QQuickItem>
 # include <QQuickView>
