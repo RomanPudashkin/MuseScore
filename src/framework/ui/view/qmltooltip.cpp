@@ -77,7 +77,7 @@ void QmlToolTip::doShowToolTip()
         return;
     }
 
-    IF_ASSERT_FAILED(window->parent()) {
+    if (!window->parent()) { //! tmp
         return;
     }
 

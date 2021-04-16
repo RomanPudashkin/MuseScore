@@ -43,7 +43,7 @@ ApplicationWindow {
         order: 1
     }
 
-    readonly property int toolbarHeight: 48
+    readonly property int toolbarHeight: 24
 
     property string currentPageUri: "musescore://home"
     property bool isNotationPage: currentPageUri === notationPage.uri
@@ -78,13 +78,12 @@ ApplicationWindow {
                 var toolbar = toolbars[i]
                 toolbar.parent = mainWindowLayout
                 if (!prevToolbar) {
-                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
+                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop, null, Qt.size(toolbar.width, toolbar.height))
                 } else {
-                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar)
+                    mainWindowLayout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar, Qt.size(toolbar.width, toolbar.height))
                 }
 
                 toolbar.init()
-
                 prevToolbar = toolbar
             }
         }
@@ -119,12 +118,17 @@ ApplicationWindow {
             id: mainToolBar
 
             uniqueName: "mainToolBar"
+            width: root.width / 2 - 100
+            height: root.toolbarHeight
+
             minimumWidth: 296
             minimumHeight: root.toolbarHeight
 
             title: qsTrc("appshell", "Main Toolbar")
 
             MainToolBar {
+                anchors.verticalCenter: parent.verticalCenter
+
                 keynav.section: topToolKeyNavSec
                 keynav.order: 1
                 currentUri: currentPageUri
@@ -145,6 +149,8 @@ ApplicationWindow {
             id: notationToolBar
 
             uniqueName: "notationToolBar"
+            width: 192
+            height: root.toolbarHeight
             minimumWidth: 192
             minimumHeight: root.toolbarHeight
 
@@ -177,6 +183,8 @@ ApplicationWindow {
             id: playbackToolBar
 
             uniqueName: "playbackToolBar"
+            width: root.width / 3
+            height: root.toolbarHeight
             minimumWidth: /*floating ? 520 : */470
             minimumHeight: /*floating ? 76 : */root.toolbarHeight
 
@@ -206,8 +214,10 @@ ApplicationWindow {
             id: undoRedoToolBar
 
             uniqueName: "undoRedoToolBar"
-            minimumWidth: 72
-            minimumHeight: root.toolbarHeight
+            width: 72
+            height: root.toolbarHeight
+            minimumWidth: width
+            minimumHeight: height
 
             //                movable: false
 

@@ -47,9 +47,9 @@ Item {
             toolbar.parent = layout
 
             if (!prevToolbar) {
-                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop)
+                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnTop, null, Qt.size(toolbar.width, toolbar.height))
             } else {
-                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar)
+                layout.addDockWidget(toolbar, KDDW.KDDockWidgets.Location_OnRight, prevToolbar, Qt.size(toolbar.width, toolbar.height))
             }
 
             toolbar.init()
@@ -62,9 +62,9 @@ Item {
             statusbar.parent = layout
 
             if (!prevStatusBar) {
-                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnBottom)
+                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnBottom, null, Qt.size(statusbar.width, statusbar.height))
             } else {
-                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnRight, prevStatusBar)
+                layout.addDockWidget(statusbar, KDDW.KDDockWidgets.Location_OnRight, prevStatusBar, Qt.size(statusbar.width, statusbar.height))
             }
 
             statusbar.init()
