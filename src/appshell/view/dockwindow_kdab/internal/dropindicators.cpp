@@ -224,7 +224,7 @@ void DropIndicators::setDropLocation(DropLocation location)
     case DropLocation_Right:
     case DropLocation_Bottom:
         if (!m_hoveredFrame) {
-            qWarning() << "ClassicIndicators::setCurrentDropLocation: frame is null. location=" << location
+            qWarning() << "DropIndicators::setCurrentDropLocation: frame is null. location=" << location
                        << "; isHovered=" << isHovered()
                        << "; dropArea->widgets=" << m_dropArea->items();
             Q_ASSERT(false);
