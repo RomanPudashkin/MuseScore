@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import MuseScore.Dock 1.0
+
 import com.kdab.dockwidgets 1.0 as KDDW
 
 KDDW.DockWidget {
@@ -14,6 +16,7 @@ KDDW.DockWidget {
     property bool closable: true
 
     property alias allowedAreas: properties.allowedAreas
+    property alias dockType: properties.dockType
 
     signal closed()
 
@@ -23,6 +26,7 @@ KDDW.DockWidget {
         objectName: "properties"
 
         property int allowedAreas: Qt.AllDockWidgetAreas
+        property int dockType: DockType.Undefined
     }
 
     Component.onCompleted: {

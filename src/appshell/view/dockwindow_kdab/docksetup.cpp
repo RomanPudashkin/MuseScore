@@ -21,6 +21,8 @@
 
 #include "internal/dropindicators.h"
 
+#include "docktypes.h"
+
 #include "thirdparty/KDDockWidgets/src/Config.h"
 #include "thirdparty/KDDockWidgets/src/DockWidgetBase.h"
 #include "thirdparty/KDDockWidgets/src/FrameworkWidgetFactory.h"
@@ -57,6 +59,7 @@ bool tabbingAllowed(const QVector<KDDockWidgets::DockWidgetBase*>& source,
 void DockSetup::setup(QQmlEngine* engine)
 {
     qRegisterMetaType<DropIndicators*>();
+    qmlRegisterUncreatableType<DockType>("MuseScore.Dock", 1, 0, "DockType", "Cannot create a ContainerType");
 
     KDDockWidgets::Config::self().setFrameworkWidgetFactory(new DockWidgetFactory());
     KDDockWidgets::Config::self().setQmlEngine(engine);
