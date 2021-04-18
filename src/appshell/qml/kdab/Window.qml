@@ -122,17 +122,16 @@ ApplicationWindow {
             id: mainToolBar
 
             uniqueName: "mainToolBar"
+
             width: root.width / 2 - 100
             height: root.toolbarHeight
-
             minimumWidth: 296
-            minimumHeight: root.toolbarHeight
+            minimumHeight: height
+            maximumHeight: height
 
             title: qsTrc("appshell", "Main Toolbar")
 
-            DOCKWINDOW.MainToolBar {
-                anchors.verticalCenter: parent.verticalCenter
-
+            contentComponent: DOCKWINDOW.MainToolBar {
                 keynav.section: topToolKeyNavSec
                 keynav.order: 1
                 currentUri: currentPageUri
@@ -153,14 +152,16 @@ ApplicationWindow {
             id: notationToolBar
 
             uniqueName: "notationToolBar"
+
             width: 192
             height: root.toolbarHeight
             minimumWidth: 192
-            minimumHeight: root.toolbarHeight
+            minimumHeight: height
+            maximumHeight: height
 
             title: qsTrc("appshell", "Notation Toolbar")
 
-            NotationToolBar {
+            contentComponent: NotationToolBar {
                 id: notationToolBarContent
 
                 keynav.section: topToolKeyNavSec
@@ -187,14 +188,16 @@ ApplicationWindow {
             id: playbackToolBar
 
             uniqueName: "playbackToolBar"
+
             width: root.width / 3
             height: root.toolbarHeight
             minimumWidth: /*floating ? 520 : */470
             minimumHeight: /*floating ? 76 : */root.toolbarHeight
+            maximumHeight: height
 
             title: qsTrc("appshell", "Playback Controls")
 
-            PlaybackToolBar {
+            contentComponent: PlaybackToolBar {
                 id: playbackToolBarContent
 
                 keynav.section: topToolKeyNavSec
@@ -218,16 +221,18 @@ ApplicationWindow {
             id: undoRedoToolBar
 
             uniqueName: "undoRedoToolBar"
+
             width: 72
             height: root.toolbarHeight
             minimumWidth: width
-            minimumHeight: height
+            minimumHeight: height            
+            maximumHeight: height
 
             //                movable: false
 
             title: qsTrc("appshell", "Undo/Redo Toolbar")
 
-            UndoRedoToolBar {
+            contentComponent: UndoRedoToolBar {
                 id: undoRedoToolBarContent
 
                 Connections {

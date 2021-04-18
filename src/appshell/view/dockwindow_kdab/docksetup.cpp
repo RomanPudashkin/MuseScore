@@ -20,6 +20,7 @@
 #include "docksetup.h"
 
 #include "internal/dropindicators.h"
+#include "internal/toolbargripmodel.h"
 
 #include "dockpanel.h"
 #include "dockstatusbar.h"
@@ -59,6 +60,8 @@ void DockSetup::setup(QQmlEngine* engine)
     qmlRegisterType<DockCentral>("MuseScore.Dock", 1, 0, "DockCentral");
     qmlRegisterType<DockPage>("MuseScore.Dock", 1, 0, "DockPage");
 
+    qmlRegisterType<ToolBarGripModel>("MuseScore.Dock", 1, 0, "ToolBarGripModel");
+
     qmlRegisterUncreatableType<DockType>("MuseScore.Dock", 1, 0, "DockType", "Cannot create a DockType");
 
     qRegisterMetaType<DropIndicators*>();
@@ -67,7 +70,8 @@ void DockSetup::setup(QQmlEngine* engine)
     KDDockWidgets::Config::self().setQmlEngine(engine);
 
     auto flags = KDDockWidgets::Config::self().flags()
-            | KDDockWidgets::Config::Flag_HideTitleBarWhenTabsVisible;
+            | KDDockWidgets::Config::Flag_HideTitleBarWhenTabsVisible
+            | KDDockWidgets::Config::Flag_NativeTitleBar;
 
     KDDockWidgets::Config::self().setFlags(flags);
 }

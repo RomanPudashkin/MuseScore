@@ -6,8 +6,9 @@ import MuseScore.UiComponents 1.0
 Rectangle {
     id: root
 
-    width: radioButtonList.contentWidth
-    height: radioButtonList.contentHeight
+    width: radioButtonList.implicitHeight
+
+    color: ui.theme.backgroundPrimaryColor
 
     property alias keynav: keynavSub
 
@@ -44,6 +45,9 @@ Rectangle {
 
     RadioButtonGroup {
         id: radioButtonList
+
+        anchors.verticalCenter: parent.verticalCenter
+        height: contentItem.childrenRect.height
 
         spacing: 0
 

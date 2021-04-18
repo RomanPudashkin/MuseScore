@@ -838,7 +838,7 @@ void DockWidgetBase::setMDIZ(int z)
 
 void DockWidgetBase::setMinimumSize(QSize size)
 {
-    QWidgetAdapter::setMaximumSize(size);
+    QWidgetAdapter::setMinimumSize(size);
 
     if (d->frame())
         d->frame()->setMinimumSize(size);
