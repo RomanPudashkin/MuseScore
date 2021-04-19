@@ -47,7 +47,7 @@ ApplicationWindow {
         order: 1
     }
 
-    readonly property int toolbarHeight: 24
+    readonly property int toolbarHeight: 48
 
     property string currentPageUri: "musescore://home"
     property bool isNotationPage: currentPageUri === notationPage.uri
@@ -122,14 +122,13 @@ ApplicationWindow {
             id: mainToolBar
 
             uniqueName: "mainToolBar"
+            title: qsTrc("appshell", "Main Toolbar")
 
-            width: root.width / 2 - 100
+            width: root.width / 2
             height: root.toolbarHeight
             minimumWidth: 296
             minimumHeight: height
             maximumHeight: height
-
-            title: qsTrc("appshell", "Main Toolbar")
 
             contentComponent: DOCKWINDOW.MainToolBar {
                 keynav.section: topToolKeyNavSec
@@ -152,14 +151,13 @@ ApplicationWindow {
             id: notationToolBar
 
             uniqueName: "notationToolBar"
+            title: qsTrc("appshell", "Notation Toolbar")
 
             width: 192
             height: root.toolbarHeight
             minimumWidth: 192
             minimumHeight: height
             maximumHeight: height
-
-            title: qsTrc("appshell", "Notation Toolbar")
 
             contentComponent: NotationToolBar {
                 id: notationToolBarContent
@@ -188,14 +186,13 @@ ApplicationWindow {
             id: playbackToolBar
 
             uniqueName: "playbackToolBar"
+            title: qsTrc("appshell", "Playback Controls")
 
             width: root.width / 3
             height: root.toolbarHeight
-            minimumWidth: /*floating ? 520 : */470
-            minimumHeight: /*floating ? 76 : */root.toolbarHeight
+            minimumWidth: floating ? 520 : 470
+            minimumHeight: floating ? 76 : root.toolbarHeight
             maximumHeight: height
-
-            title: qsTrc("appshell", "Playback Controls")
 
             contentComponent: PlaybackToolBar {
                 id: playbackToolBarContent
@@ -204,7 +201,7 @@ ApplicationWindow {
                 keynav.order: 3
                 keynav.enabled: root.isNotationPage
 
-//                floating: playbackToolBar.floating
+                floating: playbackToolBar.floating
 
                 Connections {
                     target: playbackToolBar
@@ -221,16 +218,15 @@ ApplicationWindow {
             id: undoRedoToolBar
 
             uniqueName: "undoRedoToolBar"
+            title: qsTrc("appshell", "Undo/Redo Toolbar")
 
             width: 72
             height: root.toolbarHeight
             minimumWidth: width
-            minimumHeight: height            
+            minimumHeight: height
             maximumHeight: height
 
-            //                movable: false
-
-            title: qsTrc("appshell", "Undo/Redo Toolbar")
+            movable: false
 
             contentComponent: UndoRedoToolBar {
                 id: undoRedoToolBarContent

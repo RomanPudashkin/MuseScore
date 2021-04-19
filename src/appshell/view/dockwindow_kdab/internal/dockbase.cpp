@@ -113,7 +113,7 @@ void DockBase::init()
     int minWidth = m_minimumWidth > 0 ? m_minimumWidth : minimumSize().width();
     int minHeight = m_minimumHeight > 0 ? m_minimumHeight : minimumSize().height();
     int maxWidth = m_maximumWidth > 0 ? m_maximumWidth : maximumSize().width();
-    int maxHeight = m_maximumHeight > 0 ? m_minimumHeight : maximumSize().height();
+    int maxHeight = m_maximumHeight > 0 ? m_maximumHeight : maximumSize().height();
 
     setMinimumSize(QSize(minWidth, minHeight));
     setMaximumSize(QSize(maxWidth, maxHeight));

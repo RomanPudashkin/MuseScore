@@ -10,6 +10,9 @@ Dock.DockToolBar {
 
     property Component contentComponent
 
+    property bool movable: true
+    property bool floating: false
+
     Component.onCompleted: {
         toolBarGripModel.setToolBarWidget(root.dockWidget)
     }
@@ -59,6 +62,8 @@ Dock.DockToolBar {
                 normalStateColor: "transparent"
                 Layout.alignment: Qt.AlignLeft
                 icon: IconCode.TOOLBAR_GRIP
+
+                visible: root.movable
             }
 
             Loader {
@@ -89,6 +94,8 @@ Dock.DockToolBar {
 
                 icon: IconCode.TOOLBAR_GRIP
                 rotation: 90
+
+                visible: root.movable
             }
 
             Loader {

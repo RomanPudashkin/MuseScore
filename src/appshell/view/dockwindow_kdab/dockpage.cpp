@@ -102,7 +102,7 @@ void DockPage::init(QQuickItem* mainLayout)
 
     for (DockPanel* panel : m_panels.list()) {
         panel->setParent(mainLayout);
-        layout->addDockWidget(panel->dockWidget(), KDDockWidgets::Location_OnLeft);
+        layout->addDockWidget(panel->dockWidget(), KDDockWidgets::Location_OnLeft, nullptr, QSize(panel->width(), panel->height()));
         panel->init();
     }
 

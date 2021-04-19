@@ -59,21 +59,22 @@ DockPage {
 
     readonly property int defaultPanelWidth: 272
     readonly property int minimumPanelWidth: 200
+    readonly property int toolBarHeight: 48
 
     toolBars: [
         DockToolBar {
             id: notationNoteInputBar
-            uniqueName: "notationNoteInputBar"
 
+            uniqueName: "notationNoteInputBar"
             title: qsTrc("appshell", "Note Input")
 
             width: root.width
-            height: 48
+            height: root.toolBarHeight
 
-            minimumWidth: orientation == Qt.Horizontal ? 900 : 48
+            minimumWidth: orientation == Qt.Horizontal ? 900 : root.toolBarHeight
             maximumWidth: orientation == Qt.Horizontal ? root.width : 96
-            minimumHeight: orientation == Qt.Horizontal ? 48 : 0
-            maximumHeight: orientation == Qt.Horizontal ? 48 : root.height
+            minimumHeight: orientation == Qt.Horizontal ? root.toolBarHeight : 0
+            maximumHeight: orientation == Qt.Horizontal ? root.toolBarHeight : root.height
 
             contentComponent: NoteInputBar {
                 orientation: notationNoteInputBar.orientation
@@ -88,11 +89,10 @@ DockPage {
             id: palettePanel
 
             uniqueName: "palettePanel"
-
             title: qsTrc("appshell", "Palette")
 
-            width: defaultPanelWidth
-            minimumWidth: minimumPanelWidth
+            width: root.defaultPanelWidth
+            minimumWidth: root.minimumPanelWidth
 
             onClosed: {
                 root.pageModel.isPalettePanelVisible = false
@@ -105,11 +105,10 @@ DockPage {
             id: instrumentsPanel
 
             uniqueName: "instrumentsPanel"
-
             title: qsTrc("appshell", "Instruments")
 
-            width: defaultPanelWidth
-            minimumWidth: minimumPanelWidth
+            width: root.defaultPanelWidth
+            minimumWidth: root.minimumPanelWidth
 
             onClosed: {
                 root.pageModel.isInstrumentsPanelVisible = false
@@ -122,11 +121,10 @@ DockPage {
             id: inspectorPanel
 
             uniqueName: "inspectorPanel"
-
             title: qsTrc("appshell", "Inspector")
 
-            width: defaultPanelWidth
-            minimumWidth: minimumPanelWidth
+            width: root.defaultPanelWidth
+            minimumWidth: root.minimumPanelWidth
 
             tabs: [ instrumentsPanel, palettePanel ]
 
@@ -151,12 +149,12 @@ DockPage {
     statusBars: [
         DockStatusBar {
             id: notationStatusBar
+
             uniqueName: "notationStatusBar"
 
-            width: root.width
-            height: 48
-
-            maximumHeight: 48
+            height: root.toolBarHeight
+            minimumHeight: root.toolBarHeight
+            maximumHeight: root.toolBarHeight
 
             NotationStatusBar {
                 color: root.color
