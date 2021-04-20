@@ -77,5 +77,6 @@
         <file>qml/kdab/docksystem/DockTitleBar.qml</file>
         <file>qml/kdab/docksystem/DockToolBar.qml</file>
         <file>qml/kdab/docksystem/DockFrame.qml</file>
+        <file>qml/kdab/docksystem/DockSeparator.qml</file>
     </qresource>
 </RCC>

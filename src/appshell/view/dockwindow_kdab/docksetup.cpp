@@ -21,6 +21,7 @@
 
 #include "internal/dropindicators.h"
 #include "internal/toolbargripmodel.h"
+#include "internal/dockseparator.h"
 
 #include "dockpanel.h"
 #include "dockstatusbar.h"
@@ -41,6 +42,11 @@ public:
     KDDockWidgets::DropIndicatorOverlayInterface* createDropIndicatorOverlay(KDDockWidgets::DropArea* dropArea) const override
     {
         return new DropIndicators(dropArea);
+    }
+
+    Layouting::Separator* createSeparator(Layouting::Widget* parent = nullptr) const override
+    {
+        return new DockSeparator(parent);
     }
 
     QUrl titleBarFilename() const override
@@ -64,10 +70,7 @@ void DockSetup::setup(QQmlEngine* engine)
     qmlRegisterType<DockToolBar>("MuseScore.Dock", 1, 0, "DockToolBar");
     qmlRegisterType<DockCentral>("MuseScore.Dock", 1, 0, "DockCentral");
     qmlRegisterType<DockPage>("MuseScore.Dock", 1, 0, "DockPage");
-
     qmlRegisterType<ToolBarGripModel>("MuseScore.Dock", 1, 0, "ToolBarGripModel");
-
-    qmlRegisterUncreatableType<DockType>("MuseScore.Dock", 1, 0, "DockType", "Cannot create a DockType");
 
     qRegisterMetaType<DropIndicators*>();
 
@@ -82,4 +85,6 @@ void DockSetup::setup(QQmlEngine* engine)
     QSize minDockSize = KDDockWidgets::Config::self().absoluteWidgetMinSize();
     minDockSize.setHeight(30);
     KDDockWidgets::Config::self().setAbsoluteWidgetMinSize(minDockSize);
+
+    KDDockWidgets::Config::self().setSeparatorThickness(1);
 }

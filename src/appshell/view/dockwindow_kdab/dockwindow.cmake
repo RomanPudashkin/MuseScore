@@ -24,5 +24,7 @@ set (DOCKWINDOW_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/indicatorswindow.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/toolbargripmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/toolbargripmodel.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/dockseparator.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/dockseparator.h
 )
 
