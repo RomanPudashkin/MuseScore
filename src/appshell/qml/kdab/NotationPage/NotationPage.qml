@@ -76,6 +76,8 @@ DockPage {
             minimumHeight: orientation == Qt.Horizontal ? root.toolBarHeight : 0
             maximumHeight: orientation == Qt.Horizontal ? root.toolBarHeight : root.height
 
+            allowedAreas: { Qt.AllDockWidgetAreas }
+
             contentComponent: NoteInputBar {
                 orientation: notationNoteInputBar.orientation
                 keynav.section: noteInputKeyNavSec

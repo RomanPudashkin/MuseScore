@@ -106,43 +106,31 @@ bool DropIndicators::outterBottomIndicatorVisible() const
 
 bool DropIndicators::centralIndicatorVisible() const
 {
+    if (isToolBar()) {
+        return false;
+    }
+
     return !hoveringOverCetralDock();
 }
 
 bool DropIndicators::innerLeftIndicatorVisible() const
 {
-    if (hoveringOverCetralDock()) {
-        return isAreaAllowed(Qt::LeftDockWidgetArea);
-    }
-
-    return true;
+    return isInnerLeftIndicatorVisible(Qt::LeftDockWidgetArea);
 }
 
 bool DropIndicators::innerRightIndicatorVisible() const
 {
-    if (hoveringOverCetralDock()) {
-        return isAreaAllowed(Qt::RightDockWidgetArea);
-    }
-
-    return true;
+    return isInnerLeftIndicatorVisible(Qt::RightDockWidgetArea);
 }
 
 bool DropIndicators::innerTopIndicatorVisible() const
 {
-    if (hoveringOverCetralDock()) {
-        return isAreaAllowed(Qt::TopDockWidgetArea);
-    }
-
-    return true;
+    return isInnerLeftIndicatorVisible(Qt::TopDockWidgetArea);
 }
 
 bool DropIndicators::innerBottomIndicatorVisible() const
 {
-    if (hoveringOverCetralDock()) {
-        return isAreaAllowed(Qt::BottomDockWidgetArea);
-    }
-
-    return true;
+    return isInnerLeftIndicatorVisible(Qt::BottomDockWidgetArea);
 }
 
 bool DropIndicators::hoveringOverCetralDock() const
@@ -152,7 +140,22 @@ bool DropIndicators::hoveringOverCetralDock() const
     }
 
     for (auto dock : m_hoveredFrame->dockWidgets()) {
-        if (dock->uniqueName().contains("central")) {
+        if (dockWidgetType(dock) == DockType::Types::Central) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool DropIndicators::hoveringOverToolBar() const
+{
+    if (!m_hoveredFrame) {
+        return false;
+    }
+
+    for (auto dock : m_hoveredFrame->dockWidgets()) {
+        if (dockWidgetType(dock) == DockType::Types::ToolBar) {
             return true;
         }
     }
@@ -162,7 +165,58 @@ bool DropIndicators::hoveringOverCetralDock() const
 
 bool DropIndicators::isAreaAllowed(Qt::DockWidgetArea area) const
 {
-    return m_allowedAreasForDraggedDock.testFlag(area);
+    return m_draggedDockAllowedAreas.testFlag(area);
+}
+
+bool DropIndicators::isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const
+{
+    if (isToolBar()) {
+        if (hoveringOverToolBar()) {
+            return true;
+        } else {
+            return isAreaAllowed(area);
+        }
+    }
+
+    if (hoveringOverCetralDock()) {
+        return isAreaAllowed(area);
+    }
+
+    return true;
+}
+
+bool DropIndicators::isToolBar() const
+{
+    return m_draggedDockType == DockType::Types::ToolBar;
+}
+
+QObject *DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBase *widget) const
+{
+    if (!widget) {
+        return nullptr;
+    }
+
+    return widget->findChild<QObject*>("properties");
+}
+
+DockType::Types DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
+{
+    QObject* properties = dockWidgetProperties(widget);
+    if (!properties) {
+        return DockType::Types::Undefined;
+    }
+
+    return static_cast<DockType::Types>(properties->property("dockType").toInt());
+}
+
+Qt::DockWidgetAreas DropIndicators::dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase *widget) const
+{
+    QObject* properties = dockWidgetProperties(widget);
+    if (!properties) {
+        return Qt::AllDockWidgetAreas;
+    }
+
+    return static_cast<Qt::DockWidgetAreas>(properties->property("allowedAreas").toInt());
 }
 
 bool DropIndicators::onResize(QSize)
@@ -182,7 +236,7 @@ void DropIndicators::updateVisibility()
         m_indicatorsWindow->setVisible(false);
     }
 
-    m_allowedAreasForDraggedDock = Qt::AllDockWidgetAreas;
+    m_draggedDockAllowedAreas = Qt::AllDockWidgetAreas;
 
     auto windowBeingDragged = KDDockWidgets::DragController::instance()->windowBeingDragged();
     if (!windowBeingDragged) {
@@ -190,12 +244,8 @@ void DropIndicators::updateVisibility()
     }
 
     auto dock = windowBeingDragged->dockWidgets().first();
-    auto properties = dock->findChild<QObject*>("properties");
-    if (!properties) {
-        return;
-    }
-
-    m_allowedAreasForDraggedDock = static_cast<Qt::DockWidgetAreas>(properties->property("allowedAreas").toInt());
+    m_draggedDockType = dockWidgetType(dock);
+    m_draggedDockAllowedAreas = dockWidgetAllowedAreas(dock);
 
     emit indicatorsVisibilityChanged();
 }

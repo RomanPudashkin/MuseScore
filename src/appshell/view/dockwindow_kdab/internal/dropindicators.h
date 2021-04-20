@@ -24,6 +24,8 @@
 
 #include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
 
+#include "../docktypes.h"
+
 namespace KDDockWidgets {
 class WidgetOrQuick;
 }
@@ -78,12 +80,22 @@ private:
     void updateVisibility() override;
 
     bool hoveringOverCetralDock() const;
+    bool hoveringOverToolBar() const;
+
     bool isAreaAllowed(Qt::DockWidgetArea area) const;
+    bool isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const;
+
+    bool isToolBar() const;
+
+    QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
+    DockType::Types dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
+    Qt::DockWidgetAreas dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase* widget) const;
 
     KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
     IndicatorsWindow* m_indicatorsWindow = nullptr;
 
-    Qt::DockWidgetAreas m_allowedAreasForDraggedDock;
+    DockType::Types m_draggedDockType = DockType::Types::Undefined;
+    Qt::DockWidgetAreas m_draggedDockAllowedAreas;
 };
 }
 
