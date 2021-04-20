@@ -88,6 +88,7 @@ private:
     bool isToolBar() const;
 
     QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
+
     DockType::Types dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
     Qt::DockWidgetAreas dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase* widget) const;
 

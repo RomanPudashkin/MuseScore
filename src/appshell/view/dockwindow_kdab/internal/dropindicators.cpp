@@ -202,6 +202,7 @@ QObject *DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBas
 DockType::Types DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
 {
     QObject* properties = dockWidgetProperties(widget);
+
     if (!properties) {
         return DockType::Types::Undefined;
     }
@@ -212,6 +213,7 @@ DockType::Types DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBa
 Qt::DockWidgetAreas DropIndicators::dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase *widget) const
 {
     QObject* properties = dockWidgetProperties(widget);
+
     if (!properties) {
         return Qt::AllDockWidgetAreas;
     }
