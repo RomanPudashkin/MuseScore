@@ -47,6 +47,11 @@ public:
     {
         return QUrl("qrc:/qml/kdab/docksystem/DockTitleBar.qml");
     }
+
+    QUrl frameFilename() const override
+    {
+        return QUrl("qrc:/qml/kdab/docksystem/DockFrame.qml");
+    }
 };
 }
 
