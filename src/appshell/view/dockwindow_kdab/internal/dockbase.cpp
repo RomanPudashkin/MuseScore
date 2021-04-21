@@ -31,6 +31,9 @@ DockBase::DockBase(QQuickItem *parent)
 {
     m_properties = new QObject();
     m_properties->setObjectName("properties");
+
+    connect(this, &DockBase::minimumSizeChanged, this, &DockBase::resize);
+    connect(this, &DockBase::maximumSizeChanged, this, &DockBase::resize);
 }
 
 int DockBase::minimumWidth() const
@@ -113,28 +116,20 @@ void DockBase::setAllowedAreas(Qt::DockWidgetAreas areas)
     emit allowedAreasChanged();
 }
 
+void DockBase::resize()
+{
+    applyMinimumSize();
+    applyMaximumSize();
+
+    if (dockWidget()) {
+        dockWidget()->frame()->layoutItem()->parentBoxContainer()->layoutEqually();
+    }
+}
+
 void DockBase::init()
 {
-    auto dock = dockWidget();
-    IF_ASSERT_FAILED(dock) {
-        return;
-    }
-
-    int minWidth = m_minimumWidth > 0 ? m_minimumWidth : dock->minimumWidth();
-    int minHeight = m_minimumHeight > 0 ? m_minimumHeight : dock->minimumHeight();
-    int maxWidth = m_maximumWidth > 0 ? m_maximumWidth : dock->maximumWidth();
-    int maxHeight = m_maximumHeight > 0 ? m_maximumHeight : dock->maximumHeight();
-
-    QSize minSize(minWidth, minHeight);
-    QSize maxSize(maxWidth, maxHeight);
-
-    dock->setMinimumSize(minSize);
-    dock->setMaximumSize(maxSize);
-
-    if (auto frame = dock->frame()) {
-        frame->setMinimumSize(minSize);
-        frame->setMaximumSize(maxSize);
-    }
+    applyMinimumSize();
+    applyMaximumSize();
 
     m_properties->setProperty(DOCK_TYPE_KEY, static_cast<int>(type()));
 }
@@ -148,4 +143,48 @@ void DockBase::componentComplete()
     }
 
     m_properties->setParent(dockWidget());
+}
+
+void DockBase::applyMinimumSize()
+{
+    auto dock = dockWidget();
+    if (!dock) {
+        return;
+    }
+
+    int minWidth = m_minimumWidth > 0 ? m_minimumWidth : dock->minimumSize().width();
+    int minHeight = m_minimumHeight > 0 ? m_minimumHeight : dock->minimumSize().height();
+
+    QSize minimumSize = QSize(minWidth, minHeight);
+    if (minimumSize == dock->minimumSize()) {
+        return;
+    }
+    
+    dock->setMinimumSize(minimumSize);
+    
+    if (auto frame = dock->frame()) {
+        frame->setMinimumSize(minimumSize);
+    }
+}
+
+void DockBase::applyMaximumSize()
+{
+    auto dock = dockWidget();
+    if (!dock) {
+        return;
+    }
+
+    int maxWidth = m_maximumWidth > 0 ? m_maximumWidth : dock->maximumSize().width();
+    int maxHeight = m_maximumHeight > 0 ? m_maximumHeight : dock->maximumSize().height();
+
+    QSize maximumSize = QSize(maxWidth, maxHeight);
+    if (maximumSize == dock->maximumSize()) {
+        return;
+    }
+    
+    dock->setMaximumSize(maximumSize);
+    
+    if (auto frame = dock->frame()) {
+        frame->setMaximumSize(maximumSize);
+    }
 }

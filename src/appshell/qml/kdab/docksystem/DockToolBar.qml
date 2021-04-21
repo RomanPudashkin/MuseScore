@@ -57,10 +57,11 @@ Dock.DockToolBar {
             FlatButton {
                 id: gripButton
 
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+
                 mouseArea.objectName: root.uniqueName + "toolBarMouseAreaHorizontal"
 
                 normalStateColor: "transparent"
-                Layout.alignment: Qt.AlignLeft
                 icon: IconCode.TOOLBAR_GRIP
 
                 visible: root.movable
@@ -78,7 +79,7 @@ Dock.DockToolBar {
     Component {
         id: verticalView
 
-        Column {
+        ColumnLayout {
             spacing: 0
 
             property var gripMouseArea: gripButton.mouseArea
@@ -86,12 +87,11 @@ Dock.DockToolBar {
             FlatButton {
                 id: gripButton
 
-                Layout.alignment: Qt.AlignTop
+                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
                 mouseArea.objectName: root.uniqueName + "toolBarMouseAreaVertical"
 
                 normalStateColor: "transparent"
-
                 icon: IconCode.TOOLBAR_GRIP
                 rotation: 90
 

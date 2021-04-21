@@ -36,11 +36,17 @@ public:
 public slots:
     void setOrientation(Qt::Orientation orientation);
 
+    void updateOrientation();
+
 signals:
     void orientationChanged(Qt::Orientation orientation);
 
 private:
+    void componentComplete() override;
+
     DockType type() const override;
+    DockType dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
+    QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
 
     Qt::Orientation m_orientation = Qt::Horizontal;
 };

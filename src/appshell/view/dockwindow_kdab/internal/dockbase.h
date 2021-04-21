@@ -56,6 +56,8 @@ public slots:
     void setMaximumHeight(int height);
     void setAllowedAreas(Qt::DockWidgetAreas areas);
 
+    void resize();
+
 signals:
     void minimumSizeChanged();
     void maximumSizeChanged();
@@ -65,9 +67,11 @@ signals:
 
 protected:
     virtual DockType type() const = 0;
+    void componentComplete() override;
 
 private:
-    void componentComplete() override;
+    void applyMinimumSize();
+    void applyMaximumSize();
 
     QObject* m_properties = nullptr;
 

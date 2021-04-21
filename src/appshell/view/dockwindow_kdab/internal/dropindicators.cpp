@@ -86,12 +86,12 @@ QPoint DropIndicators::posForIndicator(DropLocation loc) const
 
 bool DropIndicators::outterLeftIndicatorVisible() const
 {
-    return isAreaAllowed(Qt::LeftDockWidgetArea);
+    return false;
 }
 
 bool DropIndicators::outterRightIndicatorVisible() const
 {
-    return isAreaAllowed(Qt::RightDockWidgetArea);
+    return false;
 }
 
 bool DropIndicators::outterTopIndicatorVisible() const
