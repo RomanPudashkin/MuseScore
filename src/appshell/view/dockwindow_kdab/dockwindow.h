@@ -1,0 +1,60 @@
+//=============================================================================
+//  MuseScore
+//  Music Composition & Notation
+//
+//  Copyright (C) 2021 MuseScore BVBA and others
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License version 2.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//=============================================================================
+#ifndef MU_DOCK_DOCKWINDOW_H
+#define MU_DOCK_DOCKWINDOW_H
+
+#include "framework/uicomponents/view/qmllistproperty.h"
+
+#include "thirdparty/KDDockWidgets/src/private/quick/MainWindowInstantiator_p.h"
+
+namespace mu::dock {
+class DockToolBar;
+class DockPage;
+class DockWindow : public KDDockWidgets::MainWindowInstantiator
+{
+    Q_OBJECT
+
+    Q_PROPERTY(QString currentPageUri READ currentPageUri NOTIFY currentPageUriChanged)
+
+    Q_PROPERTY(QQmlListProperty<mu::dock::DockToolBar> toolBars READ toolBarsProperty)
+    Q_PROPERTY(QQmlListProperty<mu::dock::DockPage> pages READ pagesProperty)
+
+public:
+    explicit DockWindow(QQuickItem* parent = nullptr);
+
+    QString currentPageUri() const;
+
+    QQmlListProperty<mu::dock::DockToolBar> toolBarsProperty();
+    QQmlListProperty<mu::dock::DockPage> pagesProperty();
+
+    Q_INVOKABLE void loadPage(const QString& uri);
+
+signals:
+    void currentPageUriChanged(const QString& uri);
+
+private:
+    DockPage* pageByUri(const QString& uri) const;
+
+    QString m_currentPageUri;
+    uicomponents::QmlListProperty<DockToolBar> m_toolBars;
+    uicomponents::QmlListProperty<DockPage> m_pages;
+};
+}
+
+#endif // MU_DOCK_DOCKWINDOW_H

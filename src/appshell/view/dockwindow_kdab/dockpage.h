@@ -50,7 +50,7 @@ public:
     DockCentral* centralDock() const;
     QQmlListProperty<mu::dock::DockStatusBar> statusBarsProperty();
 
-    Q_INVOKABLE void init(QQuickItem* mainLayout);
+    Q_INVOKABLE void init(QQuickItem* dockWindow);
 
 public slots:
     void setUniqueName(const QString& name);
@@ -63,6 +63,8 @@ signals:
     void centralDockChanged(DockCentral* central);
 
 private:
+    void componentComplete() override;
+
     QString m_uniqueName;
     QString m_uri;
     uicomponents::QmlListProperty<DockToolBar> m_toolBars;

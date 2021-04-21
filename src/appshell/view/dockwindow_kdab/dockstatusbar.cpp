@@ -27,7 +27,7 @@ DockStatusBar::DockStatusBar(QQuickItem* parent)
     setAllowedAreas(Qt::BottomDockWidgetArea);
 }
 
-DockType::Types DockStatusBar::type() const
+DockType DockStatusBar::type() const
 {
-    return DockType::Types::StatusBar;
+    return DockType::StatusBar;
 }

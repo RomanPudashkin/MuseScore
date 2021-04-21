@@ -20,23 +20,13 @@
 #ifndef MU_DOCK_DOCKTYPES_H
 #define MU_DOCK_DOCKTYPES_H
 
-#include <QObject>
-
 namespace mu::dock {
-class DockType
-{
-    Q_GADGET
-
-public:
-    enum class Types {
-        Undefined = -1,
-        Panel,
-        ToolBar,
-        StatusBar,
-        Central
-    };
-
-    Q_ENUM(Types)
+enum class DockType {
+    Undefined = -1,
+    Panel,
+    ToolBar,
+    StatusBar,
+    Central
 };
 }
 

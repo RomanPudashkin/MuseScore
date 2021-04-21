@@ -23,6 +23,7 @@
 #include "internal/toolbargripmodel.h"
 #include "internal/dockseparator.h"
 
+#include "dockwindow.h"
 #include "dockpanel.h"
 #include "dockstatusbar.h"
 #include "docktoolbar.h"
@@ -68,8 +69,9 @@ public:
 
 using namespace mu::dock;
 
-void DockSetup::setup(QQmlEngine* engine)
+void DockSetup::registerQmlTypes()
 {
+    qmlRegisterType<DockWindow>("MuseScore.Dock", 1, 0, "DockWindow");
     qmlRegisterType<DockPanel>("MuseScore.Dock", 1, 0, "DockPanel");
     qmlRegisterType<DockStatusBar>("MuseScore.Dock", 1, 0, "DockStatusBar");
     qmlRegisterType<DockToolBar>("MuseScore.Dock", 1, 0, "DockToolBar");
@@ -78,7 +80,10 @@ void DockSetup::setup(QQmlEngine* engine)
     qmlRegisterType<ToolBarGripModel>("MuseScore.Dock", 1, 0, "ToolBarGripModel");
 
     qRegisterMetaType<DropIndicators*>();
+}
 
+void DockSetup::setup(QQmlEngine* engine)
+{
     KDDockWidgets::Config::self().setFrameworkWidgetFactory(new DockWidgetFactory());
     KDDockWidgets::Config::self().setQmlEngine(engine);
 

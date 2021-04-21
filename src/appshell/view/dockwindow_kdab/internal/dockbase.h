@@ -43,9 +43,11 @@ public:
     int maximumWidth() const;
     int maximumHeight() const;
 
+    QSize preferredSize() const;
+
     Qt::DockWidgetAreas allowedAreas() const;
 
-    Q_INVOKABLE virtual void init();
+    virtual void init();
 
 public slots:
     void setMinimumWidth(int width);
@@ -62,7 +64,7 @@ signals:
     void closed();
 
 protected:
-    virtual DockType::Types type() const = 0;
+    virtual DockType type() const = 0;
 
 private:
     void componentComplete() override;

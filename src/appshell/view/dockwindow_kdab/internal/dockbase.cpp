@@ -53,6 +53,11 @@ int DockBase::maximumHeight() const
     return m_maximumHeight;
 }
 
+QSize DockBase::preferredSize() const
+{
+    return QSize(width(), height());
+}
+
 Qt::DockWidgetAreas DockBase::allowedAreas() const
 {
     return static_cast<Qt::DockWidgetAreas>(m_properties->property(ALLOWED_AREAS_KEY).toInt());

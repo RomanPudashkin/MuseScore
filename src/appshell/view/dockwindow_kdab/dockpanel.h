@@ -38,7 +38,7 @@ public:
     QQmlListProperty<mu::dock::DockPanel> tabsProperty();
 
 private:
-    DockType::Types type() const override;
+    DockType type() const override;
 
     uicomponents::QmlListProperty<DockPanel> m_tabs;
 };

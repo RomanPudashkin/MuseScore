@@ -79,8 +79,7 @@ private:
     bool onResize(QSize newSize) override;
     void updateVisibility() override;
 
-    bool hoveringOverCetralDock() const;
-    bool hoveringOverToolBar() const;
+    bool hoveringOverDock(DockType type) const;
 
     bool isAreaAllowed(Qt::DockWidgetArea area) const;
     bool isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const;
@@ -89,13 +88,13 @@ private:
 
     QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
 
-    DockType::Types dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
+    DockType dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
     Qt::DockWidgetAreas dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase* widget) const;
 
     KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
     IndicatorsWindow* m_indicatorsWindow = nullptr;
 
-    DockType::Types m_draggedDockType = DockType::Types::Undefined;
+    DockType m_draggedDockType = DockType::Undefined;
     Qt::DockWidgetAreas m_draggedDockAllowedAreas;
 };
 }

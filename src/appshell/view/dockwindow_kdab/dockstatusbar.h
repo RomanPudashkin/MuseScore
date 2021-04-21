@@ -30,7 +30,7 @@ public:
     explicit DockStatusBar(QQuickItem* parent = nullptr);
 
 private:
-    DockType::Types type() const override;
+    DockType type() const override;
 };
 }
 

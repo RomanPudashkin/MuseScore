@@ -110,7 +110,7 @@ bool DropIndicators::centralIndicatorVisible() const
         return false;
     }
 
-    return !hoveringOverCetralDock();
+    return !hoveringOverDock(DockType::Central);
 }
 
 bool DropIndicators::innerLeftIndicatorVisible() const
@@ -133,29 +133,14 @@ bool DropIndicators::innerBottomIndicatorVisible() const
     return isInnerLeftIndicatorVisible(Qt::BottomDockWidgetArea);
 }
 
-bool DropIndicators::hoveringOverCetralDock() const
+bool DropIndicators::hoveringOverDock(DockType type) const
 {
     if (!m_hoveredFrame) {
         return false;
     }
 
     for (auto dock : m_hoveredFrame->dockWidgets()) {
-        if (dockWidgetType(dock) == DockType::Types::Central) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool DropIndicators::hoveringOverToolBar() const
-{
-    if (!m_hoveredFrame) {
-        return false;
-    }
-
-    for (auto dock : m_hoveredFrame->dockWidgets()) {
-        if (dockWidgetType(dock) == DockType::Types::ToolBar) {
+        if (dockWidgetType(dock) == type) {
             return true;
         }
     }
@@ -171,14 +156,14 @@ bool DropIndicators::isAreaAllowed(Qt::DockWidgetArea area) const
 bool DropIndicators::isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const
 {
     if (isToolBar()) {
-        if (hoveringOverToolBar()) {
+        if (hoveringOverDock(DockType::ToolBar)) {
             return true;
         } else {
             return isAreaAllowed(area);
         }
     }
 
-    if (hoveringOverCetralDock()) {
+    if (hoveringOverDock(DockType::Central)) {
         return isAreaAllowed(area);
     }
 
@@ -187,10 +172,10 @@ bool DropIndicators::isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const
 
 bool DropIndicators::isToolBar() const
 {
-    return m_draggedDockType == DockType::Types::ToolBar;
+    return m_draggedDockType == DockType::ToolBar;
 }
 
-QObject *DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBase *widget) const
+QObject* DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const
 {
     if (!widget) {
         return nullptr;
@@ -199,15 +184,15 @@ QObject *DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBas
     return widget->findChild<QObject*>("properties");
 }
 
-DockType::Types DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
+DockType DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
 {
     QObject* properties = dockWidgetProperties(widget);
 
     if (!properties) {
-        return DockType::Types::Undefined;
+        return DockType::Undefined;
     }
 
-    return static_cast<DockType::Types>(properties->property("dockType").toInt());
+    return static_cast<DockType>(properties->property("dockType").toInt());
 }
 
 Qt::DockWidgetAreas DropIndicators::dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase *widget) const

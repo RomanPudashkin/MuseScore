@@ -19,9 +19,9 @@
 
 #include "dockpage.h"
 
-#include "log.h"
+#include "dockwindow.h"
 
-#include "thirdparty/KDDockWidgets/src/private/quick/MainWindowInstantiator_p.h"
+#include "log.h"
 
 using namespace mu::dock;
 
@@ -93,29 +93,31 @@ void DockPage::setCentralDock(DockCentral* central)
     emit centralDockChanged(central);
 }
 
-void DockPage::init(QQuickItem* mainLayout)
+void DockPage::init(QQuickItem* dockWindow)
 {
-    auto layout = dynamic_cast<KDDockWidgets::MainWindowInstantiator*>(mainLayout);
-    IF_ASSERT_FAILED(layout) {
+    TRACEFUNC;
+
+    auto window = dynamic_cast<DockWindow*>(dockWindow);
+    IF_ASSERT_FAILED(window) {
         return;
     }
 
-    layout->addDockWidget(m_central, KDDockWidgets::Location_OnRight);
+    window->addDockWidget(m_central->dockWidget(), KDDockWidgets::Location_OnRight);
 
     for (DockPanel* panel : m_panels.list()) {
-        panel->setParent(mainLayout);
-        layout->addDockWidget(panel->dockWidget(), KDDockWidgets::Location_OnLeft, nullptr, QSize(panel->width(), panel->height()));
+        panel->setParent(dockWindow);
+        window->addDockWidget(panel->dockWidget(), KDDockWidgets::Location_OnLeft, nullptr, panel->preferredSize());
         panel->init();
     }
 
     DockToolBar* prevToolBar = nullptr;
     for (DockToolBar* toolBar : m_toolBars.list()) {
-        toolBar->setParent(mainLayout);
+        toolBar->setParent(dockWindow);
 
         if (!prevToolBar) {
-            layout->addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnTop, nullptr, QSize(toolBar->width(), toolBar->height()));
+            window->addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnTop, nullptr, toolBar->preferredSize());
         } else {
-            layout->addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnRight, prevToolBar->dockWidget(), QSize(toolBar->width(), toolBar->height()));
+            window->addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnRight, prevToolBar->dockWidget(), toolBar->preferredSize());
         }
 
         toolBar->init();
@@ -124,15 +126,23 @@ void DockPage::init(QQuickItem* mainLayout)
 
     DockStatusBar* prevStatusBar = nullptr;
     for (DockStatusBar* statusBar : m_statusBars.list()) {
-        statusBar->setParent(mainLayout);
+        statusBar->setParent(dockWindow);
 
         if (!prevStatusBar) {
-            layout->addDockWidget(statusBar->dockWidget(), KDDockWidgets::Location_OnBottom, nullptr, QSize(statusBar->width(), statusBar->height()));
+            window->addDockWidget(statusBar->dockWidget(), KDDockWidgets::Location_OnBottom, nullptr, statusBar->preferredSize());
         } else {
-            layout->addDockWidget(statusBar->dockWidget(), KDDockWidgets::Location_OnRight, prevStatusBar->dockWidget(), QSize(statusBar->width(), statusBar->height()));
+            window->addDockWidget(statusBar->dockWidget(), KDDockWidgets::Location_OnRight, prevStatusBar->dockWidget(), statusBar->preferredSize());
         }
 
         statusBar->init();
         prevStatusBar = statusBar;
     }
+}
+
+void DockPage::componentComplete()
+{
+    QQuickItem::componentComplete();
+
+    Q_ASSERT(!m_uniqueName.isEmpty());
+    Q_ASSERT(!m_uri.isEmpty());
 }

@@ -50,7 +50,9 @@
 #include "view/preferences/iopreferencesmodel.h"
 #include "view/preferences/commonaudioapiconfigurationmodel.h"
 
-#ifndef KDAB_DOCKWIDGETS
+#ifdef KDAB_DOCKWIDGETS
+#include "view/dockwindow_kdab/docksetup.h"
+#else
 #include "view/dockwindow/docksetup.h"
 #endif
 
@@ -110,9 +112,7 @@ void AppShellModule::registerResources()
 
 void AppShellModule::registerUiTypes()
 {
-#ifndef KDAB_DOCKWIDGETS
     dock::DockSetup::registerQmlTypes();
-#endif
 
     qmlRegisterType<SettingListModel>("MuseScore.Preferences", 1, 0, "SettingListModel");
     qmlRegisterType<PreferencesModel>("MuseScore.Preferences", 1, 0, "PreferencesModel");

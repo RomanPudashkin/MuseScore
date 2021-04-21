@@ -42,7 +42,7 @@ void DockToolBar::setOrientation(Qt::Orientation orientation)
     emit orientationChanged(orientation);
 }
 
-DockType::Types DockToolBar::type() const
+DockType DockToolBar::type() const
 {
-    return DockType::Types::ToolBar;
+    return DockType::ToolBar;
 }

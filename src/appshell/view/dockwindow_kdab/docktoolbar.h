@@ -40,7 +40,7 @@ signals:
     void orientationChanged(Qt::Orientation orientation);
 
 private:
-    DockType::Types type() const override;
+    DockType type() const override;
 
     Qt::Orientation m_orientation = Qt::Horizontal;
 };

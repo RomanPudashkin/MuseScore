@@ -19,6 +19,8 @@
 
 #include "dockpanel.h"
 
+#include "log.h"
+
 using namespace mu::dock;
 using namespace mu::uicomponents;
 
@@ -29,6 +31,8 @@ DockPanel::DockPanel(QQuickItem* parent)
 
 void DockPanel::init()
 {
+    TRACEFUNC;
+
     DockBase::init();
 
     for (const DockPanel* panel : m_tabs.list()) {
@@ -41,7 +45,7 @@ QQmlListProperty<DockPanel> DockPanel::tabsProperty()
     return m_tabs.property();
 }
 
-DockType::Types DockPanel::type() const
+DockType DockPanel::type() const
 {
-    return DockType::Types::Panel;
+    return DockType::Panel;
 }

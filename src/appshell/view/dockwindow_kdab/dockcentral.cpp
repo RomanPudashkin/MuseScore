@@ -27,7 +27,7 @@ DockCentral::DockCentral(QQuickItem* parent)
     setAllowedAreas(Qt::NoDockWidgetArea);
 }
 
-DockType::Types DockCentral::type() const
+DockType DockCentral::type() const
 {
-    return DockType::Types::Central;
+    return DockType::Central;
 }
