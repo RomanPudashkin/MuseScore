@@ -5,16 +5,12 @@ import QtQuick.Layouts 1.15
 import MuseScore.Ui 1.0
 import MuseScore.UiComponents 1.0
 
-import com.kdab.dockwidgets 1.0
-
-import "qrc:/kddockwidgets/private/quick/qml/" as KDDW
-
 Rectangle {
     id: root
 
     //! NOTE: please, don't rename those properties because they are used in c++
     property QtObject frameCpp
-    readonly property QtObject titleBarCpp: frameCpp ? frameCpp.titleBar : null
+    readonly property QtObject titleBarCpp: Boolean(frameCpp) ? frameCpp.titleBar : null
     readonly property int nonContentsHeight: titleBar.visible ? titleBar.heightWhenVisible + tabs.height : 0
 
     anchors.fill: parent
@@ -33,63 +29,76 @@ Rectangle {
         }
     }
 
-    ColumnLayout {
-        anchors.fill: parent
+    Item {
+        id: titleRect
 
-        spacing: 8
+        anchors.top: parent.top
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: childrenRect.height
+        width: parent.width
+        height: childrenRect.height
 
-            visible: titleBar.visible
+        visible: titleBar.visible
 
-            readonly property QtObject titleBarCpp: root.titleBarCpp
+        readonly property QtObject titleBarCpp: root.titleBarCpp
 
-            DockTitleBar {
-                id: titleBar
+        DockTitleBar {
+            id: titleBar
 
-                anchors.fill: parent
+            anchors.fill: parent
+        }
+    }
+
+    MouseArea {
+        id: dragMouseArea
+
+        anchors.fill: tabs
+
+        z: tabs.z + 1
+
+        hoverEnabled: true
+        enabled: tabs.visible
+    }
+
+    TabBar {
+        id: tabs
+
+        anchors.top: titleRect.visible ? titleRect.bottom : parent.top
+        width: parent.width
+
+        visible: count > 1
+
+        readonly property QtObject tabBarCpp: Boolean(root.frameCpp) ? root.frameCpp.tabWidget.tabBar : null
+
+        currentIndex: Boolean(frameCpp) ? frameCpp.currentIndex : 0
+
+        onTabBarCppChanged: {
+            if (Boolean(tabBarCpp)) {
+                tabBarCpp.redirectMouseEvents(dragMouseArea)
+                tabBarCpp.tabBarQmlItem = this
             }
         }
 
-        RadioButtonGroup {
-            id: tabs
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: contentItem.childrenRect.height
-
-            visible: count > 1
-            spacing: 0
-
-            readonly property QtObject tabBarCpp: root.frameCpp ? root.frameCpp.tabWidget.tabBar : null
-
+        Repeater {
             model: Boolean(root.frameCpp) ? root.frameCpp.tabWidget.dockWidgetModel : 0
-            currentIndex: Boolean(root.frameCpp) ? root.frameCpp.currentIndex : 0
 
-            delegate: FlatRadioButton {
-                ButtonGroup.group: tabs.radioButtonGroup
-                checked: model.index === tabs.currentIndex
-
-                StyledTextLabel {
-                    text: title
-                }
+            TabButton {
+                text: title
 
                 onClicked: {
-                    if (Boolean(root.frameCpp)) {
-                        root.frameCpp.tabWidget.setCurrentDockWidget(model.index)
-                    }
+                    root.frameCpp.tabWidget.setCurrentDockWidget(model.index)
                 }
             }
         }
+    }
 
-        StackLayout {
-            id: stackLayout
+    StackLayout {
+        id: stackLayout
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        anchors.top: tabs.visible ? tabs.bottom : (titleRect.visible ? titleRect.bottom : parent.top)
+        anchors.bottom: parent.bottom
 
-            currentIndex: tabs.currentIndex
-        }
+        width: parent.width
+
+        currentIndex: tabs.currentIndex
     }
 }
