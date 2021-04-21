@@ -836,22 +836,6 @@ void DockWidgetBase::setMDIZ(int z)
 #endif
 }
 
-void DockWidgetBase::setMinimumSize(QSize size)
-{
-    QWidgetAdapter::setMinimumSize(size);
-
-    if (d->frame())
-        d->frame()->setMinimumSize(size);
-}
-
-void DockWidgetBase::setMaximumSize(QSize size)
-{
-    QWidgetAdapter::setMaximumSize(size);
-
-    if (d->frame())
-        d->frame()->setMaximumSize(size);
-}
-
 LayoutSaver::DockWidget::Ptr DockWidgetBase::Private::serialize() const
 {
     auto ptr = LayoutSaver::DockWidget::dockWidgetForName(q->uniqueName());

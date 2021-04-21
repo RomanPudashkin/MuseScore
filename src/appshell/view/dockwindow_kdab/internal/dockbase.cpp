@@ -110,13 +110,26 @@ void DockBase::setAllowedAreas(Qt::DockWidgetAreas areas)
 
 void DockBase::init()
 {
-    int minWidth = m_minimumWidth > 0 ? m_minimumWidth : minimumSize().width();
-    int minHeight = m_minimumHeight > 0 ? m_minimumHeight : minimumSize().height();
-    int maxWidth = m_maximumWidth > 0 ? m_maximumWidth : maximumSize().width();
-    int maxHeight = m_maximumHeight > 0 ? m_maximumHeight : maximumSize().height();
+    auto dock = dockWidget();
+    IF_ASSERT_FAILED(dock) {
+        return;
+    }
 
-    setMinimumSize(QSize(minWidth, minHeight));
-    setMaximumSize(QSize(maxWidth, maxHeight));
+    int minWidth = m_minimumWidth > 0 ? m_minimumWidth : dock->minimumWidth();
+    int minHeight = m_minimumHeight > 0 ? m_minimumHeight : dock->minimumHeight();
+    int maxWidth = m_maximumWidth > 0 ? m_maximumWidth : dock->maximumWidth();
+    int maxHeight = m_maximumHeight > 0 ? m_maximumHeight : dock->maximumHeight();
+
+    QSize minSize(minWidth, minHeight);
+    QSize maxSize(maxWidth, maxHeight);
+
+    dock->setMinimumSize(minSize);
+    dock->setMaximumSize(maxSize);
+
+    if (auto frame = dock->frame()) {
+        frame->setMinimumSize(minSize);
+        frame->setMaximumSize(maxSize);
+    }
 
     m_properties->setProperty(DOCK_TYPE_KEY, static_cast<int>(type()));
 }

@@ -445,12 +445,6 @@ public:
     /// only implemented for QtQuick
     void setMDIZ(int z);
 
-    /// @reimp
-    void setMinimumSize(QSize size) override;
-
-    /// @reimp
-    void setMaximumSize(QSize size) override;
-
 Q_SIGNALS:
 #ifdef KDDOCKWIDGETS_QTWIDGETS
     ///@brief signal emitted when the parent changed

@@ -61,12 +61,6 @@ public:
     bool isFloating() const;
     void setFloating(bool);
 
-    QSize minimumSize() const;
-    void setMinimumSize(QSize size);
-
-    QSize maximumSize() const;
-    void setMaximumSize(QSize size);
-
     Q_INVOKABLE void addDockWidgetAsTab(DockWidgetInstantiator *other,
                                         InitialVisibilityOption = {});
     Q_INVOKABLE void addDockWidgetAsTab(DockWidgetBase *other, InitialVisibilityOption = {});
