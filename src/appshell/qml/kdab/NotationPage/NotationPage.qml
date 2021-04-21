@@ -57,8 +57,8 @@ DockPage {
         pageModel.init()
     }
 
-    readonly property int defaultPanelWidth: 272
-    readonly property int minimumPanelWidth: 200
+    readonly property int defaultPanelWidth: 160
+    readonly property int minimumPanelWidth: 50
     readonly property int toolBarHeight: 48
 
     toolBars: [
