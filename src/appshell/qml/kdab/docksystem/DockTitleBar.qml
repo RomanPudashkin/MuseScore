@@ -5,16 +5,32 @@ import MuseScore.UiComponents 1.0
 
 import "qrc:/kddockwidgets/private/quick/qml/" as KDDW
 
-KDDW.TitleBarBase {
+Item {
     id: root
 
-    heightWhenVisible: 30
+    required property QtObject titleBarCpp
+
+    property alias heightWhenVisible: titleBar.heightWhenVisible
+
+    width: parent.width
+    height: visible ? heightWhenVisible : 0
+
     visible: Boolean(titleBarCpp) && titleBarCpp.isFloating
 
-    StyledTextLabel {
-        anchors.centerIn: parent
+    KDDW.TitleBarBase {
+        id: titleBar
 
-        text: root.title
-        font: ui.theme.bodyBoldFont
+        anchors.fill: parent
+
+        heightWhenVisible: 30
+
+        StyledTextLabel {
+            id: titleLabel
+
+            anchors.centerIn: parent
+
+            font: ui.theme.bodyBoldFont
+            text: titleBar.title
+        }
     }
 }

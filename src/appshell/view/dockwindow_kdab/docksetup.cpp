@@ -58,6 +58,11 @@ public:
     {
         return QUrl("qrc:/qml/kdab/docksystem/DockFrame.qml");
     }
+
+    QUrl floatingWindowFilename() const override
+    {
+        return QUrl("qrc:/qml/kdab/docksystem/DockFloatingWindow.qml");
+    }
 };
 }
 

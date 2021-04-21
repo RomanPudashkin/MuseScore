@@ -29,23 +29,12 @@ Rectangle {
         }
     }
 
-    Item {
-        id: titleRect
+    DockTitleBar {
+        id: titleBar
 
         anchors.top: parent.top
 
-        width: parent.width
-        height: childrenRect.height
-
-        visible: titleBar.visible
-
-        readonly property QtObject titleBarCpp: root.titleBarCpp
-
-        DockTitleBar {
-            id: titleBar
-
-            anchors.fill: parent
-        }
+        titleBarCpp: root.titleBarCpp
     }
 
     MouseArea {
@@ -62,7 +51,7 @@ Rectangle {
     TabBar {
         id: tabs
 
-        anchors.top: titleRect.visible ? titleRect.bottom : parent.top
+        anchors.top: titleBar.visible ? titleBar.bottom : parent.top
         width: parent.width
 
         visible: count > 1
@@ -94,7 +83,7 @@ Rectangle {
     StackLayout {
         id: stackLayout
 
-        anchors.top: tabs.visible ? tabs.bottom : (titleRect.visible ? titleRect.bottom : parent.top)
+        anchors.top: tabs.visible ? tabs.bottom : (titleBar.visible ? titleBar.bottom : parent.top)
         anchors.bottom: parent.bottom
 
         width: parent.width
