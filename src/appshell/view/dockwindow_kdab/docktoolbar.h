@@ -26,19 +26,28 @@ class DockToolBar : public DockBase
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 
 public:
     explicit DockToolBar(QQuickItem* parent = nullptr);
 
+    bool movable() const;
     Qt::Orientation orientation() const;
 
 public slots:
+    void setMinimumWidth(int width) override;
+    void setMinimumHeight(int height) override;
+    void setMaximumWidth(int width) override;
+    void setMaximumHeight(int height) override;
+
+    void setMovable(bool movable);
     void setOrientation(Qt::Orientation orientation);
 
     void updateOrientation();
 
 signals:
+    void movableChanged(bool movable);
     void orientationChanged(Qt::Orientation orientation);
 
 private:
@@ -48,6 +57,7 @@ private:
     DockType dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
     QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
 
+    bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;
 };
 }

@@ -23,15 +23,82 @@
 
 using namespace mu::dock;
 
+static const qreal TOOLBAR_GRIP_MARGIN(4);
+static const qreal TOOLBAR_GRIP_WIDTH(28);
+static const qreal TOOLBAR_GRIP_HEIGHT(36);
+
 DockToolBar::DockToolBar(QQuickItem* parent)
     : DockBase(parent)
 {
     setAllowedAreas(Qt::TopDockWidgetArea);
 }
 
+bool DockToolBar::movable() const
+{
+    return m_movable;
+}
+
 Qt::Orientation DockToolBar::orientation() const
 {
     return m_orientation;
+}
+
+void DockToolBar::setMinimumWidth(int width)
+{
+    if (movable() && orientation() == Qt::Horizontal) {
+        width += TOOLBAR_GRIP_WIDTH + TOOLBAR_GRIP_MARGIN;
+    }
+
+    DockBase::setMinimumWidth(width);
+}
+
+void DockToolBar::setMinimumHeight(int height)
+{
+    if (movable() && orientation() == Qt::Vertical) {
+        height += TOOLBAR_GRIP_HEIGHT + TOOLBAR_GRIP_MARGIN;
+    }
+
+    DockBase::setMinimumHeight(height);
+}
+
+void DockToolBar::setMaximumWidth(int width)
+{
+    int preferedWidth = this->width();
+
+    if (movable() && orientation() == Qt::Horizontal) {
+        preferedWidth = TOOLBAR_GRIP_WIDTH + TOOLBAR_GRIP_MARGIN;
+    }
+
+    if (preferedWidth > width) {
+        width = preferedWidth;
+    }
+
+    DockBase::setMaximumWidth(width);
+}
+
+void DockToolBar::setMaximumHeight(int height)
+{
+    int preferedHeight = this->height();
+
+    if (movable() && orientation() == Qt::Horizontal) {
+        preferedHeight = TOOLBAR_GRIP_HEIGHT + TOOLBAR_GRIP_MARGIN;
+    }
+
+    if (preferedHeight > height) {
+        height = preferedHeight;
+    }
+
+    DockBase::setMaximumHeight(height);
+}
+
+void DockToolBar::setMovable(bool movable)
+{
+    if (m_movable == movable) {
+        return;
+    }
+
+    m_movable = movable;
+    emit movableChanged(m_movable);
 }
 
 void DockToolBar::setOrientation(Qt::Orientation orientation)

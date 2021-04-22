@@ -50,10 +50,10 @@ public:
     virtual void init();
 
 public slots:
-    void setMinimumWidth(int width);
-    void setMinimumHeight(int height);
-    void setMaximumWidth(int width);
-    void setMaximumHeight(int height);
+    virtual void setMinimumWidth(int width);
+    virtual void setMinimumHeight(int height);
+    virtual void setMaximumWidth(int width);
+    virtual void setMaximumHeight(int height);
     void setAllowedAreas(Qt::DockWidgetAreas areas);
 
     void resize();

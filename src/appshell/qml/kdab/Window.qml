@@ -64,7 +64,7 @@ ApplicationWindow {
 
                 width: root.width / 2
                 height: window.toolbarHeight
-                minimumWidth: 296
+                minimumWidth: 304
                 minimumHeight: height
                 maximumHeight: height
 
@@ -91,9 +91,9 @@ ApplicationWindow {
                 uniqueName: "notationToolBar"
                 title: qsTrc("appshell", "Notation Toolbar")
 
-                width: 192
+                width: 198
                 height: window.toolbarHeight
-                minimumWidth: 192
+                minimumWidth: 198
                 minimumHeight: height
                 maximumHeight: height
 
@@ -128,7 +128,7 @@ ApplicationWindow {
 
                 width: root.width / 3
                 height: window.toolbarHeight
-                minimumWidth: floating ? 520 : 470
+                minimumWidth: floating ? 526 : 476
                 minimumHeight: floating ? 76 : window.toolbarHeight
                 maximumHeight: height
 
@@ -158,7 +158,7 @@ ApplicationWindow {
                 uniqueName: "undoRedoToolBar"
                 title: qsTrc("appshell", "Undo/Redo Toolbar")
 
-                width: 72
+                width: 74
                 height: window.toolbarHeight
                 minimumWidth: width
                 minimumHeight: height

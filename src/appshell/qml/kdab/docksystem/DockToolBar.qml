@@ -10,7 +10,6 @@ Dock.DockToolBar {
 
     property Component contentComponent
 
-    property bool movable: true
     property bool floating: false
 
     Component.onCompleted: {
@@ -22,13 +21,6 @@ Dock.DockToolBar {
 
         color: ui.theme.backgroundPrimaryColor
 
-        QtObject {
-            id: privateProperties
-
-            readonly property int gripWidth: 32
-            readonly property int gripHeight: 36
-        }
-
         Dock.ToolBarGripModel {
             id: toolBarGripModel
         }
@@ -37,11 +29,12 @@ Dock.DockToolBar {
             id: loader
 
             anchors.fill: parent
+            anchors.margins: 2
 
             sourceComponent: orientation === Qt.Horizontal ? horizontalView : verticalView
 
             onLoaded: {
-                toolBarGripModel.gripMouseArea = loader.item.gripMouseArea;
+                toolBarGripModel.gripMouseArea = loader.item.gripMouseArea
             }
         }
     }
@@ -50,7 +43,7 @@ Dock.DockToolBar {
         id: horizontalView
 
         RowLayout {
-            spacing: 0
+            spacing: 2
 
             property var gripMouseArea: gripButton.mouseArea
 
@@ -80,7 +73,7 @@ Dock.DockToolBar {
         id: verticalView
 
         ColumnLayout {
-            spacing: 0
+            spacing: 2
 
             property var gripMouseArea: gripButton.mouseArea
 
