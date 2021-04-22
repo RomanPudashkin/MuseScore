@@ -77,7 +77,9 @@ void QmlToolTip::doShowToolTip()
         return;
     }
 
-    if (!window->parent()) { //! tmp
+    //! TODO: here should be IF_ASSERT_FAILED instead of if (!...)
+    //! But this leads to aborting of the application in KDAB dockwidgets mode
+    if (!window->parent()) {
         return;
     }
 

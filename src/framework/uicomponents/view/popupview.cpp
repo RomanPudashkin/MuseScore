@@ -215,11 +215,13 @@ void PopupView::componentComplete()
 
 bool PopupView::eventFilter(QObject* watched, QEvent* event)
 {
+    bool isMainWindow = (mainWindow() && (watched == mainWindow()->qMainWindow()));
+
     if (QEvent::MouseButtonPress == event->type()) {
         mousePressEvent(static_cast<QMouseEvent*>(event));
     } else if (QEvent::MouseButtonRelease == event->type()) {
         mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-    } else if (QEvent::Close == event->type() && watched == mainWindow()->qMainWindow()) {
+    } else if (QEvent::Close == event->type() && isMainWindow) {
         close();
     }
 
