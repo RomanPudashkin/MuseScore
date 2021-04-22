@@ -27,6 +27,7 @@ using namespace mu::uicomponents;
 DockPanel::DockPanel(QQuickItem* parent)
     : DockBase(parent), m_tabs(this)
 {
+    setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 }
 
 void DockPanel::init()

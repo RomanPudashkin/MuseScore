@@ -17,8 +17,6 @@
 
 #include "ui_masterpalette.h"
 
-#include "modularity/ioc.h"
-#include "framework/ui/imainwindow.h"
 #include "ui/view/widgetdialog.h"
 
 namespace Ms {
@@ -33,8 +31,6 @@ class KeyEditor;
 class MasterPalette : public mu::ui::WidgetDialog, Ui::MasterPalette
 {
     Q_OBJECT
-
-    INJECT(palette, mu::ui::IMainWindow, mainWindow)
 
     Q_PROPERTY(QString selectedPaletteName READ selectedPaletteName WRITE setSelectedPaletteName NOTIFY selectedPaletteNameChanged)
 

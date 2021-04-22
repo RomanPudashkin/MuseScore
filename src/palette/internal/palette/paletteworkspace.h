@@ -23,7 +23,6 @@
 #include <QAbstractItemModel>
 #include "palettemodel.h"
 #include "modularity/ioc.h"
-#include "framework/ui/imainwindow.h"
 #include "framework/global/iinteractive.h"
 #include "../ipaletteconfiguration.h"
 #include "async/asyncable.h"
@@ -40,7 +39,6 @@ class PaletteElementEditor : public QObject
 {
     Q_OBJECT
 
-    INJECT(palette, mu::ui::IMainWindow, mainWindow)
     INJECT(palette, mu::framework::IInteractive, interactive)
 
     AbstractPaletteController* _controller = nullptr;
@@ -130,7 +128,6 @@ class UserPaletteController : public AbstractPaletteController, public mu::async
 {
     Q_OBJECT
 
-    INJECT(palette, mu::ui::IMainWindow, mainWindow)
     INJECT(palette, mu::framework::IInteractive, interactive)
     INJECT(palette, mu::palette::IPaletteConfiguration, configuration)
 
@@ -197,7 +194,6 @@ class PaletteWorkspace : public QObject
 {
     Q_OBJECT
 
-    INJECT(palette, mu::ui::IMainWindow, mainWindow)
     INJECT(palette, mu::framework::IInteractive, interactive)
 
     PaletteTreeModel* userPalette;

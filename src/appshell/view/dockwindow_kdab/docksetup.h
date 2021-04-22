@@ -27,6 +27,7 @@ class DockSetup
 {
 public:
     static void registerQmlTypes();
+    static void registerExports();
     static void setup(QQmlEngine* engine);
 };
 }

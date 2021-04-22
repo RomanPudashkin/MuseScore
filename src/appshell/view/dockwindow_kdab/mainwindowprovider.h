@@ -2,7 +2,7 @@
 //  MuseScore
 //  Music Composition & Notation
 //
-//  Copyright (C) 2020 MuseScore BVBA and others
+//  Copyright (C) 2021 MuseScore BVBA and others
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License version 2.
@@ -16,30 +16,22 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
-#ifndef MU_UI_IMAINWINDOW_H
-#define MU_UI_IMAINWINDOW_H
+#ifndef MU_DOCK_MAINWINDOWPROVIDER_H
+#define MU_DOCK_MAINWINDOWPROVIDER_H
 
-#include "modularity/imoduleexport.h"
+#include "framework/ui/imainwindow.h"
 
-class QObject;
-class QMainWindow;
-class QScreen;
-
-namespace mu::ui {
-class IMainWindow : MODULE_EXPORT_INTERFACE
+namespace mu::dock {
+class MainWindowProvider : public ui::IMainWindow
 {
-    INTERFACE_ID(IMainWindow)
-
 public:
-    virtual ~IMainWindow() = default;
+    QMainWindow* qMainWindow() const override;
+    QObject* mainWindowObject() const override;
 
-    virtual QMainWindow* qMainWindow() const = 0;
-    virtual QObject* mainWindowObject() const = 0;
-
-    virtual bool isFullScreen() const = 0;
-    virtual void toggleFullScreen() = 0;
-    virtual const QScreen* screen() const = 0;
+    bool isFullScreen() const override;
+    void toggleFullScreen() override;
+    const QScreen* screen() const override;
 };
 }
 
-#endif // MU_UI_IMAINWINDOW_H
+#endif // MU_DOCK_MAINWINDOWPROVIDER_H

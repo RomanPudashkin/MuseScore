@@ -283,7 +283,12 @@ void InteractiveProvider::closeWidgetDialog(const QVariant& dialogMetaTypeId)
 {
     int _dialogMetaTypeId = dialogMetaTypeId.toInt();
 
-    for (QObject* object : mainWindow()->qMainWindow()->children()) {
+    QObject* window = mainWindow()->mainWindowObject();
+    if (!window) {
+        return;
+    }
+
+    for (QObject* object : window->children()) {
         WidgetDialog* dialog = dynamic_cast<WidgetDialog*>(object);
         if (dialog && dialog->metaTypeId() == _dialogMetaTypeId) {
             dialog->close();

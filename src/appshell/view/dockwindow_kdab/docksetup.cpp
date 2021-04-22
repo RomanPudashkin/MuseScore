@@ -30,6 +30,10 @@
 #include "dockcentral.h"
 #include "dockpage.h"
 
+#include "mainwindowprovider.h"
+
+#include "modularity/ioc.h"
+
 #include "thirdparty/KDDockWidgets/src/Config.h"
 #include "thirdparty/KDDockWidgets/src/DockWidgetBase.h"
 #include "thirdparty/KDDockWidgets/src/FrameworkWidgetFactory.h"
@@ -80,6 +84,11 @@ void DockSetup::registerQmlTypes()
     qmlRegisterType<ToolBarGripModel>("MuseScore.Dock", 1, 0, "ToolBarGripModel");
 
     qRegisterMetaType<DropIndicators*>();
+}
+
+void DockSetup::registerExports()
+{
+    framework::ioc()->registerExport<ui::IMainWindow>("dock", new MainWindowProvider());
 }
 
 void DockSetup::setup(QQmlEngine* engine)

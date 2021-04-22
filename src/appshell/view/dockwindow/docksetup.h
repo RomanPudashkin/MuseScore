@@ -27,6 +27,7 @@ public:
     DockSetup();
 
     static void registerQmlTypes();
+    static void registerExports();
 };
 }
 

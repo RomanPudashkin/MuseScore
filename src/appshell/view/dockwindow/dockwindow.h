@@ -67,9 +67,13 @@ public:
 
     QString currentPageUri() const;
 
-    QMainWindow* qMainWindow() override;
-    QMenuBar* qMenuBar();
-    void stackUnder(QWidget* w) override;
+    //! IMainWindow
+    QMainWindow* qMainWindow() const override;
+    QObject* mainWindowObject() const override;
+
+    bool isFullScreen() const override;
+    void toggleFullScreen() override;
+    const QScreen* screen() const override;
 
 public slots:
     void setTitle(QString title);
@@ -96,6 +100,7 @@ private:
 
     DockPage* page(const QString& uri) const;
     DockPage* currentPage() const;
+    QMenuBar* qMenuBar() const;
 
     void togglePage(DockPage* old, DockPage* current);
     void hidePage(DockPage* page);

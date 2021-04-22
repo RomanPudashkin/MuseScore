@@ -45,3 +45,7 @@ void DockSetup::registerQmlTypes()
     qmlRegisterType<DockStatusBar>("MuseScore.Dock", 1, 0, "DockStatusBar");
     qmlRegisterType<DockMenuBar>("MuseScore.Dock", 1, 0, "DockMenuBar");
 }
+
+void DockSetup::registerExports()
+{
+}

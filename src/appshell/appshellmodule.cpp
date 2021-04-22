@@ -81,6 +81,8 @@ std::string AppShellModule::moduleName() const
 
 void AppShellModule::registerExports()
 {
+    dock::DockSetup::registerExports();
+
     ioc()->registerExport<IAppShellConfiguration>(moduleName(), s_appShellConfiguration);
     ioc()->registerExport<INotationPageState>(moduleName(), s_notationPageState);
 }
