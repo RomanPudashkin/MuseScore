@@ -80,6 +80,11 @@ void DockWindow::loadPage(const QString& uri)
         }
 
         toolBar->init();
+
+        if (!toolBar->allowedPagesUriList().empty() && !toolBar->allowedPagesUriList().contains(uri)) {
+            toolBar->dockWidget()->close();
+        }
+
         prevToolBar = toolBar;
     }
 

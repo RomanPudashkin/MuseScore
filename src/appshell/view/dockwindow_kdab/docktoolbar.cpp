@@ -43,6 +43,11 @@ Qt::Orientation DockToolBar::orientation() const
     return m_orientation;
 }
 
+QStringList DockToolBar::allowedPagesUriList() const
+{
+    return m_allowedPagesUriList;
+}
+
 void DockToolBar::setMinimumWidth(int width)
 {
     if (movable() && orientation() == Qt::Horizontal) {
@@ -142,6 +147,16 @@ void DockToolBar::updateOrientation()
     }
 
     setOrientation(newOrientation);
+}
+
+void DockToolBar::setAllowedPagesUriList(QStringList allowedPagesUriList)
+{
+    if (m_allowedPagesUriList == allowedPagesUriList) {
+        return;
+    }
+
+    m_allowedPagesUriList = allowedPagesUriList;
+    emit allowedPagesUriListChanged(m_allowedPagesUriList);
 }
 
 void DockToolBar::componentComplete()

@@ -53,7 +53,7 @@ ApplicationWindow {
         }
 
         readonly property int toolbarHeight: 48
-        readonly property bool isNotationPage: currentPageUri === notationPage.uri
+        property bool isNotationPage: currentPageUri === notationPage.uri
 
         toolBars: [
             DockToolBar {
@@ -97,24 +97,18 @@ ApplicationWindow {
                 minimumHeight: height
                 maximumHeight: height
 
+                allowedPagesUriList: [ notationPage.uri ]
+
                 contentComponent: NotationToolBar {
                     id: notationToolBarContent
 
                     keynav.section: topToolKeyNavSec
                     keynav.order: 2
                     keynav.enabled: notationToolBar.visible
+
                     onActiveFocusRequested: {
                         if (keynav.active) {
                             notationToolBar.forceActiveFocus()
-                        }
-                    }
-
-                    Connections {
-                        target: notationToolBar
-
-                        Component.onCompleted: {
-                            notationPage.pageModel.isNotationToolBarVisible = notationToolBar.visible
-                            notationToolBar.visible = Qt.binding(function() { return window.isNotationPage && notationPage.pageModel.isNotationToolBarVisible })
                         }
                     }
                 }
@@ -132,6 +126,8 @@ ApplicationWindow {
                 minimumHeight: floating ? 76 : window.toolbarHeight
                 maximumHeight: height
 
+                allowedPagesUriList: [ notationPage.uri ]
+
                 contentComponent: PlaybackToolBar {
                     id: playbackToolBarContent
 
@@ -140,15 +136,6 @@ ApplicationWindow {
                     keynav.enabled: window.isNotationPage
 
                     floating: playbackToolBar.floating
-
-                    Connections {
-                        target: playbackToolBar
-
-                        Component.onCompleted: {
-                            notationPage.pageModel.isPlaybackToolBarVisible = playbackToolBar.visible
-                            playbackToolBar.visible = Qt.binding(function() { return window.isNotationPage && notationPage.pageModel.isPlaybackToolBarVisible})
-                        }
-                    }
                 }
             },
 
@@ -166,17 +153,10 @@ ApplicationWindow {
 
                 movable: false
 
+                allowedPagesUriList: [ notationPage.uri ]
+
                 contentComponent: UndoRedoToolBar {
                     id: undoRedoToolBarContent
-
-                    Connections {
-                        target: undoRedoToolBar
-
-                        Component.onCompleted: {
-                            notationPage.pageModel.isUndoRedoToolBarVisible = undoRedoToolBar.visible
-                            undoRedoToolBar.visible = Qt.binding(function() { return window.isNotationPage && notationPage.pageModel.isUndoRedoToolBarVisible})
-                        }
-                    }
                 }
             }
         ]
