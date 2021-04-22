@@ -71,13 +71,8 @@ void DockWindow::loadPage(const QString& uri)
 
     DockToolBar* prevToolBar = nullptr;
     for (DockToolBar* toolBar : m_toolBars.list()) {
-        toolBar->setParent(this);
-
-        if (!prevToolBar) {
-            addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnTop, nullptr, toolBar->preferredSize());
-        } else {
-            addDockWidget(toolBar->dockWidget(), KDDockWidgets::Location_OnRight, prevToolBar->dockWidget(), toolBar->preferredSize());
-        }
+        auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
+        addDockWidget(toolBar, location, prevToolBar, toolBar->preferredSize());
 
         toolBar->init();
 
