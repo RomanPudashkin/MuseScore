@@ -15,7 +15,7 @@ Item {
     width: parent.width
     height: visible ? heightWhenVisible : 0
 
-    visible: Boolean(titleBarCpp) && titleBarCpp.isFloating
+    visible: Boolean(titleBarCpp)
 
     KDDW.TitleBarBase {
         id: titleBar

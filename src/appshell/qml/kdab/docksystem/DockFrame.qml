@@ -35,6 +35,8 @@ Rectangle {
         anchors.top: parent.top
 
         titleBarCpp: root.titleBarCpp
+
+        visible: false
     }
 
     MouseArea {

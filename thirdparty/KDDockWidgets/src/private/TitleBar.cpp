@@ -34,7 +34,6 @@ TitleBar::TitleBar(Frame *parent)
     connect(m_frame, &Frame::numDockWidgetsChanged, this, &TitleBar::updateCloseButton);
     connect(m_frame, &Frame::isFocusedChanged, this, &TitleBar::isFocusedChanged);
     connect(m_frame, &Frame::isInMainWindowChanged, this, &TitleBar::updateAutoHideButton);
-    connect(m_frame, &Frame::isInMainWindowChanged, this, &TitleBar::isFloatingChanged);
 
     init();
 
