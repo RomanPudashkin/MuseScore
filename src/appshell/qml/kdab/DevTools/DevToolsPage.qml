@@ -49,6 +49,8 @@ DockPage {
             minimumWidth: 200
             maximumWidth: 292
 
+            allowedAreas: Qt.NoDockWidgetArea
+
             Rectangle {
                 anchors.fill: parent
                 color: ui.theme.backgroundPrimaryColor

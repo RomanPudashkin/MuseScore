@@ -20,15 +20,9 @@
 #ifndef MU_DOCK_DROPINDICATORS_H
 #define MU_DOCK_DROPINDICATORS_H
 
-#include <QObject>
-
-#include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
-
 #include "../docktypes.h"
 
-namespace KDDockWidgets {
-class WidgetOrQuick;
-}
+#include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
 
 namespace mu::dock {
 class IndicatorsWindow;
@@ -86,16 +80,9 @@ private:
 
     bool isToolBar() const;
 
-    QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
-
-    DockType dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
-    Qt::DockWidgetAreas dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase* widget) const;
-
     KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
     IndicatorsWindow* m_indicatorsWindow = nullptr;
-
-    DockType m_draggedDockType = DockType::Undefined;
-    Qt::DockWidgetAreas m_draggedDockAllowedAreas;
+    DockProperties m_draggedDockProperties;
 };
 }
 

@@ -30,5 +30,7 @@ set (DOCKWINDOW_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/toolbargripmodel.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/dockseparator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/dockseparator.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/dockframemodel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/dockframemodel.h
 )
 

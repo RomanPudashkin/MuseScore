@@ -20,6 +20,8 @@
 #ifndef MU_DOCK_DOCKTYPES_H
 #define MU_DOCK_DOCKTYPES_H
 
+#include <QObject>
+
 namespace mu::dock {
 enum class DockType {
     Undefined = -1,
@@ -28,6 +30,38 @@ enum class DockType {
     StatusBar,
     Central
 };
+
+struct DockProperties
+{
+    DockType type = DockType::Undefined;
+    Qt::DockWidgetAreas allowedAreas = Qt::NoDockWidgetArea;
+};
+
+inline void writePropertiesTobject(const DockProperties& properties, QObject& obj)
+{
+    QObject* propertiesObj = new QObject(&obj);
+    propertiesObj->setObjectName("properties");
+    propertiesObj->setProperty("dockType", static_cast<int>(properties.type));
+    propertiesObj->setProperty("allowedAreas", static_cast<int>(properties.allowedAreas));
+}
+
+inline DockProperties readPropertiesFromObject(QObject* obj)
+{
+    if (!obj) {
+        return DockProperties();
+    }
+
+    QObject* properties = obj->findChild<QObject*>("properties");
+    if (!properties) {
+        return DockProperties();
+    }
+
+    DockProperties result;
+    result.type = static_cast<DockType>(properties->property("dockType").toInt());
+    result.allowedAreas = static_cast<Qt::DockWidgetAreas>(properties->property("allowedAreas").toInt());
+
+    return result;
+}
 }
 
 #endif // MU_DOCK_DOCKTYPES_H

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import MuseScore.Ui 1.0
 import MuseScore.UiComponents 1.0
+import MuseScore.Dock 1.0
 
 Rectangle {
     id: root
@@ -29,6 +30,12 @@ Rectangle {
         }
     }
 
+    DockFrameModel {
+        id: frameModel
+
+        frame: root.frameCpp
+    }
+
     DockTitleBar {
         id: titleBar
 
@@ -36,7 +43,7 @@ Rectangle {
 
         titleBarCpp: root.titleBarCpp
 
-        visible: false
+        visible: frameModel.titleBarVisible
     }
 
     MouseArea {

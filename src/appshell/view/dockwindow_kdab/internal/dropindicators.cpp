@@ -140,7 +140,9 @@ bool DropIndicators::hoveringOverDock(DockType type) const
     }
 
     for (auto dock : m_hoveredFrame->dockWidgets()) {
-        if (dockWidgetType(dock) == type) {
+        DockProperties properties = readPropertiesFromObject(dock);
+
+        if (properties.type == type) {
             return true;
         }
     }
@@ -150,7 +152,7 @@ bool DropIndicators::hoveringOverDock(DockType type) const
 
 bool DropIndicators::isAreaAllowed(Qt::DockWidgetArea area) const
 {
-    return m_draggedDockAllowedAreas.testFlag(area);
+    return m_draggedDockProperties.allowedAreas.testFlag(area);
 }
 
 bool DropIndicators::isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const
@@ -172,38 +174,7 @@ bool DropIndicators::isInnerLeftIndicatorVisible(Qt::DockWidgetArea area) const
 
 bool DropIndicators::isToolBar() const
 {
-    return m_draggedDockType == DockType::ToolBar;
-}
-
-QObject* DropIndicators::dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const
-{
-    if (!widget) {
-        return nullptr;
-    }
-
-    return widget->findChild<QObject*>("properties");
-}
-
-DockType DropIndicators::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
-{
-    QObject* properties = dockWidgetProperties(widget);
-
-    if (!properties) {
-        return DockType::Undefined;
-    }
-
-    return static_cast<DockType>(properties->property("dockType").toInt());
-}
-
-Qt::DockWidgetAreas DropIndicators::dockWidgetAllowedAreas(const KDDockWidgets::DockWidgetBase *widget) const
-{
-    QObject* properties = dockWidgetProperties(widget);
-
-    if (!properties) {
-        return Qt::AllDockWidgetAreas;
-    }
-
-    return static_cast<Qt::DockWidgetAreas>(properties->property("allowedAreas").toInt());
+    return m_draggedDockProperties.type == DockType::ToolBar;
 }
 
 bool DropIndicators::onResize(QSize)
@@ -223,16 +194,15 @@ void DropIndicators::updateVisibility()
         m_indicatorsWindow->setVisible(false);
     }
 
-    m_draggedDockAllowedAreas = Qt::AllDockWidgetAreas;
+    m_draggedDockProperties.allowedAreas = Qt::AllDockWidgetAreas;
 
     auto windowBeingDragged = KDDockWidgets::DragController::instance()->windowBeingDragged();
-    if (!windowBeingDragged) {
+    if (!windowBeingDragged || windowBeingDragged->dockWidgets().isEmpty()) {
         return;
     }
 
     auto dock = windowBeingDragged->dockWidgets().first();
-    m_draggedDockType = dockWidgetType(dock);
-    m_draggedDockAllowedAreas = dockWidgetAllowedAreas(dock);
+    m_draggedDockProperties = readPropertiesFromObject(dock);
 
     emit indicatorsVisibilityChanged();
 }
