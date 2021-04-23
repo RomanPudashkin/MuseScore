@@ -49,7 +49,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         Component.onCompleted: {
-            loadPage("musescore://home")
+            api.launcher.open("musescore://home")
         }
 
         readonly property int toolbarHeight: 48
