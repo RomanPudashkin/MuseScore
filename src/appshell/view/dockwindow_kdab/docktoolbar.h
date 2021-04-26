@@ -62,8 +62,6 @@ private:
     void componentComplete() override;
 
     DockType type() const override;
-    DockType dockWidgetType(const KDDockWidgets::DockWidgetBase* widget) const;
-    QObject* dockWidgetProperties(const KDDockWidgets::DockWidgetBase* widget) const;
 
     bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;

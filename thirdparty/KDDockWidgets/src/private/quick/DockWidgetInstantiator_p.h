@@ -43,8 +43,6 @@ class DockWidgetInstantiator : public QQuickItem
     Q_PROPERTY(bool isFocused READ isFocused NOTIFY isFocusedChanged)
     Q_PROPERTY(bool isFloating READ isFloating WRITE setFloating NOTIFY isFloatingChanged)
 public:
-    explicit DockWidgetInstantiator(QQuickItem *parent = nullptr);
-
     QString uniqueName() const;
     void setUniqueName(const QString &);
 

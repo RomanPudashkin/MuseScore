@@ -19,14 +19,21 @@
 #ifndef MU_DOCK_DOCKWINDOW_H
 #define MU_DOCK_DOCKWINDOW_H
 
+#include <QQuickItem>
+
 #include "framework/uicomponents/view/qmllistproperty.h"
 
-#include "thirdparty/KDDockWidgets/src/private/quick/MainWindowInstantiator_p.h"
+#include "thirdparty/KDDockWidgets/src/KDDockWidgets.h"
+
+namespace KDDockWidgets {
+class MainWindowBase;
+}
 
 namespace mu::dock {
 class DockToolBar;
 class DockPage;
-class DockWindow : public KDDockWidgets::MainWindowInstantiator
+class DockBase;
+class DockWindow : public QQuickItem
 {
     Q_OBJECT
 
@@ -45,12 +52,15 @@ public:
 
     Q_INVOKABLE void loadPage(const QString& uri);
 
+    void addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo = nullptr);
+
 signals:
     void currentPageUriChanged(const QString& uri);
 
 private:
     DockPage* pageByUri(const QString& uri) const;
 
+    KDDockWidgets::MainWindowBase* m_mainWindow = nullptr;
     QString m_currentPageUri;
     uicomponents::QmlListProperty<DockToolBar> m_toolBars;
     uicomponents::QmlListProperty<DockPage> m_pages;

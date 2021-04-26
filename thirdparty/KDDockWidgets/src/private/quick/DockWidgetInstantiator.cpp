@@ -15,11 +15,6 @@
 
 using namespace KDDockWidgets;
 
-DockWidgetInstantiator::DockWidgetInstantiator(QQuickItem *parent)
-    : QQuickItem(parent)
-{
-}
-
 QString DockWidgetInstantiator::uniqueName() const
 {
     return m_uniqueName;

@@ -24,6 +24,7 @@
 #include <QQuickItem>
 
 namespace mu::dock {
+class DockWindow;
 class DockToolBar;
 class DockPanel;
 class DockCentral;
@@ -50,7 +51,9 @@ public:
     DockCentral* centralDock() const;
     QQmlListProperty<mu::dock::DockStatusBar> statusBarsProperty();
 
-    Q_INVOKABLE void init(QQuickItem* dockWindow);
+    Q_INVOKABLE void init(DockWindow& window);
+
+    void close();
 
 public slots:
     void setUniqueName(const QString& name);

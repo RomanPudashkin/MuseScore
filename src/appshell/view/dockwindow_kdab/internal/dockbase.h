@@ -19,14 +19,21 @@
 #ifndef MU_DOCK_DOCKBASE_H
 #define MU_DOCK_DOCKBASE_H
 
+#include <QQuickItem>
+
 #include "../docktypes.h"
 
-#include "thirdparty/KDDockWidgets/src/private/quick/DockWidgetInstantiator_p.h"
+namespace KDDockWidgets {
+class DockWidgetQuick;
+}
 
 namespace mu::dock {
-class DockBase : public KDDockWidgets::DockWidgetInstantiator
+class DockBase : public QQuickItem
 {
     Q_OBJECT
+
+    Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+    Q_PROPERTY(QString uniqueName READ uniqueName WRITE setUniqueName NOTIFY uniqueNameChanged)
 
     Q_PROPERTY(int minimumWidth READ minimumWidth WRITE setMinimumWidth NOTIFY minimumSizeChanged)
     Q_PROPERTY(int minimumHeight READ minimumHeight WRITE setMinimumHeight NOTIFY minimumSizeChanged)
@@ -37,6 +44,9 @@ class DockBase : public KDDockWidgets::DockWidgetInstantiator
 
 public:
     explicit DockBase(QQuickItem* parent = nullptr);
+
+    QString title() const;
+    QString uniqueName() const;
 
     int minimumWidth() const;
     int minimumHeight() const;
@@ -49,7 +59,12 @@ public:
 
     virtual void init();
 
+    void close();
+
 public slots:
+    void setTitle(const QString& title);
+    void setUniqueName(const QString& uniqueName);
+
     virtual void setMinimumWidth(int width);
     virtual void setMinimumHeight(int height);
     virtual void setMaximumWidth(int width);
@@ -58,6 +73,8 @@ public slots:
     void setAllowedAreas(Qt::DockWidgetAreas areas);
 
 signals:
+    void titleChanged();
+    void uniqueNameChanged();
     void minimumSizeChanged();
     void maximumSizeChanged();
     void allowedAreasChanged();
@@ -65,9 +82,13 @@ signals:
     void closed();
 
 protected:
+    friend class DockWindow;
+
     virtual DockType type() const = 0;
 
     void componentComplete() override;
+
+    KDDockWidgets::DockWidgetQuick* dockWidget() const;
 
 private slots:
     void resize();
@@ -80,7 +101,10 @@ private:
     int m_maximumWidth = 0;
     int m_maximumHeight = 0;
 
+    QString m_title;
+    QString m_uniqueName;
     Qt::DockWidgetAreas m_allowedAreas = Qt::NoDockWidgetArea;
+    KDDockWidgets::DockWidgetQuick* m_dockWidget = nullptr;
 };
 }
 

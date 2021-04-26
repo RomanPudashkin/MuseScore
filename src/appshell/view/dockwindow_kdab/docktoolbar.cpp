@@ -140,7 +140,9 @@ void DockToolBar::updateOrientation()
             continue;
         }
 
-        if (frame && dockWidgetType(frame->dockWidgets().first()) == DockType::Central) {
+        DockType type = readPropertiesFromObject(frame->dockWidgets().first()).type;
+
+        if (type == DockType::Central) {
             newOrientation = Qt::Vertical;
             break;
         }
@@ -182,24 +184,4 @@ void DockToolBar::componentComplete()
 DockType DockToolBar::type() const
 {
     return DockType::ToolBar;
-}
-
-DockType DockToolBar::dockWidgetType(const KDDockWidgets::DockWidgetBase *widget) const
-{
-    QObject* properties = dockWidgetProperties(widget);
-
-    if (!properties) {
-        return DockType::Undefined;
-    }
-
-    return static_cast<DockType>(properties->property("dockType").toInt());
-}
-
-QObject *DockToolBar::dockWidgetProperties(const KDDockWidgets::DockWidgetBase *widget) const
-{
-    if (!widget) {
-        return nullptr;
-    }
-
-    return widget->findChild<QObject*>("properties");
 }

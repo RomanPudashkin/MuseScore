@@ -24,17 +24,40 @@
 
 #include "log.h"
 
-#include "thirdparty/KDDockWidgets/src/private/DockRegistry_p.h"
+#include "thirdparty/KDDockWidgets/src/MainWindowBase.h"
+#include "thirdparty/KDDockWidgets/src/DockWidgetQuick.h"
+
+namespace mu::dock {
+class MainWindow : public KDDockWidgets::MainWindowBase
+{
+public:
+    MainWindow(QQuickItem* parent)
+        : KDDockWidgets::MainWindowBase("mainWindow", KDDockWidgets::MainWindowOption_None, parent)
+    {
+        setParentItem(parent);
+    }
+
+private:
+    KDDockWidgets::SideBar* sideBar(KDDockWidgets::SideBarLocation) const override
+    {
+        return nullptr;
+    }
+
+    QMargins centerWidgetMargins() const override
+    {
+        return {};
+    }
+};
+}
 
 using namespace mu::dock;
 
 DockWindow::DockWindow(QQuickItem* parent)
-    : KDDockWidgets::MainWindowInstantiator(),
+    : QQuickItem(parent),
+      m_mainWindow(new MainWindow(this)),
       m_toolBars(this),
       m_pages(this)
 {
-    setParentItem(parent);
-    setUniqueName("mainWindow");
 }
 
 QString DockWindow::currentPageUri() const
@@ -60,24 +83,25 @@ void DockWindow::loadPage(const QString& uri)
         return;
     }
 
-    DockPage* page = pageByUri(uri);
-    IF_ASSERT_FAILED(page) {
+    DockPage* newPage = pageByUri(uri);
+    IF_ASSERT_FAILED(newPage) {
         return;
     }
 
-    KDDockWidgets::DockRegistry::self()->clear();
+    DockPage* currentPage = pageByUri(m_currentPageUri);
+    if (currentPage) {
+        currentPage->close();
+    }
 
-    page->init(this);
+    newPage->init(*this);
 
     DockToolBar* prevToolBar = nullptr;
     for (DockToolBar* toolBar : m_toolBars.list()) {
         auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
-        addDockWidget(toolBar, location, prevToolBar, toolBar->preferredSize());
-
-        toolBar->init();
+        addDock(toolBar, location, prevToolBar);
 
         if (!toolBar->allowedPagesUriList().empty() && !toolBar->allowedPagesUriList().contains(uri)) {
-            toolBar->dockWidget()->close();
+            toolBar->close();
         }
 
         prevToolBar = toolBar;
@@ -85,6 +109,17 @@ void DockWindow::loadPage(const QString& uri)
 
     m_currentPageUri = uri;
     emit currentPageUriChanged(uri);
+}
+
+void DockWindow::addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo)
+{
+    IF_ASSERT_FAILED(dock) {
+        return;
+    }
+
+    KDDockWidgets::DockWidgetBase* relativeDock = relativeTo ? relativeTo->dockWidget() : nullptr;
+    m_mainWindow->addDockWidget(dock->dockWidget(), location,  relativeDock, dock->preferredSize());
+    dock->init();
 }
 
 DockPage* DockWindow::pageByUri(const QString& uri) const

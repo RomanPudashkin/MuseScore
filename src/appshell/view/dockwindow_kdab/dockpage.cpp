@@ -20,6 +20,10 @@
 #include "dockpage.h"
 
 #include "dockwindow.h"
+#include "docktoolbar.h"
+#include "dockcentral.h"
+#include "dockpanel.h"
+#include "dockstatusbar.h"
 
 #include "log.h"
 
@@ -93,39 +97,47 @@ void DockPage::setCentralDock(DockCentral* central)
     emit centralDockChanged(central);
 }
 
-void DockPage::init(QQuickItem* dockWindow)
+void DockPage::init(DockWindow& window)
 {
     TRACEFUNC;
 
-    auto window = dynamic_cast<DockWindow*>(dockWindow);
-    IF_ASSERT_FAILED(window) {
-        return;
-    }
-
-    window->addDockWidget(m_central->dockWidget(), KDDockWidgets::Location_OnRight);
-    m_central->init();
+    window.addDock(m_central, KDDockWidgets::Location_OnRight);
 
     for (DockPanel* panel : m_panels.list()) {
-        window->addDockWidget(panel->dockWidget(), KDDockWidgets::Location_OnLeft, nullptr, panel->preferredSize());
-        panel->init();
+        window.addDock(panel, KDDockWidgets::Location_OnLeft);
     }
 
     DockToolBar* prevToolBar = nullptr;
     for (DockToolBar* toolBar : m_toolBars.list()) {
         auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
-        window->addDockWidget(toolBar, location, prevToolBar, toolBar->preferredSize());
-
-        toolBar->init();
+        window.addDock(toolBar, location, prevToolBar);
         prevToolBar = toolBar;
     }
 
     DockStatusBar* prevStatusBar = nullptr;
     for (DockStatusBar* statusBar : m_statusBars.list()) {
         auto location = prevStatusBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnBottom;
-        window->addDockWidget(statusBar, location, prevStatusBar, statusBar->preferredSize());
-
-        statusBar->init();
+        window.addDock(statusBar, location, prevStatusBar);
         prevStatusBar = statusBar;
+    }
+}
+
+void DockPage::close()
+{
+    TRACEFUNC;
+
+    auto toolbars = m_toolBars.list();
+    auto panels = m_panels.list();
+    auto statusBars = m_statusBars.list();
+
+    QList<DockBase*> allDocks;
+    allDocks << QList<DockBase*>(toolbars.begin(), toolbars.end());
+    allDocks << m_central;
+    allDocks << QList<DockBase*>(panels.begin(), panels.end());
+    allDocks << QList<DockBase*>(statusBars.begin(), statusBars.end());
+
+    for (DockBase* dock : allDocks) {
+        dock->close();
     }
 }
 

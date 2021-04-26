@@ -37,7 +37,7 @@ void DockPanel::init()
     DockBase::init();
 
     for (const DockPanel* panel : m_tabs.list()) {
-        addDockWidgetAsTab(panel->dockWidget());
+        dockWidget()->addDockWidgetAsTab(panel->dockWidget());
     }
 }
 
