@@ -59,6 +59,7 @@ DockPage {
 
     readonly property int defaultPanelWidth: 160
     readonly property int minimumPanelWidth: 50
+    readonly property int maximumPanelWidth: 260
     readonly property int toolBarHeight: 48
 
     toolBars: [
@@ -95,6 +96,7 @@ DockPage {
 
             width: root.defaultPanelWidth
             minimumWidth: root.minimumPanelWidth
+            maximumWidth: root.maximumPanelWidth
 
             onClosed: {
                 root.pageModel.isPalettePanelVisible = false
@@ -111,6 +113,7 @@ DockPage {
 
             width: root.defaultPanelWidth
             minimumWidth: root.minimumPanelWidth
+            maximumWidth: root.maximumPanelWidth
 
             onClosed: {
                 root.pageModel.isInstrumentsPanelVisible = false
@@ -127,6 +130,7 @@ DockPage {
 
             width: root.defaultPanelWidth
             minimumWidth: root.minimumPanelWidth
+            maximumWidth: root.maximumPanelWidth
 
             tabs: [ instrumentsPanel, palettePanel ]
 
