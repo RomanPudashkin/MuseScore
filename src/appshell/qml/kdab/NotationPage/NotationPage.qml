@@ -183,6 +183,8 @@ DockPage {
             minimumWidth: root.minimumPanelWidth
             maximumWidth: root.maximumPanelWidth
 
+            tabifyPanel: palettePanel
+
             onClosed: {
                 root.pageModel.isInstrumentsPanelVisible = false
             }
@@ -200,7 +202,7 @@ DockPage {
             minimumWidth: root.minimumPanelWidth
             maximumWidth: root.maximumPanelWidth
 
-            tabs: [ instrumentsPanel, palettePanel ]
+            tabifyPanel: instrumentsPanel
 
             onClosed: {
                 root.pageModel.isInspectorPanelVisible = false

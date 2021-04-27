@@ -99,7 +99,7 @@ void DockSetup::setup(QQmlEngine* engine)
     KDDockWidgets::Config::self().setQmlEngine(engine);
 
     auto flags = KDDockWidgets::Config::self().flags()
-            | KDDockWidgets::Config::Flag_HideTitleBarWhenTabsVisible;
+                 | KDDockWidgets::Config::Flag_HideTitleBarWhenTabsVisible;
 
     KDDockWidgets::Config::self().setFlags(flags);
 

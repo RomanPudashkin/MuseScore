@@ -21,43 +21,27 @@
 
 #include "dockpage.h"
 #include "docktoolbar.h"
+#include "dockpanel.h"
 
 #include "log.h"
 
-#include "thirdparty/KDDockWidgets/src/MainWindowBase.h"
+#include "thirdparty/KDDockWidgets/src/private/quick/MainWindowQuick_p.h"
 #include "thirdparty/KDDockWidgets/src/DockWidgetQuick.h"
-
-namespace mu::dock {
-class MainWindow : public KDDockWidgets::MainWindowBase
-{
-public:
-    MainWindow(QQuickItem* parent)
-        : KDDockWidgets::MainWindowBase("mainWindow", KDDockWidgets::MainWindowOption_None, parent)
-    {
-        setParentItem(parent);
-    }
-
-private:
-    KDDockWidgets::SideBar* sideBar(KDDockWidgets::SideBarLocation) const override
-    {
-        return nullptr;
-    }
-
-    QMargins centerWidgetMargins() const override
-    {
-        return {};
-    }
-};
-}
 
 using namespace mu::dock;
 
 DockWindow::DockWindow(QQuickItem* parent)
     : QQuickItem(parent),
-      m_mainWindow(new MainWindow(this)),
-      m_toolBars(this),
-      m_pages(this)
+    m_toolBars(this),
+    m_pages(this)
 {
+}
+
+void DockWindow::componentComplete()
+{
+    QQuickItem::componentComplete();
+
+    m_mainWindow = new KDDockWidgets::MainWindowQuick("mainWindow", KDDockWidgets::MainWindowOption::MainWindowOption_None, this);
 }
 
 QString DockWindow::currentPageUri() const
@@ -99,24 +83,28 @@ void DockWindow::loadPage(const QString& uri)
     emit currentPageUriChanged(uri);
 }
 
-void DockWindow::loadPageContent(DockPage* page)
+void DockWindow::loadPageContent(const DockPage* page)
 {
     TRACEFUNC;
 
     addDock(page->centralDock(), KDDockWidgets::Location_OnRight);
 
     for (DockPanel* panel : page->panels()) {
+        //! TODO: add an ability to change location of panels
         addDock(panel, KDDockWidgets::Location_OnLeft);
     }
 
-    DockToolBar* prevToolBar = nullptr;
+    const DockToolBar* prevToolBar = nullptr;
     for (DockToolBar* toolBar : page->toolBars()) {
+        //! NOTE: need to add dock to its default position
+        //! the following dock will be added on the right side
+        //! if there is a dock at the default position
         auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
         addDock(toolBar, location, prevToolBar);
         prevToolBar = toolBar;
     }
 
-    DockStatusBar* prevStatusBar = nullptr;
+    const DockStatusBar* prevStatusBar = nullptr;
     for (DockStatusBar* statusBar : page->statusBars()) {
         auto location = prevStatusBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnBottom;
         addDock(statusBar, location, prevStatusBar);
@@ -133,9 +121,22 @@ void DockWindow::loadPageContent(DockPage* page)
         addDock(toolBar, location, prevToolBar);
         prevToolBar = toolBar;
     }
+
+    unitePanelsToTabs(page);
 }
 
-void DockWindow::addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo)
+void DockWindow::unitePanelsToTabs(const DockPage* page)
+{
+    for (const DockPanel* panel : page->panels()) {
+        const DockPanel* tab = panel->tabifyPanel();
+
+        if (tab) {
+            panel->dockWidget()->addDockWidgetAsTab(tab->dockWidget());
+        }
+    }
+}
+
+void DockWindow::addDock(DockBase* dock, KDDockWidgets::Location location, const DockBase* relativeTo)
 {
     IF_ASSERT_FAILED(dock) {
         return;

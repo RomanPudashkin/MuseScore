@@ -25,25 +25,24 @@ using namespace mu::dock;
 using namespace mu::uicomponents;
 
 DockPanel::DockPanel(QQuickItem* parent)
-    : DockBase(parent), m_tabs(this)
+    : DockBase(parent)
 {
     setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 }
 
-void DockPanel::init()
+DockPanel* DockPanel::tabifyPanel() const
 {
-    TRACEFUNC;
-
-    DockBase::init();
-
-    for (const DockPanel* panel : m_tabs.list()) {
-        dockWidget()->addDockWidgetAsTab(panel->dockWidget());
-    }
+    return m_tabifyPanel;
 }
 
-QQmlListProperty<DockPanel> DockPanel::tabsProperty()
+void DockPanel::setTabifyPanel(DockPanel* panel)
 {
-    return m_tabs.property();
+    if (panel == m_tabifyPanel) {
+        return;
+    }
+
+    m_tabifyPanel = panel;
+    emit tabifyPanelChanged(panel);
 }
 
 DockType DockPanel::type() const

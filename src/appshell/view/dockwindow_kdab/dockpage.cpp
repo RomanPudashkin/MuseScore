@@ -30,10 +30,10 @@ using namespace mu::dock;
 
 DockPage::DockPage(QQuickItem* parent)
     : QQuickItem(parent),
-      m_mainToolBars(this),
-      m_toolBars(this),
-      m_panels(this),
-      m_statusBars(this)
+    m_mainToolBars(this),
+    m_toolBars(this),
+    m_panels(this),
+    m_statusBars(this)
 {
 }
 

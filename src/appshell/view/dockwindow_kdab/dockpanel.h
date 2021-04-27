@@ -28,19 +28,23 @@ class DockPanel : public DockBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQmlListProperty<mu::dock::DockPanel> tabs READ tabsProperty)
+    Q_PROPERTY(DockPanel* tabifyPanel READ tabifyPanel WRITE setTabifyPanel NOTIFY tabifyPanelChanged)
 
 public:
     explicit DockPanel(QQuickItem* parent = nullptr);
 
-    void init() override;
+    DockPanel* tabifyPanel() const;
 
-    QQmlListProperty<mu::dock::DockPanel> tabsProperty();
+public slots:
+    void setTabifyPanel(DockPanel* panel);
+
+signals:
+    void tabifyPanelChanged(DockPanel* panel);
 
 private:
     DockType type() const override;
 
-    uicomponents::QmlListProperty<DockPanel> m_tabs;
+    DockPanel* m_tabifyPanel = nullptr;
 };
 }
 

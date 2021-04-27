@@ -56,9 +56,14 @@ signals:
     void currentPageUriChanged(const QString& uri);
 
 private:
+    void componentComplete() override;
+
     DockPage* pageByUri(const QString& uri) const;
-    void loadPageContent(DockPage* page);
-    void addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo = nullptr);
+
+    void loadPageContent(const DockPage* page);
+    void unitePanelsToTabs(const DockPage* page);
+
+    void addDock(DockBase* dock, KDDockWidgets::Location location, const DockBase* relativeTo = nullptr);
 
     KDDockWidgets::MainWindowBase* m_mainWindow = nullptr;
     QString m_currentPageUri;
