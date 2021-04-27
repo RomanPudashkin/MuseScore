@@ -37,11 +37,6 @@ DockPage::DockPage(QQuickItem* parent)
 {
 }
 
-QString DockPage::uniqueName() const
-{
-    return m_uniqueName;
-}
-
 QString DockPage::uri() const
 {
     return m_uri;
@@ -65,16 +60,6 @@ DockCentral* DockPage::centralDock() const
 QQmlListProperty<DockStatusBar> DockPage::statusBarsProperty()
 {
     return m_statusBars.property();
-}
-
-void DockPage::setUniqueName(const QString& name)
-{
-    if (name == m_uniqueName) {
-        return;
-    }
-
-    m_uniqueName = name;
-    emit uniqueNameChanged(name);
 }
 
 void DockPage::setUri(const QString& uri)
@@ -145,6 +130,5 @@ void DockPage::componentComplete()
 {
     QQuickItem::componentComplete();
 
-    Q_ASSERT(!m_uniqueName.isEmpty());
     Q_ASSERT(!m_uri.isEmpty());
 }

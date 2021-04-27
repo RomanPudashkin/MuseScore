@@ -8,7 +8,7 @@ import "../docksystem"
 DockPage {
     id: publishPage
 
-    uniqueName: "Publish"
+    objectName: "Publish"
 
     central: Rectangle {
         color: ui.theme.backgroundSecondaryColor

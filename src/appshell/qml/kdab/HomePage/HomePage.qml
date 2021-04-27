@@ -17,7 +17,7 @@ DockPage {
     property string item: "scores"
     property string subItem: ""
 
-    uniqueName: "Home"
+    objectName: "Home"
 
     onItemChanged: {
         Qt.callLater(root.setCurrentCentral, item)
@@ -43,7 +43,7 @@ DockPage {
 
     panels: [
         DockPanel {
-            uniqueName: "homeMenu"
+            objectName: "homeMenu"
 
             minimumWidth: 76
             maximumWidth: 292

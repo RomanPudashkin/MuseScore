@@ -37,11 +37,6 @@ QString DockBase::title() const
     return m_title;
 }
 
-QString DockBase::uniqueName() const
-{
-    return m_uniqueName;
-}
-
 int DockBase::minimumWidth() const
 {
     return m_minimumWidth;
@@ -85,16 +80,6 @@ void DockBase::setTitle(const QString& title)
 
     m_title = title;
     emit titleChanged();
-}
-
-void DockBase::setUniqueName(const QString& uniqueName)
-{
-    if (uniqueName == m_uniqueName) {
-        return;
-    }
-
-    m_uniqueName = uniqueName;
-    emit uniqueNameChanged();
 }
 
 void DockBase::setMinimumWidth(int width)
@@ -170,7 +155,7 @@ void DockBase::close()
 
 void DockBase::componentComplete()
 {
-    m_dockWidget = new KDDockWidgets::DockWidgetQuick(m_uniqueName);
+    m_dockWidget = new KDDockWidgets::DockWidgetQuick(objectName());
     m_dockWidget->setWidget(childItems().constFirst());
     m_dockWidget->setTitle(m_title);
 

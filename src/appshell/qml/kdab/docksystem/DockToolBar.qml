@@ -52,7 +52,7 @@ Dock.DockToolBar {
 
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-                mouseArea.objectName: root.uniqueName + "toolBarMouseAreaHorizontal"
+                mouseArea.objectName: root.objectName + "toolBarMouseAreaHorizontal"
 
                 normalStateColor: "transparent"
                 icon: IconCode.TOOLBAR_GRIP
@@ -82,7 +82,7 @@ Dock.DockToolBar {
 
                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
-                mouseArea.objectName: root.uniqueName + "toolBarMouseAreaVertical"
+                mouseArea.objectName: root.objectName + "toolBarMouseAreaVertical"
 
                 normalStateColor: "transparent"
                 icon: IconCode.TOOLBAR_GRIP

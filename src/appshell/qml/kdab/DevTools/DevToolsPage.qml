@@ -21,7 +21,7 @@ import "../docksystem"
 DockPage {
     id: root
 
-    uniqueName: "DevTools"
+    objectName: "DevTools"
 
     function setCurrentCentral(name) {
         switch (name) {
@@ -44,7 +44,7 @@ DockPage {
         DockPanel {
             id: devtoolsPanel
 
-            uniqueName: "devtoolsPanel"
+            objectName: "devtoolsPanel"
 
             minimumWidth: 200
             maximumWidth: 292

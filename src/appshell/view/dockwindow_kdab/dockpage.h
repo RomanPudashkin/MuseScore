@@ -33,7 +33,6 @@ class DockPage : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString uniqueName READ uniqueName WRITE setUniqueName NOTIFY uniqueNameChanged)
     Q_PROPERTY(QString uri READ uri WRITE setUri NOTIFY uriChanged)
     Q_PROPERTY(QQmlListProperty<mu::dock::DockToolBar> toolBars READ toolBarsProperty)
     Q_PROPERTY(QQmlListProperty<mu::dock::DockPanel> panels READ panelsProperty)
@@ -43,7 +42,6 @@ class DockPage : public QQuickItem
 public:
     explicit DockPage(QQuickItem* parent = nullptr);
 
-    QString uniqueName() const;
     QString uri() const;
 
     QQmlListProperty<mu::dock::DockToolBar> toolBarsProperty();
@@ -56,7 +54,6 @@ public:
     void close();
 
 public slots:
-    void setUniqueName(const QString& name);
     void setUri(const QString& uri);
     void setCentralDock(DockCentral* central);
 
@@ -68,7 +65,6 @@ signals:
 private:
     void componentComplete() override;
 
-    QString m_uniqueName;
     QString m_uri;
     uicomponents::QmlListProperty<DockToolBar> m_toolBars;
     uicomponents::QmlListProperty<DockPanel> m_panels;

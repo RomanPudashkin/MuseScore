@@ -8,7 +8,7 @@ Dock.DockPage {
     property alias central: central.sourceComponent
 
     centralDock: Dock.DockCentral {
-        uniqueName: root.uniqueName + "_central"
+        objectName: root.objectName + "_central"
 
         Loader {
             id: central

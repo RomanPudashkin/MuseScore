@@ -16,7 +16,7 @@ import "../../NotationPage"
 DockPage {
     id: root
 
-    uniqueName: "Notation"
+    objectName: "Notation"
 
     property var color: ui.theme.backgroundPrimaryColor
     property var borderColor: ui.theme.strokeColor
@@ -66,7 +66,7 @@ DockPage {
         DockToolBar {
             id: notationNoteInputBar
 
-            uniqueName: "notationNoteInputBar"
+            objectName: "notationNoteInputBar"
             title: qsTrc("appshell", "Note Input")
 
             width: root.width
@@ -91,7 +91,7 @@ DockPage {
         DockPanel {
             id: palettePanel
 
-            uniqueName: "palettePanel"
+            objectName: "palettePanel"
             title: qsTrc("appshell", "Palette")
 
             width: root.defaultPanelWidth
@@ -108,7 +108,7 @@ DockPage {
         DockPanel {
             id: instrumentsPanel
 
-            uniqueName: "instrumentsPanel"
+            objectName: "instrumentsPanel"
             title: qsTrc("appshell", "Instruments")
 
             width: root.defaultPanelWidth
@@ -125,7 +125,7 @@ DockPage {
         DockPanel {
             id: inspectorPanel
 
-            uniqueName: "inspectorPanel"
+            objectName: "inspectorPanel"
             title: qsTrc("appshell", "Inspector")
 
             width: root.defaultPanelWidth
@@ -156,7 +156,7 @@ DockPage {
         DockStatusBar {
             id: notationStatusBar
 
-            uniqueName: "notationStatusBar"
+            objectName: "notationStatusBar"
 
             height: root.toolBarHeight
             minimumHeight: root.toolBarHeight

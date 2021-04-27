@@ -33,7 +33,6 @@ class DockBase : public QQuickItem
     Q_OBJECT
 
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
-    Q_PROPERTY(QString uniqueName READ uniqueName WRITE setUniqueName NOTIFY uniqueNameChanged)
 
     Q_PROPERTY(int minimumWidth READ minimumWidth WRITE setMinimumWidth NOTIFY minimumSizeChanged)
     Q_PROPERTY(int minimumHeight READ minimumHeight WRITE setMinimumHeight NOTIFY minimumSizeChanged)
@@ -63,7 +62,6 @@ public:
 
 public slots:
     void setTitle(const QString& title);
-    void setUniqueName(const QString& uniqueName);
 
     virtual void setMinimumWidth(int width);
     virtual void setMinimumHeight(int height);
@@ -74,7 +72,6 @@ public slots:
 
 signals:
     void titleChanged();
-    void uniqueNameChanged();
     void minimumSizeChanged();
     void maximumSizeChanged();
     void allowedAreasChanged();

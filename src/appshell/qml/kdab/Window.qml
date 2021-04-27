@@ -59,7 +59,7 @@ ApplicationWindow {
             DockToolBar {
                 id: mainToolBar
 
-                uniqueName: "mainToolBar"
+                objectName: "mainToolBar"
                 title: qsTrc("appshell", "Main Toolbar")
 
                 width: root.width / 2
@@ -88,7 +88,7 @@ ApplicationWindow {
             DockToolBar {
                 id: notationToolBar
 
-                uniqueName: "notationToolBar"
+                objectName: "notationToolBar"
                 title: qsTrc("appshell", "Notation Toolbar")
 
                 width: 198
@@ -117,7 +117,7 @@ ApplicationWindow {
             DockToolBar {
                 id: playbackToolBar
 
-                uniqueName: "playbackToolBar"
+                objectName: "playbackToolBar"
                 title: qsTrc("appshell", "Playback Controls")
 
                 width: root.width / 3
@@ -142,7 +142,7 @@ ApplicationWindow {
             DockToolBar	{
                 id: undoRedoToolBar
 
-                uniqueName: "undoRedoToolBar"
+                objectName: "undoRedoToolBar"
                 title: qsTrc("appshell", "Undo/Redo Toolbar")
 
                 width: 74
