@@ -148,22 +148,31 @@ void DockBase::init()
 
 void DockBase::close()
 {
-    if (dockWidget()) {
-        dockWidget()->forceClose();
+    IF_ASSERT_FAILED(dockWidget()) {
+        return;
     }
+
+    dockWidget()->forceClose();
 }
 
 void DockBase::componentComplete()
 {
+    QQuickItem::componentComplete();
+
+    auto children = childItems();
+    IF_ASSERT_FAILED(!children.isEmpty()) {
+        return;
+    }
+
     m_dockWidget = new KDDockWidgets::DockWidgetQuick(objectName());
-    m_dockWidget->setWidget(childItems().constFirst());
+    m_dockWidget->setWidget(children.constFirst());
     m_dockWidget->setTitle(m_title);
 
     DockProperties properties;
     properties.type = type();
     properties.allowedAreas = allowedAreas();
 
-    writePropertiesToObject(properties, *dockWidget());
+    writePropertiesToObject(properties, *m_dockWidget);
 }
 
 void DockBase::applySizeConstraints()

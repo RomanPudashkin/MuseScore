@@ -9,6 +9,7 @@ DockPage {
     id: publishPage
 
     objectName: "Publish"
+    uri: "musescore://publish"
 
     central: Rectangle {
         color: ui.theme.backgroundSecondaryColor

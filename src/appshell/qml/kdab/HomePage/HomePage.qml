@@ -18,6 +18,7 @@ DockPage {
     property string subItem: ""
 
     objectName: "Home"
+    uri: "musescore://home"
 
     onItemChanged: {
         Qt.callLater(root.setCurrentCentral, item)

@@ -52,13 +52,13 @@ public:
 
     Q_INVOKABLE void loadPage(const QString& uri);
 
-    void addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo = nullptr);
-
 signals:
     void currentPageUriChanged(const QString& uri);
 
 private:
     DockPage* pageByUri(const QString& uri) const;
+    void loadPageContent(DockPage* page);
+    void addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo = nullptr);
 
     KDDockWidgets::MainWindowBase* m_mainWindow = nullptr;
     QString m_currentPageUri;

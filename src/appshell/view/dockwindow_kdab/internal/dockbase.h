@@ -99,7 +99,6 @@ private:
     int m_maximumHeight = 0;
 
     QString m_title;
-    QString m_uniqueName;
     Qt::DockWidgetAreas m_allowedAreas = Qt::NoDockWidgetArea;
     KDDockWidgets::DockWidgetQuick* m_dockWidget = nullptr;
 };

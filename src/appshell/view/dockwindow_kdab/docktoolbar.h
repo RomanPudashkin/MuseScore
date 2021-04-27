@@ -29,15 +29,11 @@ class DockToolBar : public DockBase
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 
-    Q_PROPERTY(QStringList allowedPagesUriList READ allowedPagesUriList WRITE setAllowedPagesUriList NOTIFY allowedPagesUriListChanged)
-
 public:
     explicit DockToolBar(QQuickItem* parent = nullptr);
 
     bool movable() const;
     Qt::Orientation orientation() const;
-
-    QStringList allowedPagesUriList() const;
 
 public slots:
     void setMinimumWidth(int width) override;
@@ -48,15 +44,12 @@ public slots:
     void setMovable(bool movable);
     void setOrientation(Qt::Orientation orientation);
 
-    void updateOrientation();
-
-    void setAllowedPagesUriList(QStringList allowedPagesUriList);
-
 signals:
     void movableChanged(bool movable);
     void orientationChanged(Qt::Orientation orientation);
 
-    void allowedPagesUriListChanged(QStringList allowedPagesUriList);
+private slots:
+     void updateOrientation();
 
 private:
     void componentComplete() override;
@@ -65,7 +58,6 @@ private:
 
     bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;
-    QStringList m_allowedPagesUriList;
 };
 }
 

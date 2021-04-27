@@ -93,22 +93,46 @@ void DockWindow::loadPage(const QString& uri)
         currentPage->close();
     }
 
-    newPage->init(*this);
-
-    DockToolBar* prevToolBar = nullptr;
-    for (DockToolBar* toolBar : m_toolBars.list()) {
-        auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
-        addDock(toolBar, location, prevToolBar);
-
-        if (!toolBar->allowedPagesUriList().empty() && !toolBar->allowedPagesUriList().contains(uri)) {
-            toolBar->close();
-        }
-
-        prevToolBar = toolBar;
-    }
+    loadPageContent(newPage);
 
     m_currentPageUri = uri;
     emit currentPageUriChanged(uri);
+}
+
+void DockWindow::loadPageContent(DockPage* page)
+{
+    TRACEFUNC;
+
+    addDock(page->centralDock(), KDDockWidgets::Location_OnRight);
+
+    for (DockPanel* panel : page->panels()) {
+        addDock(panel, KDDockWidgets::Location_OnLeft);
+    }
+
+    DockToolBar* prevToolBar = nullptr;
+    for (DockToolBar* toolBar : page->toolBars()) {
+        auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
+        addDock(toolBar, location, prevToolBar);
+        prevToolBar = toolBar;
+    }
+
+    DockStatusBar* prevStatusBar = nullptr;
+    for (DockStatusBar* statusBar : page->statusBars()) {
+        auto location = prevStatusBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnBottom;
+        addDock(statusBar, location, prevStatusBar);
+        prevStatusBar = statusBar;
+    }
+
+    QList<DockToolBar*> allToolBars = m_toolBars.list();
+    allToolBars << page->mainToolBars();
+
+    prevToolBar = nullptr;
+
+    for (DockToolBar* toolBar : allToolBars) {
+        auto location = prevToolBar ? KDDockWidgets::Location_OnRight : KDDockWidgets::Location_OnTop;
+        addDock(toolBar, location, prevToolBar);
+        prevToolBar = toolBar;
+    }
 }
 
 void DockWindow::addDock(DockBase* dock, KDDockWidgets::Location location, DockBase* relativeTo)
@@ -118,7 +142,7 @@ void DockWindow::addDock(DockBase* dock, KDDockWidgets::Location location, DockB
     }
 
     KDDockWidgets::DockWidgetBase* relativeDock = relativeTo ? relativeTo->dockWidget() : nullptr;
-    m_mainWindow->addDockWidget(dock->dockWidget(), location,  relativeDock, dock->preferredSize());
+    m_mainWindow->addDockWidget(dock->dockWidget(), location, relativeDock, dock->preferredSize());
     dock->init();
 }
 

@@ -22,6 +22,7 @@ DockPage {
     id: root
 
     objectName: "DevTools"
+    uri: "musescore://devtools"
 
     function setCurrentCentral(name) {
         switch (name) {

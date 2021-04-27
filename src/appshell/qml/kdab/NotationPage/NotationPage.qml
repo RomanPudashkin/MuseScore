@@ -9,6 +9,7 @@ import MuseScore.NotationScene 1.0
 import MuseScore.Palette 1.0
 import MuseScore.Inspector 1.0
 import MuseScore.Instruments 1.0
+import MuseScore.Playback 1.0
 
 import "../docksystem"
 import "../../NotationPage"
@@ -17,6 +18,7 @@ DockPage {
     id: root
 
     objectName: "Notation"
+    uri: "musescore://notation"
 
     property var color: ui.theme.backgroundPrimaryColor
     property var borderColor: ui.theme.strokeColor
@@ -25,6 +27,8 @@ DockPage {
     property bool isPlaybackToolBarVisible: false
     property bool isUndoRedoToolBarVisible: false
     property bool isNotationNavigatorVisible: false
+
+    property var topToolKeyNavSec
 
     property NotationPageModel pageModel: NotationPageModel {}
 
@@ -62,6 +66,69 @@ DockPage {
     readonly property int maximumPanelWidth: 260
     readonly property int toolBarHeight: 48
 
+    mainToolBars: [
+        DockToolBar {
+            id: notationToolBar
+
+            objectName: "notationToolBar"
+            title: qsTrc("appshell", "Notation Toolbar")
+
+            width: 198
+            height: root.toolBarHeight
+            minimumWidth: 198
+            minimumHeight: height
+            maximumHeight: height
+
+            contentComponent: NotationToolBar {
+                keynav.section: root.topToolKeyNavSec
+                keynav.order: 2
+
+                onActiveFocusRequested: {
+                    if (keynav.active) {
+                        notationToolBar.forceActiveFocus()
+                    }
+                }
+            }
+        },
+
+        DockToolBar {
+            id: playbackToolBar
+
+            objectName: "playbackToolBar"
+            title: qsTrc("appshell", "Playback Controls")
+
+            width: root.width / 3
+            height: root.toolbarHeight
+            minimumWidth: floating ? 526 : 476
+            minimumHeight: floating ? 76 : root.toolBarHeight
+            maximumHeight: height
+
+            contentComponent: PlaybackToolBar {
+                keynav.section: root.topToolKeyNavSec
+                keynav.order: 3
+
+                floating: playbackToolBar.floating
+            }
+        },
+
+        DockToolBar	{
+            id: undoRedoToolBar
+
+            objectName: "undoRedoToolBar"
+            title: qsTrc("appshell", "Undo/Redo Toolbar")
+
+            width: 74
+            height: root.toolBarHeight
+            minimumWidth: width
+            minimumHeight: height
+            maximumHeight: height
+
+            movable: false
+
+            contentComponent: UndoRedoToolBar {}
+        }
+    ]
+
     toolBars: [
         DockToolBar {
             id: notationNoteInputBar
@@ -81,6 +148,7 @@ DockPage {
 
             contentComponent: NoteInputBar {
                 orientation: notationNoteInputBar.orientation
+
                 keynav.section: noteInputKeyNavSec
                 keynav.order: 1
             }

@@ -1,15 +1,10 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 import MuseScore.AppShell 1.0
 import MuseScore.Dock 1.0
 import MuseScore.Ui 1.0
 import MuseScore.UiComponents 1.0
-
-import MuseScore.Shortcuts 1.0
-import MuseScore.Playback 1.0
-import MuseScore.NotationScene 1.0
 
 import "./HomePage"
 import "./NotationPage"
@@ -49,11 +44,8 @@ ApplicationWindow {
         anchors.fill: parent
 
         Component.onCompleted: {
-            api.launcher.open("musescore://home")
+            api.launcher.open(homePage.uri)
         }
-
-        readonly property int toolbarHeight: 48
-        property bool isNotationPage: currentPageUri === notationPage.uri
 
         toolBars: [
             DockToolBar {
@@ -63,7 +55,7 @@ ApplicationWindow {
                 title: qsTrc("appshell", "Main Toolbar")
 
                 width: root.width / 2
-                height: window.toolbarHeight
+                height: 48
                 minimumWidth: 304
                 minimumHeight: height
                 maximumHeight: height
@@ -83,108 +75,21 @@ ApplicationWindow {
                         api.launcher.open(uri)
                     }
                 }
-            },
-
-            DockToolBar {
-                id: notationToolBar
-
-                objectName: "notationToolBar"
-                title: qsTrc("appshell", "Notation Toolbar")
-
-                width: 198
-                height: window.toolbarHeight
-                minimumWidth: 198
-                minimumHeight: height
-                maximumHeight: height
-
-                allowedPagesUriList: [ notationPage.uri ]
-
-                contentComponent: NotationToolBar {
-                    id: notationToolBarContent
-
-                    keynav.section: topToolKeyNavSec
-                    keynav.order: 2
-                    keynav.enabled: notationToolBar.visible
-
-                    onActiveFocusRequested: {
-                        if (keynav.active) {
-                            notationToolBar.forceActiveFocus()
-                        }
-                    }
-                }
-            },
-
-            DockToolBar {
-                id: playbackToolBar
-
-                objectName: "playbackToolBar"
-                title: qsTrc("appshell", "Playback Controls")
-
-                width: root.width / 3
-                height: window.toolbarHeight
-                minimumWidth: floating ? 526 : 476
-                minimumHeight: floating ? 76 : window.toolbarHeight
-                maximumHeight: height
-
-                allowedPagesUriList: [ notationPage.uri ]
-
-                contentComponent: PlaybackToolBar {
-                    id: playbackToolBarContent
-
-                    keynav.section: topToolKeyNavSec
-                    keynav.order: 3
-                    keynav.enabled: window.isNotationPage
-
-                    floating: playbackToolBar.floating
-                }
-            },
-
-            DockToolBar	{
-                id: undoRedoToolBar
-
-                objectName: "undoRedoToolBar"
-                title: qsTrc("appshell", "Undo/Redo Toolbar")
-
-                width: 74
-                height: window.toolbarHeight
-                minimumWidth: width
-                minimumHeight: height
-                maximumHeight: height
-
-                movable: false
-
-                allowedPagesUriList: [ notationPage.uri ]
-
-                contentComponent: UndoRedoToolBar {
-                    id: undoRedoToolBarContent
-                }
             }
         ]
 
         pages: [
             HomePage {
                 id: homePage
-
-                uri: "musescore://home"
             },
 
             NotationPage {
-                id: notationPage
-
-                uri: "musescore://notation"
+                topToolKeyNavSec: root.topToolKeyNavSec
             },
 
-            PublishPage {
-                id: publishPage
+            PublishPage {},
 
-                uri: "musescore://publish"
-            },
-
-            DevToolsPage {
-                id: devtoolsPage
-
-                uri: "musescore://devtools"
-            }
+            DevToolsPage {}
         ]
     }
 }

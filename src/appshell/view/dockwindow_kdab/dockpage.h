@@ -24,7 +24,6 @@
 #include <QQuickItem>
 
 namespace mu::dock {
-class DockWindow;
 class DockToolBar;
 class DockPanel;
 class DockCentral;
@@ -34,6 +33,7 @@ class DockPage : public QQuickItem
     Q_OBJECT
 
     Q_PROPERTY(QString uri READ uri WRITE setUri NOTIFY uriChanged)
+    Q_PROPERTY(QQmlListProperty<mu::dock::DockToolBar> mainToolBars READ mainToolBarsProperty)
     Q_PROPERTY(QQmlListProperty<mu::dock::DockToolBar> toolBars READ toolBarsProperty)
     Q_PROPERTY(QQmlListProperty<mu::dock::DockPanel> panels READ panelsProperty)
     Q_PROPERTY(mu::dock::DockCentral* centralDock READ centralDock WRITE setCentralDock NOTIFY centralDockChanged)
@@ -44,12 +44,16 @@ public:
 
     QString uri() const;
 
-    QQmlListProperty<mu::dock::DockToolBar> toolBarsProperty();
-    QQmlListProperty<mu::dock::DockPanel> panelsProperty();
-    DockCentral* centralDock() const;
-    QQmlListProperty<mu::dock::DockStatusBar> statusBarsProperty();
+    QQmlListProperty<DockToolBar> mainToolBarsProperty();
+    QQmlListProperty<DockToolBar> toolBarsProperty();
+    QQmlListProperty<DockPanel> panelsProperty();
+    QQmlListProperty<DockStatusBar> statusBarsProperty();
 
-    Q_INVOKABLE void init(DockWindow& window);
+    QList<DockToolBar*> mainToolBars() const;
+    QList<DockToolBar*> toolBars() const;
+    DockCentral* centralDock() const;
+    QList<DockPanel*> panels() const;
+    QList<DockStatusBar*> statusBars() const;
 
     void close();
 
@@ -66,6 +70,7 @@ private:
     void componentComplete() override;
 
     QString m_uri;
+    uicomponents::QmlListProperty<DockToolBar> m_mainToolBars;
     uicomponents::QmlListProperty<DockToolBar> m_toolBars;
     uicomponents::QmlListProperty<DockPanel> m_panels;
     DockCentral* m_central = nullptr;
