@@ -296,6 +296,7 @@ MenuItemList AppMenuModel::recentScores() const
         item.title = !meta.title.isEmpty() ? meta.title : meta.fileName.toQString();
         item.args = ActionData::make_arg1<io::path>(meta.filePath);
         item.state.enabled = true;
+        item.selectable = true;
 
         items << item;
     }
