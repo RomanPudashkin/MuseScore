@@ -109,12 +109,9 @@ PopupView {
             }
         }
 
-        DropShadow {
+        StyledDropShadow {
             anchors.fill: parent
             source: mainBackground
-            color: "#75000000"
-            verticalOffset: 4
-            samples: 30
         }
     }
 

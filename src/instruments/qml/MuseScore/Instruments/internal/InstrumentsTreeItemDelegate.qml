@@ -174,9 +174,6 @@ Item {
 
         anchors.fill: parent
         source: background
-        color: "#75000000"
-        verticalOffset: 4
-        samples: 30
         visible: false
     }
 
