@@ -39,6 +39,8 @@ public:
     bool movable() const;
     Qt::Orientation orientation() const;
 
+    Q_INVOKABLE void setDraggableMouseArea(QQuickItem* mouseArea);
+
 public slots:
     void setMinimumWidth(int width) override;
     void setMinimumHeight(int height) override;
@@ -57,8 +59,10 @@ private slots:
 
 private:
     void componentComplete() override;
-
     DockType type() const override;
+
+    class DraggableArea;
+    DraggableArea* m_draggableArea = nullptr;
 
     bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;

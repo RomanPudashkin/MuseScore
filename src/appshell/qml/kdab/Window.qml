@@ -60,6 +60,8 @@ ApplicationWindow {
                 minimumHeight: height
                 maximumHeight: height
 
+                movable: false
+
                 contentComponent: DOCKWINDOW.MainToolBar {
                     keynav.section: topToolKeyNavSec
                     keynav.order: 1

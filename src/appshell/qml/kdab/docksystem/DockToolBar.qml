@@ -12,18 +12,10 @@ Dock.DockToolBar {
 
     property bool floating: false
 
-    Component.onCompleted: {
-        toolBarGripModel.setToolBarWidget(root.dockWidget)
-    }
-
     Rectangle {
         anchors.fill: parent
 
         color: ui.theme.backgroundPrimaryColor
-
-        Dock.ToolBarGripModel {
-            id: toolBarGripModel
-        }
 
         Loader {
             id: loader
@@ -34,7 +26,7 @@ Dock.DockToolBar {
             sourceComponent: orientation === Qt.Horizontal ? horizontalView : verticalView
 
             onLoaded: {
-                toolBarGripModel.gripMouseArea = loader.item.gripMouseArea
+                root.setDraggableMouseArea(loader.item.gripMouseArea)
             }
         }
     }
@@ -52,7 +44,7 @@ Dock.DockToolBar {
 
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
-                mouseArea.objectName: root.objectName + "toolBarMouseAreaHorizontal"
+                mouseArea.objectName: root.objectName + "_toolBarMouseAreaHorizontal"
 
                 normalStateColor: "transparent"
                 icon: IconCode.TOOLBAR_GRIP
@@ -82,7 +74,7 @@ Dock.DockToolBar {
 
                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
-                mouseArea.objectName: root.objectName + "toolBarMouseAreaVertical"
+                mouseArea.objectName: root.objectName + "_toolBarMouseAreaVertical"
 
                 normalStateColor: "transparent"
                 icon: IconCode.TOOLBAR_GRIP

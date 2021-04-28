@@ -23,7 +23,6 @@
 #include "docksetup.h"
 
 #include "internal/dropindicators.h"
-#include "internal/toolbargripmodel.h"
 #include "internal/dockseparator.h"
 #include "internal/dockframemodel.h"
 
@@ -85,7 +84,6 @@ void DockSetup::registerQmlTypes()
     qmlRegisterType<DockToolBar>("MuseScore.Dock", 1, 0, "DockToolBar");
     qmlRegisterType<DockCentral>("MuseScore.Dock", 1, 0, "DockCentral");
     qmlRegisterType<DockPage>("MuseScore.Dock", 1, 0, "DockPage");
-    qmlRegisterType<ToolBarGripModel>("MuseScore.Dock", 1, 0, "ToolBarGripModel");
     qmlRegisterType<DockFrameModel>("MuseScore.Dock", 1, 0, "DockFrameModel");
 
     qRegisterMetaType<DropIndicators*>();
