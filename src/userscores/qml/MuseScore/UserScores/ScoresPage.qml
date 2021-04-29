@@ -33,7 +33,7 @@ FocusScope {
         }
     }
 
-    RowLayout {
+    Item {
         id: topLayout
 
         anchors.top: parent.top
@@ -43,24 +43,24 @@ FocusScope {
         anchors.right: parent.right
         anchors.rightMargin: privateProperties.sideMargin
 
-        spacing: 12
+        height: childrenRect.height
 
         StyledTextLabel {
             id: pageTitle
 
+            anchors.left: parent.left
+            anchors.right: searchField.left
+            anchors.rightMargin: 12
+
             text: qsTrc("userscores", "Scores")
             font: ui.theme.titleBoldFont
+            horizontalAlignment: Text.AlignLeft
         }
 
         SearchField {
             id: searchField
 
-            Layout.maximumWidth: width
-            Layout.alignment: Qt.AlignHCenter
-        }
-
-        Item {
-            Layout.preferredWidth: pageTitle.width
+            anchors.centerIn: parent
         }
     }
 
