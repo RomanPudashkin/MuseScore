@@ -12,7 +12,6 @@ FocusableItem {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.rightMargin: 48
 
     onContentHeightChanged: {
         if (contentHeight > implicitHeight) {

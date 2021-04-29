@@ -13,7 +13,7 @@ FocusableItem {
     property bool isExpanded: true
 
     anchors.left: parent.left
-    anchors.leftMargin: -expandButtonIcon.width / 2
+    anchors.leftMargin: -expandButtonIcon.width / 3
     anchors.right: parent.right
 
     implicitHeight: expandSectionRow.height

@@ -24,7 +24,7 @@ InspectorSectionView {
         Item {
 
             height: childrenRect.height
-            width: root.width
+            width: parent.width
 
             CheckBox {
                 anchors.left: parent.left

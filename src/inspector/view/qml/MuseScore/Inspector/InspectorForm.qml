@@ -30,16 +30,18 @@ FocusableItem {
     Flickable {
         id: flickableArea
 
+        property int sideMargin: 24
+
         anchors.top: tabTitleColumn.bottom
-        anchors.topMargin: 12
+        anchors.topMargin: sideMargin / 2
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: sideMargin
+        anchors.right: parent.right
+        anchors.rightMargin: sideMargin
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 24
+        anchors.bottomMargin: sideMargin
 
-        width: parent.width
-
-        contentWidth: contentItem.childrenRect.width
+        clip: true
 
         function updateContentHeight() {
             var resultContentHeight = 0
@@ -67,7 +69,8 @@ FocusableItem {
         }
 
         Column {
-            width: root.width
+            anchors.left: parent.left
+            anchors.right: parent.right
 
             spacing: 6
 
