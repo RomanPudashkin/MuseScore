@@ -135,6 +135,11 @@ void DockWindow::unitePanelsToTabs(const DockPage* page)
 
         if (tab) {
             panel->dockWidget()->addDockWidgetAsTab(tab->dockWidget());
+
+            KDDockWidgets::Frame* frame = panel->dockWidget()->frame();
+            if (frame) {
+                frame->setCurrentTabIndex(0);
+            }
         }
     }
 }
