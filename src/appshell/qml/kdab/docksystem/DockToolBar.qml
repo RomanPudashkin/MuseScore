@@ -10,8 +10,6 @@ Dock.DockToolBar {
 
     property Component contentComponent
 
-    property bool floating: false
-
     Rectangle {
         anchors.fill: parent
 
