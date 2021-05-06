@@ -70,17 +70,12 @@ signals:
 private:
     friend class IndicatorsWindow;
 
-    enum class IndicatorType {
-        Outter,
-        Central,
-        Inner
-    };
+    bool isIndicatorVisible(DropLocation location) const;
+    bool isDropAllowed(DropLocation location) const;
 
-    bool isIndicatorVisible(IndicatorType type, Qt::DockWidgetArea area = Qt::NoDockWidgetArea) const;
-    bool isAreaAllowed(Qt::DockWidgetArea area) const;
     bool isToolBar() const;
 
-    bool hoveringOverDock(DockType type) const;
+    const KDDockWidgets::DockWidgetBase* draggedDock() const;
     const KDDockWidgets::DockWidgetBase* hoveredDock() const;
 
     void setDropLocation(DropLocation);
@@ -88,6 +83,8 @@ private:
 
     bool onResize(QSize newSize) override;
     void updateVisibility() override;
+
+    void showDropAreaIfNeed(const QPoint& hoveredGlobalPos);
 
     KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
     IndicatorsWindow* m_indicatorsWindow = nullptr;
