@@ -57,6 +57,21 @@ void DockWindow::componentComplete()
     m_mainWindow = new KDDockWidgets::MainWindowQuick("mainWindow",
                                                       KDDockWidgets::MainWindowOption_None,
                                                       this);
+
+    mainWindow()->dockingHelperVisibleChanged().onReceive(this, [this](bool visible) {
+        DockPage* page = pageByUri(m_currentPageUri);
+        DockBase* helper = page ? page->toolBarsDockingHelper() : nullptr;
+
+        if (!helper) {
+            return;
+        }
+
+        if (visible) {
+            helper->show();
+        } else {
+            helper->hide();
+        }
+    });
 }
 
 QString DockWindow::currentPageUri() const
@@ -143,20 +158,27 @@ void DockWindow::loadPageContent(const DockPage* page)
     }
 
     unitePanelsToTabs(page);
+
+    for (DockBase* dock : page->allDocks()) {
+        if (!dock->isVisible()) {
+            dock->hide();
+        }
+    }
 }
 
 void DockWindow::unitePanelsToTabs(const DockPage* page)
 {
     for (const DockPanel* panel : page->panels()) {
         const DockPanel* tab = panel->tabifyPanel();
+        if (!tab) {
+            continue;
+        }
 
-        if (tab) {
-            panel->dockWidget()->addDockWidgetAsTab(tab->dockWidget());
+        panel->dockWidget()->addDockWidgetAsTab(tab->dockWidget());
 
-            KDDockWidgets::Frame* frame = panel->dockWidget()->frame();
-            if (frame) {
-                frame->setCurrentTabIndex(0);
-            }
+        KDDockWidgets::Frame* frame = panel->dockWidget()->frame();
+        if (frame) {
+            frame->setCurrentTabIndex(0);
         }
     }
 }

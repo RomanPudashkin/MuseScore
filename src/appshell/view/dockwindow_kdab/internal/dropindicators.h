@@ -25,6 +25,9 @@
 
 #include "../docktypes.h"
 
+#include "modularity/ioc.h"
+#include "ui/imainwindow.h"
+
 #include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
 
 namespace mu::dock {
@@ -44,6 +47,8 @@ class DropIndicators : public KDDockWidgets::DropIndicatorOverlayInterface
     Q_PROPERTY(bool innerRightIndicatorVisible READ innerRightIndicatorVisible NOTIFY indicatorsVisibilityChanged)
     Q_PROPERTY(bool innerTopIndicatorVisible READ innerTopIndicatorVisible NOTIFY indicatorsVisibilityChanged)
     Q_PROPERTY(bool innerBottomIndicatorVisible READ innerBottomIndicatorVisible NOTIFY indicatorsVisibilityChanged)
+
+    INJECT(dock, ui::IMainWindow, mainWindow)
 
 public:
     explicit DropIndicators(KDDockWidgets::DropArea* dropArea);

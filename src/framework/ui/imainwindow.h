@@ -23,6 +23,7 @@
 #define MU_UI_IMAINWINDOW_H
 
 #include "modularity/imoduleexport.h"
+#include "async/channel.h"
 
 class QMainWindow;
 class QWindow;
@@ -42,6 +43,9 @@ public:
     virtual bool isFullScreen() const = 0;
     virtual void toggleFullScreen() = 0;
     virtual const QScreen* screen() const = 0;
+
+    virtual void setDockingHelperVisible(bool visible) = 0;
+    virtual async::Channel<bool> dockingHelperVisibleChanged() const = 0;
 };
 }
 

@@ -239,7 +239,8 @@ void DropIndicators::updateVisibility()
     } else {
         m_rubberBand->setVisible(false);
         m_indicatorsWindow->setVisible(false);
-    }        
+        mainWindow()->setDockingHelperVisible(false);
+    }
 
     m_draggedDockProperties = readPropertiesFromObject(draggedDock());
 
@@ -264,7 +265,7 @@ void DropIndicators::showDropAreaIfNeed(const QPoint& hoveredGlobalPos)
         return;
     }
 
-    QRect dropAreaRect = hoveredDock->geometry();
+    QRect dropAreaRect = hoveredFrameRect();
 
     int distanceToLeftCorner = std::abs(dropAreaRect.x() - hoveredGlobalPos.x());
     int distanceToRightCorner = std::abs(dropAreaRect.x() + dropAreaRect.width() - hoveredGlobalPos.x());
@@ -276,12 +277,16 @@ void DropIndicators::showDropAreaIfNeed(const QPoint& hoveredGlobalPos)
         dropLocation = DropLocation_Right;
     }
 
-    dropAreaRect.setWidth(draggedDock->width());
+    if (draggedDock->width() <= hoveredDock->width() / 2) {
+        dropAreaRect.setWidth(draggedDock->width());
+    }
+
+    mainWindow()->setDockingHelperVisible(true);
 
     m_rubberBand->setGeometry(dropAreaRect);
     m_rubberBand->setVisible(true);
 
-    setDropLocation(dropLocation);
+    setCurrentDropLocation(dropLocation);
 }
 
 void DropIndicators::setDropLocation(DropLocation location)

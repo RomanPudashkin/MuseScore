@@ -205,7 +205,12 @@ void DockToolBar::updateOrientation()
         return;
     }
 
-    Layouting::ItemBoxContainer* container = dockWidget()->frame()->layoutItem()->parentBoxContainer();
+    KDDockWidgets::Frame* frame = dockWidget()->frame();
+    if (!frame) {
+        return;
+    }
+
+    Layouting::ItemBoxContainer* container = frame->layoutItem()->parentBoxContainer();
     if (!container) {
         return;
     }

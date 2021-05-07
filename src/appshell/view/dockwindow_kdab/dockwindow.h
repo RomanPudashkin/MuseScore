@@ -31,6 +31,8 @@
 
 #include "modularity/ioc.h"
 #include "ui/iuiconfiguration.h"
+#include "ui/imainwindow.h"
+#include "async/asyncable.h"
 
 namespace KDDockWidgets {
 class MainWindowBase;
@@ -41,7 +43,7 @@ namespace mu::dock {
 class DockToolBar;
 class DockPage;
 class DockBase;
-class DockWindow : public QQuickItem
+class DockWindow : public QQuickItem, public async::Asyncable
 {
     Q_OBJECT
 
@@ -51,6 +53,7 @@ class DockWindow : public QQuickItem
     Q_PROPERTY(QQmlListProperty<mu::dock::DockPage> pages READ pagesProperty)
 
     INJECT(dock, ui::IUiConfiguration, configuration)
+    INJECT(dock, ui::IMainWindow, mainWindow)
 
 public:
     explicit DockWindow(QQuickItem* parent = nullptr);

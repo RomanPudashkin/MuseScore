@@ -35,6 +35,12 @@ public:
     bool isFullScreen() const override;
     void toggleFullScreen() override;
     const QScreen* screen() const override;
+
+    void setDockingHelperVisible(bool visible) override;
+    async::Channel<bool> dockingHelperVisibleChanged() const override;
+
+private:
+    async::Channel<bool> m_dockingHelperVisibleChanged;
 };
 }
 

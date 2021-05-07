@@ -27,6 +27,7 @@
 #include "thirdparty/KDDockWidgets/src/private/DockRegistry_p.h"
 
 using namespace mu::dock;
+using namespace mu::async;
 
 inline QWindow* mainWindow()
 {
@@ -75,4 +76,14 @@ const QScreen* MainWindowProvider::screen() const
 {
     const QWindow* window = mainWindow();
     return window ? window->screen() : nullptr;
+}
+
+void MainWindowProvider::setDockingHelperVisible(bool visible)
+{
+    m_dockingHelperVisibleChanged.send(visible);
+}
+
+Channel<bool> MainWindowProvider::dockingHelperVisibleChanged() const
+{
+    return m_dockingHelperVisibleChanged;
 }
