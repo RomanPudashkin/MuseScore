@@ -31,7 +31,7 @@
 #include "thirdparty/KDDockWidgets/src/private/DropIndicatorOverlayInterface_p.h"
 
 namespace mu::dock {
-class IndicatorsWindow;
+class DropIndicatorsWindow;
 class DropIndicators : public KDDockWidgets::DropIndicatorOverlayInterface
 {
     Q_OBJECT
@@ -92,7 +92,7 @@ private:
     void updateWindowPosition();
 
     KDDockWidgets::QWidgetOrQuick* m_rubberBand = nullptr;
-    IndicatorsWindow* m_indicatorsWindow = nullptr;
+    DropIndicatorsWindow* m_indicatorsWindow = nullptr;
     DockProperties m_draggedDockProperties;
 };
 }
