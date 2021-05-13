@@ -78,12 +78,12 @@ const QScreen* MainWindowProvider::screen() const
     return window ? window->screen() : nullptr;
 }
 
-void MainWindowProvider::setDockingHelperVisible(bool visible)
+void MainWindowProvider::updateToolBarsDockingHelpers(const QPoint& mouseGlobalPos)
 {
-    m_dockingHelperVisibleChanged.send(visible);
+    m_dockingHelperVisibleChanged.send(mouseGlobalPos);
 }
 
-Channel<bool> MainWindowProvider::dockingHelperVisibleChanged() const
+mu::async::Channel<QPoint> MainWindowProvider::toolbarsDockingHelpersUpdateRequested() const
 {
     return m_dockingHelperVisibleChanged;
 }

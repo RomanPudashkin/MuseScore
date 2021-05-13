@@ -151,6 +151,21 @@ void DockBase::setFloating(bool floating)
     emit floatingChanged();
 }
 
+void DockBase::setLocation(DockLocation location)
+{
+    if (m_location == location) {
+        return;
+    }
+
+    m_location = location;
+    emit locationChanged(m_location);
+}
+
+DockType DockBase::type() const
+{
+    return DockType::Undefined;
+}
+
 void DockBase::resize()
 {
     applySizeConstraints();
@@ -181,6 +196,11 @@ void DockBase::hide()
     }
 
     m_dockWidget->forceClose();
+}
+
+DockBase::DockLocation DockBase::location() const
+{
+    return m_location;
 }
 
 void DockBase::componentComplete()
@@ -231,7 +251,7 @@ void DockBase::applySizeConstraints()
 void DockBase::listenFloatingChanges()
 {
     connect(m_dockWidget, &KDDockWidgets::DockWidgetQuick::parentChanged, [this]() {
-        if (!m_dockWidget) {
+        if (!m_dockWidget || !m_dockWidget->parentItem()) {
             return;
         }
 

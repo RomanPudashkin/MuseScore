@@ -109,6 +109,8 @@ DockToolBar::DockToolBar(QQuickItem* parent)
     m_draggableArea(new DraggableArea())
 {
     setAllowedAreas(Qt::TopDockWidgetArea);
+
+    setLocation(DockLocation::Top);
 }
 
 bool DockToolBar::movable() const
@@ -129,6 +131,11 @@ void DockToolBar::setDraggableMouseArea(QQuickItem* mouseArea)
 
     m_draggableArea->setParent(mouseArea);
     m_draggableArea->setMouseArea(mouseArea);
+}
+
+DockToolBar* DockToolBar::tabifyToolBar() const
+{
+    return m_tabifyToolBar;
 }
 
 void DockToolBar::setMinimumWidth(int width)
@@ -199,6 +206,16 @@ void DockToolBar::setOrientation(Qt::Orientation orientation)
     emit orientationChanged(orientation);
 }
 
+void DockToolBar::setTabifyToolBar(DockToolBar* tabifyToolBar)
+{
+    if (m_tabifyToolBar == tabifyToolBar) {
+        return;
+    }
+
+    m_tabifyToolBar = tabifyToolBar;
+    emit tabifyToolBarChanged(m_tabifyToolBar);
+}
+
 void DockToolBar::updateOrientation()
 {
     if (dockWidget()->isFloating()) {
@@ -206,7 +223,7 @@ void DockToolBar::updateOrientation()
     }
 
     KDDockWidgets::Frame* frame = dockWidget()->frame();
-    if (!frame) {
+    if (!frame || !frame->layoutItem()) {
         return;
     }
 
@@ -223,12 +240,12 @@ void DockToolBar::updateOrientation()
     Qt::Orientation newOrientation = Qt::Horizontal;
 
     for (const Layouting::Item* containerItem: container->childItems()) {
-        auto frame = static_cast<KDDockWidgets::Frame*>(containerItem->guestAsQObject());
-        if (!frame || frame->dockWidgets().empty()) {
+        auto itemFrame = static_cast<KDDockWidgets::Frame*>(containerItem->guestAsQObject());
+        if (!itemFrame || itemFrame->dockWidgets().empty()) {
             continue;
         }
 
-        DockType type = readPropertiesFromObject(frame->dockWidgets().first()).type;
+        DockType type = readPropertiesFromObject(itemFrame->dockWidgets().first()).type;
 
         if (type == DockType::Central) {
             newOrientation = Qt::Vertical;
@@ -244,7 +261,7 @@ void DockToolBar::componentComplete()
     DockBase::componentComplete();
 
     connect(dockWidget(), &KDDockWidgets::DockWidgetQuick::parentChanged, [this]() {
-        if (!dockWidget()) {
+        if (!dockWidget() || !dockWidget()->parentItem()) {
             return;
         }
 

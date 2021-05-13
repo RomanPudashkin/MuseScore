@@ -36,11 +36,11 @@ public:
     void toggleFullScreen() override;
     const QScreen* screen() const override;
 
-    void setDockingHelperVisible(bool visible) override;
-    async::Channel<bool> dockingHelperVisibleChanged() const override;
+    void updateToolBarsDockingHelpers(const QPoint& mouseGlobalPos = QPoint()) override;
+    async::Channel<QPoint> toolbarsDockingHelpersUpdateRequested() const override;
 
 private:
-    async::Channel<bool> m_dockingHelperVisibleChanged;
+    async::Channel<QPoint> m_dockingHelperVisibleChanged;
 };
 }
 

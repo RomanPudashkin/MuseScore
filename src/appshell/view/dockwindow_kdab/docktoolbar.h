@@ -33,6 +33,8 @@ class DockToolBar : public DockBase
     Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 
+    Q_PROPERTY(DockToolBar * tabifyToolBar READ tabifyToolBar WRITE setTabifyToolBar NOTIFY tabifyToolBarChanged)
+
 public:
     explicit DockToolBar(QQuickItem* parent = nullptr);
 
@@ -40,6 +42,8 @@ public:
     Qt::Orientation orientation() const;
 
     Q_INVOKABLE void setDraggableMouseArea(QQuickItem* mouseArea);
+
+    DockToolBar* tabifyToolBar() const;
 
 public slots:
     void setMinimumWidth(int width) override;
@@ -50,9 +54,13 @@ public slots:
     void setMovable(bool movable);
     void setOrientation(Qt::Orientation orientation);
 
+    void setTabifyToolBar(DockToolBar* tabifyToolBar);
+
 signals:
     void movableChanged(bool movable);
     void orientationChanged(Qt::Orientation orientation);
+
+    void tabifyToolBarChanged(DockToolBar* tabifyToolBar);
 
 private slots:
     void updateOrientation();
@@ -66,6 +74,7 @@ private:
 
     bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;
+    DockToolBar* m_tabifyToolBar = nullptr;
 };
 }
 

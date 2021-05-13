@@ -28,6 +28,7 @@
 class QMainWindow;
 class QWindow;
 class QScreen;
+class QPoint;
 
 namespace mu::ui {
 class IMainWindow : MODULE_EXPORT_INTERFACE
@@ -44,8 +45,8 @@ public:
     virtual void toggleFullScreen() = 0;
     virtual const QScreen* screen() const = 0;
 
-    virtual void setDockingHelperVisible(bool visible) = 0;
-    virtual async::Channel<bool> dockingHelperVisibleChanged() const = 0;
+    virtual void updateToolBarsDockingHelpers(const QPoint& mouseGlobalPos = QPoint()) = 0;
+    virtual async::Channel<QPoint> toolbarsDockingHelpersUpdateRequested() const = 0;
 };
 }
 
