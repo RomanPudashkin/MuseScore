@@ -236,6 +236,7 @@ void DockWindow::loadPageToolbars(const DockPage* page)
             bottomSideToolbars << toolBar;
             break;
         case DockBase::DockLocation::Center:
+        case DockBase::DockLocation::Undefined:
             LOGW() << "Error location for toolbar";
             break;
         }
