@@ -126,8 +126,11 @@ void DockWindow::loadPage(const QString& uri)
     }
 
     loadPageContent(newPage);
-    bool isFirstOpening = m_currentPageUri.isEmpty();
-//    restoreState(newPage->objectName(), isFirstOpening);
+
+    //! TODO: temporary disabled
+    //! see the issue: https://github.com/KDAB/KDDockWidgets/pull/196
+    //bool isFirstOpening = m_currentPageUri.isEmpty();
+    //restoreState(newPage->objectName(), isFirstOpening);
 
     initDocks(newPage);
 
