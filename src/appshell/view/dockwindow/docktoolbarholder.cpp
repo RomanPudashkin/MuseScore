@@ -28,7 +28,6 @@ DockToolBarHolder::DockToolBarHolder(QQuickItem* parent)
     : DockToolBar(parent)
 {
     setVisible(false);
-    setMovable(false);
 }
 
 void DockToolBarHolder::componentComplete()

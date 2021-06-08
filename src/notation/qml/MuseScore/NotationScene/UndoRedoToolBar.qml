@@ -27,6 +27,9 @@ import MuseScore.NotationScene 1.0
 Rectangle {
     id: root
 
+    width: content.width
+    height: content.height
+
     color: ui.theme.backgroundPrimaryColor
 
     Component.onCompleted: {
@@ -38,7 +41,7 @@ Rectangle {
     }
 
     Row {
-        anchors.centerIn: parent
+        id: content
 
         height: childrenRect.height
         spacing: 2

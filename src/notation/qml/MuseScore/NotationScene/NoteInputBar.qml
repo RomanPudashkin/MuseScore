@@ -33,6 +33,9 @@ Rectangle {
 
     property alias navigation: keynavSub
 
+    height: gridView.height
+    width: gridView.width
+
     color: ui.theme.backgroundPrimaryColor
 
     QtObject {
@@ -56,7 +59,9 @@ Rectangle {
 
     GridViewSectional {
         id: gridView
-        anchors.fill: parent
+
+        height: contentHeight
+        width: contentWidth
 
         sectionRole: "sectionRole"
 
@@ -77,6 +82,7 @@ Rectangle {
 
         itemDelegate: FlatButton {
             id: btn
+
             property var item: Boolean(itemModel) ? itemModel : null
             property var hasMenu: Boolean(item) && item.subitemsRole.length !== 0
 
@@ -170,7 +176,7 @@ Rectangle {
         width: gridView.cellWidth
         height: gridView.cellHeight
 
-        icon: IconCode.CONFIGURE
+        icon: IconCode.SETTINGS_COG
         iconFont: ui.theme.toolbarIconsFont
         normalStateColor: "transparent"
         navigation.panel: keynavSub
@@ -187,22 +193,22 @@ Rectangle {
             PropertyChanges {
                 target: gridView
                 sectionWidth: 1
-                sectionHeight: root.height
+                //sectionHeight: root.height
                 rows: 1
                 columns: gridView.noLimit
             }
 
             AnchorChanges {
                 target: customizeButton
-                anchors.right: root.right
-                anchors.verticalCenter: root.verticalCenter
+
+                anchors.left: gridView.right
             }
         },
         State {
             when: !privatesProperties.isHorizontal
             PropertyChanges {
                 target: gridView
-                sectionWidth: root.width
+                //sectionWidth: root.width
                 sectionHeight: 1
                 rows: gridView.noLimit
                 columns: 2
@@ -210,8 +216,8 @@ Rectangle {
 
             AnchorChanges {
                 target: customizeButton
-                anchors.bottom: root.bottom
-                anchors.right: root.right
+
+                anchors.top: gridView.bottom
             }
         }
     ]

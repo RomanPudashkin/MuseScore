@@ -36,6 +36,9 @@ Rectangle {
     property alias navigation: keynavSub
     property bool floating: false
 
+    height: content.height
+    width: content.width
+
     color: ui.theme.backgroundPrimaryColor
 
     NavigationPanel {
@@ -53,10 +56,11 @@ Rectangle {
     }
 
     Column {
+        id: content
+
         spacing: 14
 
-        anchors.verticalCenter: parent.verticalCenter
-        width: parent.width
+        width: childrenRect.width
 
         enabled: playbackModel.isPlayAllowed
 

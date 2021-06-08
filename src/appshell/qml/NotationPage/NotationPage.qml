@@ -91,9 +91,7 @@ DockPage {
             objectName: "notationToolBar"
             title: qsTrc("appshell", "Notation Toolbar")
 
-            minimumWidth: 198
-
-            contentComponent: NotationToolBar {
+            contentItem: NotationToolBar {
                 navigation.section: root.topToolKeyNavSec
                 navigation.order: 2
 
@@ -112,10 +110,8 @@ DockPage {
             title: qsTrc("appshell", "Playback Controls")
 
             width: root.width / 3
-            minimumWidth: floating ? 526 : 476
-            minimumHeight: floating ? 56 : root.toolBarHeight
 
-            contentComponent: PlaybackToolBar {
+            contentItem: PlaybackToolBar {
                 navigation.section: root.topToolKeyNavSec
                 navigation.order: 3
 
@@ -129,12 +125,9 @@ DockPage {
             objectName: "undoRedoToolBar"
             title: qsTrc("appshell", "Undo/Redo Toolbar")
 
-            minimumWidth: 74
-            maximumWidth: 74
-
             movable: false
 
-            contentComponent: UndoRedoToolBar {}
+            contentItem: UndoRedoToolBar {}
         }
     ]
 
@@ -145,12 +138,12 @@ DockPage {
             objectName: "noteInputBar"
             title: qsTrc("appshell", "Note Input")
 
-            horizontalPreferredSize: Qt.size(720, root.toolBarHeight)
-            verticalPreferredSize: Qt.size(root.toolBarHeight, 400)
+            horizontalFloatingLength: 720
+            verticalFloatingLength: 400
 
             allowedAreas: { Qt.AllDockWidgetAreas }
 
-            contentComponent: NoteInputBar {
+            contentItem: NoteInputBar {
                 orientation: noteInputBar.orientation
 
                 navigation.section: noteInputKeyNavSec

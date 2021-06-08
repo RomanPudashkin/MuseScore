@@ -29,85 +29,104 @@ import MuseScore.Dock 1.0 as Dock
 Dock.DockToolBar {
     id: root
 
-    property Component contentComponent
+    property alias contentItem: contentLoader.sourceComponent
+    property alias movable: gripButton.visible
+
+    Component.onCompleted: {
+        console.debug("--- obj: " + objectName)
+        console.debug("--- contentSize: " + Qt.size(contentLoader.width, contentLoader.height))
+    }
 
     Rectangle {
         anchors.fill: parent
 
         color: ui.theme.backgroundPrimaryColor
 
-        Loader {
-            id: loader
+        Item {
+            id: contentRect
+
+            property int margins: 2
+
+            property int gripButtonWidth: gripButton.visible ? gripButton.width : 0
+            property int gripButtonHeight: gripButton.visible ? gripButton.height : 0
 
             anchors.fill: parent
-            anchors.margins: 2
-
-            sourceComponent: orientation === Qt.Horizontal ? horizontalView : verticalView
-
-            onLoaded: {
-                root.setDraggableMouseArea(loader.item.gripMouseArea)
-            }
-        }
-    }
-
-    Component {
-        id: horizontalView
-
-        RowLayout {
-            spacing: 2
-
-            property var gripMouseArea: gripButton.mouseArea
+            anchors.margins: contentRect.margins
 
             FlatButton {
                 id: gripButton
 
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-                mouseArea.objectName: root.objectName + "_toolBarMouseAreaHorizontal"
+                mouseArea.objectName: root.objectName + "_gripButton"
 
                 normalStateColor: "transparent"
                 icon: IconCode.TOOLBAR_GRIP
 
-                visible: root.movable
+                Component.onCompleted: {
+                    root.setDraggableMouseArea(mouseArea)
+                }
             }
 
             Loader {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                sourceComponent: root.contentComponent
+                id: contentLoader
             }
         }
     }
 
-    Component {
-        id: verticalView
+    states: [
+        State {
+            name: "HORIZONTAL"
+            when: root.orientation === Qt.Horizontal
 
-        ColumnLayout {
-            spacing: 2
+            PropertyChanges {
+                target: root
 
-            property var gripMouseArea: gripButton.mouseArea
+                minimumWidth: contentLoader.item ? 2 * contentRect.margins + contentRect.gripButtonWidth + contentLoader.width : 0
+                minimumHeight: contentLoader.item ? 2 * contentRect.margins + contentLoader.height : 0
+            }
 
-            FlatButton {
-                id: gripButton
+            PropertyChanges {
+                target: gripButton
 
-                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+                anchors.left: parent.left
+                anchors.top: undefined
+            }
 
-                mouseArea.objectName: root.objectName + "_toolBarMouseAreaVertical"
+            PropertyChanges {
+                target: contentLoader
 
-                normalStateColor: "transparent"
-                icon: IconCode.TOOLBAR_GRIP
+                anchors.left: gripButton.visible ? gripButton.right : parent.left
+                anchors.leftMargin: contentRect.margins
+                anchors.top: parent.top
+            }
+        },
+
+        State {
+            name: "VERTICAL"
+            when: root.orientation === Qt.Vertical
+
+            PropertyChanges {
+                target: root
+
+                minimumWidth: contentLoader.item ? 2 * contentRect.margins + contentLoader.width : 0
+                minimumHeight: contentLoader.item ? 2 * contentRect.margins + contentRect.gripButtonHeight + contentLoader.height : 0
+            }
+
+            PropertyChanges {
+                target: gripButton
+
+                anchors.top: parent.top
+                anchors.left: undefined
+
                 rotation: 90
-
-                visible: root.movable
             }
 
-            Loader {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            PropertyChanges {
+                target: contentLoader
 
-                sourceComponent: root.contentComponent
+                anchors.top: gripButton.bottom
+                anchors.topMargin: contentRect.margins
+                anchors.left: parent.left
             }
         }
-    }
+    ]
 }

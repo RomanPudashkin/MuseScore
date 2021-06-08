@@ -89,9 +89,7 @@ public slots:
     virtual void setMaximumHeight(int height);
 
     void setAllowedAreas(Qt::DockWidgetAreas areas);
-
     void setFloating(bool floating);
-
     void setLocation(DockLocation location);
 
 signals:
@@ -116,10 +114,9 @@ protected:
     KDDockWidgets::DockWidgetQuick* dockWidget() const;
 
 private slots:
-    void resize();
+    void applySizeConstraints();
 
 private:
-    void applySizeConstraints();
     void listenFloatingChanges();
 
     int m_minimumWidth = 0;

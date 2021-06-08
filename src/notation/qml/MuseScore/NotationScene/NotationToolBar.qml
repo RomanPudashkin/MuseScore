@@ -31,6 +31,9 @@ Rectangle {
 
     signal activeFocusRequested()
 
+    height: view.height
+    width: view.width
+
     color: ui.theme.backgroundPrimaryColor
 
     Component.onCompleted: {
@@ -54,8 +57,6 @@ Rectangle {
 
     ListView {
         id: view
-
-        anchors.verticalCenter: parent.verticalCenter
 
         width: contentWidth
         height: contentItem.childrenRect.height

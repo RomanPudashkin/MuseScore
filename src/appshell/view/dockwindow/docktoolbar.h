@@ -30,40 +30,36 @@ class DockToolBar : public DockBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool movable READ movable WRITE setMovable NOTIFY movableChanged)
     Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
 
     Q_PROPERTY(
-        QSize horizontalPreferredSize READ horizontalPreferredSize WRITE setHorizontalPreferredSize NOTIFY horizontalPreferredSizeChanged)
-    Q_PROPERTY(QSize verticalPreferredSize READ verticalPreferredSize WRITE setVerticalPreferredSize NOTIFY verticalPreferredSizeChanged)
+        int horizontalFloatingLength READ horizontalFloatingLength WRITE setHorizontalFloatingLength NOTIFY horizontalFloatingLengthChanged)
+    Q_PROPERTY(int verticalFloatingLength READ verticalFloatingLength WRITE setVerticalFloatingLength NOTIFY verticalFloatingLengthChanged)
 
 public:
     explicit DockToolBar(QQuickItem* parent = nullptr);
 
-    bool movable() const;
     Qt::Orientation orientation() const;
 
     Q_INVOKABLE void setDraggableMouseArea(QQuickItem* mouseArea);
 
-    QSize horizontalPreferredSize() const;
-    QSize verticalPreferredSize() const;
+    int horizontalFloatingLength() const;
+    int verticalFloatingLength() const;
 
 public slots:
+    void setOrientation(Qt::Orientation orientation);
+    void setHorizontalFloatingLength(int length);
+    void setVerticalFloatingLength(int length);
+
     void setMinimumWidth(int width) override;
     void setMinimumHeight(int height) override;
     void setMaximumWidth(int width) override;
     void setMaximumHeight(int height) override;
 
-    void setMovable(bool movable);
-    void setOrientation(Qt::Orientation orientation);
-    void setHorizontalPreferredSize(QSize horizontalPreferredSize);
-    void setVerticalPreferredSize(QSize verticalPreferredSize);
-
 signals:
-    void movableChanged(bool movable);
     void orientationChanged(Qt::Orientation orientation);
-    void horizontalPreferredSizeChanged(QSize horizontalPreferredSize);
-    void verticalPreferredSizeChanged(QSize verticalPreferredSize);
+    void horizontalFloatingLengthChanged(int length);
+    void verticalFloatingLengthChanged(int length);
 
 protected:
     void componentComplete() override;
@@ -73,18 +69,18 @@ protected:
     static const int MIN_SIDE_SIZE;
     static const int MAX_SIDE_SIZE;
 
-private:
-    void updateSizeConstraints();
+private slots:
+    void applyFloatingSizeConstraints();
 
+private:
     bool isOrientationChangingAllowed() const;
 
     class DraggableArea;
     DraggableArea* m_draggableArea = nullptr;
 
-    bool m_movable = true;
     Qt::Orientation m_orientation = Qt::Horizontal;
-    QSize m_horizontalPreferredSize;
-    QSize m_verticalPreferredSize;
+    int m_horizontalFloatingLength = 0;
+    int m_verticalFloatingLength = 0;
 };
 }
 

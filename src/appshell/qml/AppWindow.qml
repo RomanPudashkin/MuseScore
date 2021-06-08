@@ -37,6 +37,7 @@ ApplicationWindow {
     visible: true
 
     title: qsTrc("appshell", "MuseScore 4")
+    objectName: "ApplicationWindow"
 
     ToolTipProvider { }
 

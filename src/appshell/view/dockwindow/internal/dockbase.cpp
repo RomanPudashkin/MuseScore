@@ -57,8 +57,8 @@ using namespace mu::dock;
 DockBase::DockBase(QQuickItem* parent)
     : QQuickItem(parent)
 {
-    connect(this, &DockBase::minimumSizeChanged, this, &DockBase::resize);
-    connect(this, &DockBase::maximumSizeChanged, this, &DockBase::resize);
+    connect(this, &DockBase::minimumSizeChanged, this, &DockBase::applySizeConstraints);
+    connect(this, &DockBase::maximumSizeChanged, this, &DockBase::applySizeConstraints);
 }
 
 QString DockBase::title() const
@@ -189,11 +189,6 @@ void DockBase::setLocation(DockLocation location)
 DockType DockBase::type() const
 {
     return DockType::Undefined;
-}
-
-void DockBase::resize()
-{
-    applySizeConstraints();
 }
 
 void DockBase::init()
