@@ -36,6 +36,7 @@
 #include "stafftype.h"
 #include "sym.h"
 #include "scoreOrder.h"
+#include "profiler.h"
 
 #include "mscore/preferences.h"
 
@@ -290,6 +291,7 @@ void Score::write(XmlWriter& xml, bool selectionOnly)
 
 void Score::readStaff(XmlReader& e)
       {
+      TRACEFUNC;
       int staff = e.intAttribute("id", 1) - 1;
       int measureIdx = 0;
       e.setCurrentMeasureIndex(0);
@@ -834,6 +836,7 @@ QString readRootFile(MQZipReader* uz, QList<QString>& images)
 
 Score::FileError MasterScore::loadCompressedMsc(QIODevice* io, bool ignoreVersionError)
       {
+      TRACEFUNC;
       MQZipReader uz(io);
 
       QList<QString> sl;
@@ -948,6 +951,7 @@ Score::FileError MasterScore::loadMsc(QString name, bool ignoreVersionError)
 
 Score::FileError MasterScore::loadMsc(QString name, QIODevice* io, bool ignoreVersionError)
       {
+      TRACEFUNC;
       ScoreLoad sl;
       fileInfo()->setFile(name);
 

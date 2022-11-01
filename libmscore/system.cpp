@@ -45,6 +45,7 @@
 #include "stafflines.h"
 #include "bracketItem.h"
 #include "global/log.h"
+#include "profiler.h"
 
 namespace Ms {
 
@@ -229,6 +230,7 @@ void System::adjustStavesNumber(int nstaves)
 
 void System::layoutSystem(qreal xo1, const bool isFirstSystem, bool firstSystemIndent)
       {
+      TRACEFUNC;
       if (_staves.empty())                 // ignore vbox
             return;
 

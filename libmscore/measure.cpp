@@ -58,6 +58,7 @@
 #include "slur.h"
 #include "spacer.h"
 #include "staff.h"
+#include "profiler.h"
 #include "stafftext.h"
 #include "stafftype.h"
 #include "stringdata.h"
@@ -1998,6 +1999,7 @@ void Measure::write(XmlWriter& xml, int staff, bool writeSystemElements, bool fo
 
 void Measure::read(XmlReader& e, int staffIdx)
       {
+      TRACEFUNC;
       qreal _spatium = spatium();
       e.setCurrentMeasure(this);
       int nextTrack = staffIdx * VOICES;
@@ -2142,6 +2144,7 @@ void Measure::read(XmlReader& e, int staffIdx)
 
 void Measure::readVoice(XmlReader& e, int staffIdx, bool irregular)
       {
+      TRACEFUNC;
       Segment* segment = nullptr;
       QList<Chord*> graceNotes;
       Beam* startingBeam = nullptr;

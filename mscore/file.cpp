@@ -86,6 +86,7 @@
 #include "tourhandler.h"
 #include "preferences.h"
 #include "libmscore/instrtemplate.h"
+#include "libmscore/profiler.h"
 
 #ifdef OMR
 #include "omr/omr.h"
@@ -439,6 +440,8 @@ Score* MuseScore::openScore(const QString& fn, bool switchTab, const bool consid
             score->update();
             score->styleChanged();
             score->doLayout();
+
+            PROFILER_PRINT;
 
             if (considerInCurrentSession) {
                   const int tabIdx = appendScore(score);
@@ -2259,6 +2262,7 @@ void importExtension(QString name)
 
 Score::FileError readScore(MasterScore* score, QString name, bool ignoreVersionError)
       {
+      TRACEFUNC;
       ScoreLoad sl;
 
       QFileInfo info(name);

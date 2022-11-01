@@ -66,6 +66,7 @@
 #include "spacer.h"
 #include "fermata.h"
 #include "measurenumber.h"
+#include "profiler.h"
 
 namespace Ms {
 
@@ -2865,6 +2866,7 @@ std::pair<qreal, qreal> extendedStemLenWithTwoNoteTremolo(Tremolo* tremolo, qrea
 
 void Score::getNextMeasure(LayoutContext& lc)
       {
+      TRACEFUNC;
       lc.prevMeasure = lc.curMeasure;
       lc.curMeasure  = lc.nextMeasure;
       if (!lc.curMeasure)
@@ -3712,6 +3714,7 @@ void alignHarmonies(const System* system, const std::vector<Segment*>& sl, bool 
 
 static void processLines(System* system, std::vector<Spanner*> lines, bool align)
       {
+      TRACEFUNC;
       std::vector<SpannerSegment*> segments;
       for (Spanner* sp : lines) {
             SpannerSegment* ss = sp->layoutSystem(system);     // create/layout spanner segment for this system
@@ -3757,6 +3760,7 @@ static void processLines(System* system, std::vector<Spanner*> lines, bool align
 
 System* Score::collectSystem(LayoutContext& lc)
       {
+      TRACEFUNC;
       if (!lc.curMeasure)
             return 0;
       const MeasureBase* measure  = _systems.empty() ? 0 : _systems.back()->measures().back();
@@ -4093,6 +4097,7 @@ System* Score::collectSystem(LayoutContext& lc)
 
 void Score::layoutSystemElements(System* system, LayoutContext& lc)
       {
+      TRACEFUNC;
       //-------------------------------------------------------------
       //    create cr segment list to speed up computations
       //-------------------------------------------------------------

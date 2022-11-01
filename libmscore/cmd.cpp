@@ -74,6 +74,7 @@
 #include "tremolo.h"
 #include "rehearsalmark.h"
 #include "sym.h"
+#include "profiler.h"
 
 namespace Ms {
 
@@ -293,6 +294,7 @@ void CmdState::dump()
 
 void Score::update(bool resetCmdState)
       {
+      TRACEFUNC;
       bool updateAll = false;
       for (MasterScore* ms : *movements()) {
             CmdState& cs = ms->cmdState();

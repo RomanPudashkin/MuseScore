@@ -18,6 +18,7 @@
 //=============================================================================
 
 #include "mscore/musescore.h"
+#include "libmscore/profiler.h"
 
 #include "modulessetup.h"
 
@@ -92,5 +93,7 @@ int main(int argc, char** argv)
       char** argvFinal = argv;
 #endif
 
-      return Ms::runApplication(argcFinal, argvFinal);
+      int code = Ms::runApplication(argcFinal, argvFinal);
+      PROFILER_PRINT;
+      return code;
       }

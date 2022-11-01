@@ -16,6 +16,7 @@
 #include "spanner.h"
 #include "staff.h"
 #include "beam.h"
+#include "profiler.h"
 #include "tuplet.h"
 
 namespace Ms {
@@ -592,6 +593,7 @@ void XmlReader::removeConnector(const ConnectorInfoReader* c)
 
 void XmlReader::checkConnectors()
       {
+      TRACEFUNC;
       for (std::unique_ptr<ConnectorInfoReader>& c : _pendingConnectors)
             addConnectorInfo(std::move(c));
       _pendingConnectors.clear();
