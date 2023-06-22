@@ -10,7 +10,7 @@ using namespace mu::playback;
 using namespace mu::audio;
 
 static const QString VST_MENU_ITEM_ID("VST3");
-static const QString SOUNDFONTS_MENU_ITEM_ID = QString::fromStdString(mu::trc("playback", "SoundFonts"));
+static const QString SOUNDFONTS_MENU_ITEM_ID("SoundFonts");
 static const QString MUSE_MENU_ITEM_ID("Muse Sounds");
 
 InputResourceItem::InputResourceItem(QObject* parent)
@@ -27,9 +27,7 @@ void InputResourceItem::requestAvailableResources()
         QVariantList result;
 
         if (!isBlank()) {
-            QString currentResourceId = QString::fromStdString(m_currentInputParams.resourceMeta.id);
-
-            result << buildMenuItem(currentResourceId,
+            result << buildMenuItem(QString::fromStdString(m_currentInputParams.resourceMeta.id),
                                     title(),
                                     true /*checked*/);
 
@@ -97,10 +95,7 @@ void InputResourceItem::setParams(const audio::AudioInputParams& newParams)
 
 QString InputResourceItem::title() const
 {
-    if (m_currentInputParams.type() == mu::audio::AudioSourceType::MuseSampler) {
-        return m_currentInputParams.resourceMeta.attributeVal(u"museName").toQString();
-    }
-    return QString::fromStdString(m_currentInputParams.resourceMeta.id);
+    return QString::fromStdString(m_currentInputParams.resourceMeta.name);
 }
 
 bool InputResourceItem::isBlank() const
@@ -125,23 +120,19 @@ QVariantMap InputResourceItem::buildMuseMenuItem(const ResourceByVendorMap& reso
     QVariantList subItemsByType;
 
     for (const auto& pair : resourcesByVendor) {
-        std::map<String, std::vector<std::tuple<int, String, const AudioResourceMeta&> > > categoryMap;
+        std::map<String, std::vector<const AudioResourceMeta*> > categoryMap;
         for (const AudioResourceMeta& resourceMeta : pair.second) {
             const String& category = resourceMeta.attributeVal(u"museCategory");
-            const String& name = resourceMeta.attributeVal(u"museName");
-            int unique_id = resourceMeta.attributeVal(u"museUID").toInt();
 
-            categoryMap[category].push_back({ unique_id, name, resourceMeta });
+            categoryMap[category].push_back(&resourceMeta);
         }
 
         for (const auto& category : categoryMap) {
             QVariantList subItemsByCategory;
-            for (const auto& inst : category.second) {
-                QString instName = std::get<1>(inst).toQString();
-                auto instId = std::get<2>(inst).id;
-                subItemsByCategory << buildMenuItem(QString::fromStdString(instId),
-                                                    instName,
-                                                    m_currentInputParams.resourceMeta.id == instId);
+            for (const AudioResourceMeta* meta : category.second) {
+                subItemsByCategory << buildMenuItem(QString::fromStdString(meta->id),
+                                                    QString::fromStdString(meta->name),
+                                                    m_currentInputParams.resourceMeta.id == meta->id);
             }
 
             QString categoryString = category.first.toQString();
@@ -163,16 +154,15 @@ QVariantMap InputResourceItem::buildVstMenuItem(const ResourceByVendorMap& resou
     QVariantList subItemsByType;
 
     for (const auto& pair : resourcesByVendor) {
-        const QString& vendor = QString::fromStdString(pair.first);
-
         QVariantList subItemsByVendor;
 
         for (const AudioResourceMeta& resourceMeta : pair.second) {
-            const QString& resourceId = QString::fromStdString(resourceMeta.id);
-            subItemsByVendor << buildMenuItem(resourceId,
-                                              resourceId,
+            subItemsByVendor << buildMenuItem(QString::fromStdString(resourceMeta.id),
+                                              QString::fromStdString(resourceMeta.name),
                                               m_currentInputParams.resourceMeta.id == resourceMeta.id);
         }
+
+        QString vendor = QString::fromStdString(pair.first);
 
         subItemsByType << buildMenuItem(vendor,
                                         vendor,
@@ -192,16 +182,14 @@ QVariantMap InputResourceItem::buildSoundFontsMenuItem(const ResourceByVendorMap
 
     for (const auto& pair : resourcesByVendor) {
         for (const AudioResourceMeta& resourceMeta : pair.second) {
-            const QString& resourceId = QString::fromStdString(resourceMeta.id);
-
-            subItemsByType << buildMenuItem(resourceId,
-                                            resourceId,
+            subItemsByType << buildMenuItem(QString::fromStdString(resourceMeta.id),
+                                            QString::fromStdString(resourceMeta.name),
                                             m_currentInputParams.resourceMeta.id == resourceMeta.id);
         }
     }
 
     return buildMenuItem(SOUNDFONTS_MENU_ITEM_ID,
-                         SOUNDFONTS_MENU_ITEM_ID,
+                         mu::qtrc("playback", "SoundFonts"),
                          m_currentInputParams.resourceMeta.type == AudioResourceType::FluidSoundfont,
                          subItemsByType);
 }

@@ -24,6 +24,7 @@
 
 #include <QApplication>
 
+#include "audioutils.h"
 #include "audioerrors.h"
 #include "translation.h"
 #include "log.h"
@@ -153,6 +154,7 @@ mu::Ret RegisterAudioPluginsScenario::registerFailedPlugin(const io::path_t& plu
 
     AudioPluginInfo info;
     info.meta.id = io::filename(pluginPath).toStdString();
+    info.meta.name = info.meta.id;
 
     std::string ext = io::suffix(pluginPath);
     if (ext.find("vst") != std::string::npos) {

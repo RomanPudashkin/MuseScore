@@ -74,6 +74,7 @@ AudioResourceMetaList FluidResolver::resolveResources() const
     for (const auto& pair : m_resourcesCache) {
         AudioResourceMeta meta;
         meta.id = pair.first;
+        meta.name = pair.first;
         meta.type = AudioResourceType::FluidSoundfont;
         meta.vendor = FLUID_VENDOR_NAME;
         meta.attributes = { { u"playbackSetupData", mpe::GENERIC_SETUP_DATA_STRING } };

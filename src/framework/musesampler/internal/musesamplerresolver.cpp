@@ -60,14 +60,14 @@ ISynthesizerPtr MuseSamplerResolver::resolveSynth(const audio::TrackId /*trackId
     auto instrumentList = m_libHandler->getInstrumentList();
     while (auto instrument = m_libHandler->getNextInstrument(instrumentList)) {
         String uniqueId = String::fromStdString(std::to_string(m_libHandler->getInstrumentId(instrument)));
-        String internalName = String::fromUtf8(m_libHandler->getInstrumentName(instrument));
         String internalCategory = String::fromUtf8(m_libHandler->getInstrumentCategory(instrument));
         String instrumentSoundId = String::fromUtf8(m_libHandler->getMpeSoundId(instrument));
+        std::string internalName = m_libHandler->getInstrumentName(instrument);
 
         if (params.resourceMeta.attributeVal(u"playbackSetupData") == instrumentSoundId
             && params.resourceMeta.attributeVal(u"museCategory") == internalCategory
-            && params.resourceMeta.attributeVal(u"museName") == internalName
-            && params.resourceMeta.attributeVal(u"museUID") == uniqueId) {
+            && params.resourceMeta.attributeVal(u"museUID") == uniqueId
+            && params.resourceMeta.name == internalName) {
             return std::make_shared<MuseSamplerWrapper>(m_libHandler, params);
         }
     }
@@ -109,12 +109,12 @@ AudioResourceMetaList MuseSamplerResolver::resolveResources() const
 
         AudioResourceMeta meta;
         meta.id = buildMuseInstrumentId(internalCategory, internalName, uniqueId).toStdString();
+        meta.name = internalName.toStdString();
         meta.type = AudioResourceType::MuseSamplerSoundPack;
         meta.vendor = instrumentPack.toStdString();
         meta.attributes = {
             { u"playbackSetupData", instrumentSoundId },
             { u"museCategory", internalCategory },
-            { u"museName", internalName },
             { u"museUID", String::fromStdString(std::to_string(uniqueId)) },
         };
 

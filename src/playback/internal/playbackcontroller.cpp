@@ -22,6 +22,7 @@
 #include "playbackcontroller.h"
 
 #include "playbacktypes.h"
+#include "audio/audioutils.h"
 
 #include "containers.h"
 #include "defer.h"
@@ -65,12 +66,7 @@ static AudioOutputParams makeReverbOutputParams()
 static std::string resolveAuxTrackTitle(aux_channel_idx_t index, const AudioOutputParams& params)
 {
     if (params.fxChain.size() == 1) {
-        const AudioResourceMeta& meta = params.fxChain.cbegin()->second.resourceMeta;
-        if (meta.id == MUSE_REVERB_ID) {
-            return mu::trc("playback", "Reverb");
-        }
-
-        return meta.id;
+        return params.fxChain.cbegin()->second.resourceMeta.name;
     }
 
     return mu::mtrc("playback", "Aux %1").arg(index + 1).toStdString();

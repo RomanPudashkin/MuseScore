@@ -9,12 +9,7 @@
 using namespace mu::playback;
 using namespace mu::audio;
 
-static const QString& NO_FX_MENU_ITEM_ID()
-{
-    static std::string id = mu::trc("playback", "No effect");
-    static QString resultStr = QString::fromStdString(id);
-    return resultStr;
-}
+static const QString NO_FX_MENU_ITEM_ID("NO_EFFECT");
 
 OutputResourceItem::OutputResourceItem(QObject* parent, const audio::AudioFxParams& params)
     : AbstractAudioResourceItem(parent),
@@ -31,17 +26,16 @@ void OutputResourceItem::requestAvailableResources()
         QVariantList result;
 
         if (!isBlank()) {
-            const QString& currentResourceId = QString::fromStdString(m_currentFxParams.resourceMeta.id);
-            result << buildMenuItem(currentResourceId,
-                                    currentResourceId,
+            result << buildMenuItem(QString::fromStdString(m_currentFxParams.resourceMeta.id),
+                                    QString::fromStdString(m_currentFxParams.resourceMeta.name),
                                     true /*checked*/);
 
             result << buildSeparator();
         }
 
         // add "no fx" item
-        result << buildMenuItem(NO_FX_MENU_ITEM_ID(),
-                                NO_FX_MENU_ITEM_ID(),
+        result << buildMenuItem(NO_FX_MENU_ITEM_ID,
+                                mu::qtrc("playback", "No effect"),
                                 m_currentFxParams.resourceMeta.id.empty());
 
         if (!m_fxByVendorMap.empty()) {
@@ -49,16 +43,15 @@ void OutputResourceItem::requestAvailableResources()
         }
 
         for (const auto& pair : m_fxByVendorMap) {
-            const QString& vendor = QString::fromStdString(pair.first);
-
             QVariantList subItems;
 
             for (const AudioResourceMeta& fxResourceMeta : pair.second) {
-                const QString& resourceId = QString::fromStdString(fxResourceMeta.id);
-                subItems << buildMenuItem(resourceId,
-                                          resourceId,
+                subItems << buildMenuItem(QString::fromStdString(fxResourceMeta.id),
+                                          QString::fromStdString(fxResourceMeta.name),
                                           m_currentFxParams.resourceMeta.id == fxResourceMeta.id);
             }
+
+            QString vendor = QString::fromStdString(pair.first);
 
             result << buildMenuItem(vendor,
                                     vendor,
@@ -77,7 +70,7 @@ void OutputResourceItem::requestAvailableResources()
 
 void OutputResourceItem::handleMenuItem(const QString& menuItemId)
 {
-    if (menuItemId == NO_FX_MENU_ITEM_ID()) {
+    if (menuItemId == NO_FX_MENU_ITEM_ID) {
         updateCurrentFxParams(AudioResourceMeta());
         return;
     }
@@ -128,7 +121,7 @@ void OutputResourceItem::setParams(const audio::AudioFxParams& params)
 
 QString OutputResourceItem::title() const
 {
-    return QString::fromStdString(m_currentFxParams.resourceMeta.id);
+    return QString::fromStdString(m_currentFxParams.resourceMeta.name);
 }
 
 bool OutputResourceItem::isActive() const

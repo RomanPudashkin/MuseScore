@@ -75,6 +75,10 @@ protected:
             metaObj.set("type", mu::value(RESOURCE_TYPE_TO_STR, info.meta.type, "Undefined"));
             metaObj.set("hasNativeEditorSupport", info.meta.hasNativeEditorSupport);
 
+            if (!info.meta.name.empty()) {
+                metaObj.set("name", info.meta.name);
+            }
+
             if (!info.meta.vendor.empty()) {
                 metaObj.set("vendor", info.meta.vendor);
             }

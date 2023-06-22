@@ -90,15 +90,17 @@ struct SoundTrackFormat {
     }
 };
 
-using AudioSourceName = std::string;
 using AudioResourceId = std::string;
 using AudioResourceIdList = std::vector<AudioResourceId>;
+using AudioResourceName = std::string;
 using AudioResourceVendor = std::string;
 using AudioResourceAttributes = std::map<String, String>;
 using AudioUnitConfig = std::map<std::string, std::string>;
 
 static const String PLAYBACK_SETUP_DATA_ATTRIBUTE("playbackSetupData");
 static const String CATEGORIES_ATTRIBUTE("categories");
+
+static const AudioResourceId MUSE_REVERB_ID("Muse Reverb");
 
 enum class AudioResourceType {
     Undefined = -1,
@@ -111,6 +113,7 @@ enum class AudioResourceType {
 
 struct AudioResourceMeta {
     AudioResourceId id;
+    AudioResourceName name;
     AudioResourceType type = AudioResourceType::Undefined;
     AudioResourceVendor vendor;
     AudioResourceAttributes attributes;
@@ -131,6 +134,7 @@ struct AudioResourceMeta {
     bool isValid() const
     {
         return !id.empty()
+               && !name.empty()
                && !vendor.empty()
                && type != AudioResourceType::Undefined;
     }
@@ -138,6 +142,7 @@ struct AudioResourceMeta {
     bool operator==(const AudioResourceMeta& other) const
     {
         return id == other.id
+               && name == other.name
                && vendor == other.vendor
                && type == other.type
                && hasNativeEditorSupport == other.hasNativeEditorSupport
@@ -159,19 +164,6 @@ struct AudioResourceMeta {
 using AudioResourceMetaList = std::vector<AudioResourceMeta>;
 using AudioResourceMetaSet = std::set<AudioResourceMeta>;
 
-static const AudioResourceId MUSE_REVERB_ID("Muse Reverb");
-
-inline AudioResourceMeta makeReverbMeta()
-{
-    AudioResourceMeta meta;
-    meta.id = MUSE_REVERB_ID;
-    meta.type = AudioResourceType::MusePlugin;
-    meta.vendor = "Muse";
-    meta.hasNativeEditorSupport = true;
-
-    return meta;
-}
-
 enum class AudioPluginType {
     Undefined = -1,
     Instrument,
@@ -185,22 +177,6 @@ struct AudioPluginInfo {
     bool enabled = false;
     int errorCode = 0;
 };
-
-inline AudioPluginType audioPluginTypeFromCategoriesString(const String& categoriesStr)
-{
-    static const std::map<String, AudioPluginType> STRING_TO_PLUGIN_TYPE_MAP = {
-        { u"Fx", AudioPluginType::Fx },
-        { u"Instrument", AudioPluginType::Instrument },
-    };
-
-    for (auto it = STRING_TO_PLUGIN_TYPE_MAP.cbegin(); it != STRING_TO_PLUGIN_TYPE_MAP.cend(); ++it) {
-        if (categoriesStr.contains(it->first)) {
-            return it->second;
-        }
-    }
-
-    return AudioPluginType::Undefined;
-}
 
 enum class AudioFxType {
     Undefined = -1,

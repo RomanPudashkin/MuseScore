@@ -24,6 +24,8 @@
 
 #include "serialization/json.h"
 
+#include "audioutils.h"
+
 #include "log.h"
 
 using namespace mu::audio;
@@ -56,6 +58,10 @@ static JsonObject metaToJson(const AudioResourceMeta& meta)
     result.set("type", mu::value(RESOURCE_TYPE_TO_STRING_MAP, meta.type, "Undefined"));
     result.set("hasNativeEditorSupport", meta.hasNativeEditorSupport);
 
+    if (!meta.name.empty()) {
+        result.set("name", meta.name);
+    }
+
     if (!meta.vendor.empty()) {
         result.set("vendor", meta.vendor);
     }
@@ -85,6 +91,7 @@ static AudioResourceMeta metaFromJson(const JsonObject& object)
 
     result.id = object.value("id").toStdString();
     result.type = mu::key(RESOURCE_TYPE_TO_STRING_MAP, object.value("type").toStdString());
+    result.name = object.value("name").toStdString();
     result.vendor = object.value("vendor").toStdString();
     result.hasNativeEditorSupport = object.value("hasNativeEditorSupport").toBool();
 

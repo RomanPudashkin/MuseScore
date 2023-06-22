@@ -396,9 +396,20 @@ AudioResourceMeta ProjectAudioSettings::resourceMetaFromJson(const QJsonObject& 
     AudioResourceMeta result;
     result.id = object.value("id").toString().toStdString();
     result.hasNativeEditorSupport = object.value("hasNativeEditorSupport").toBool();
+    result.name = object.value("name").toString().toStdString();
     result.vendor = object.value("vendor").toString().toStdString();
     result.type = resourceTypeFromString(object.value("type").toString());
     result.attributes = attributesFromJson(object.value("attributes").toObject());
+
+    if (result.name.empty()) {
+        //! NOTE: compatibility with pre-4.1 projects
+        auto museNameIt = result.attributes.find(u"museName");
+        if (museNameIt != result.attributes.end()) {
+            result.name = museNameIt->second.toStdString();
+        } else {
+            result.name = result.id;
+        }
+    }
 
     return result;
 }
@@ -505,6 +516,7 @@ QJsonObject ProjectAudioSettings::resourceMetaToJson(const audio::AudioResourceM
     QJsonObject result;
     result.insert("id", QString::fromStdString(meta.id));
     result.insert("hasNativeEditorSupport", meta.hasNativeEditorSupport);
+    result.insert("name", QString::fromStdString(meta.name));
     result.insert("vendor", QString::fromStdString(meta.vendor));
     result.insert("type", resourceTypeToString(meta.type));
     result.insert("attributes", attributesToJson(meta.attributes));
