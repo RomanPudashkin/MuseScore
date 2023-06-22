@@ -110,6 +110,7 @@ mu::Ret KnownAudioPluginsRegister::load()
 
     m_loaded = false;
     m_pluginInfoMap.clear();
+    m_compatFileNameToResourceId.clear();
     m_pluginPaths.clear();
 
     io::path_t knownAudioPluginsPath = configuration()->knownAudioPluginsFilePath();
@@ -143,6 +144,7 @@ mu::Ret KnownAudioPluginsRegister::load()
         info.errorCode = object.value("errorCode").toInt();
 
         m_pluginPaths.insert(info.path);
+        m_compatFileNameToResourceId.emplace(io::completeBasename(info.path), info.meta.id);
         m_pluginInfoMap.emplace(info.meta.id, std::move(info));
     }
 
@@ -169,13 +171,13 @@ std::vector<AudioPluginInfo> KnownAudioPluginsRegister::pluginInfoList(PluginInf
 
 const mu::io::path_t& KnownAudioPluginsRegister::pluginPath(const AudioResourceId& resourceId) const
 {
-    auto it = m_pluginInfoMap.find(resourceId);
-    if (it == m_pluginInfoMap.end()) {
-        static const io::path_t _dummy;
-        return _dummy;
+    const AudioPluginInfo* info = findPluginInfo(resourceId);
+    if (info) {
+        return info->path;
     }
 
-    return it->second.path;
+    static const io::path_t _dummy;
+    return _dummy;
 }
 
 bool KnownAudioPluginsRegister::exists(const io::path_t& pluginPath) const
@@ -185,7 +187,7 @@ bool KnownAudioPluginsRegister::exists(const io::path_t& pluginPath) const
 
 bool KnownAudioPluginsRegister::exists(const AudioResourceId& resourceId) const
 {
-    return mu::contains(m_pluginInfoMap, resourceId);
+    return findPluginInfo(resourceId) != nullptr;
 }
 
 mu::Ret KnownAudioPluginsRegister::registerPlugin(const AudioPluginInfo& info)
@@ -202,6 +204,7 @@ mu::Ret KnownAudioPluginsRegister::registerPlugin(const AudioPluginInfo& info)
     }
 
     m_pluginInfoMap.emplace(info.meta.id, info);
+    m_compatFileNameToResourceId.emplace(io::completeBasename(info.path), info.meta.id);
     m_pluginPaths.insert(info.path);
 
     Ret ret = writePluginsInfo();
@@ -221,6 +224,7 @@ mu::Ret KnownAudioPluginsRegister::unregisterPlugin(const AudioResourceId& resou
     for (const auto& pair : m_pluginInfoMap) {
         if (pair.first == resourceId) {
             mu::remove(m_pluginPaths, pair.second.path);
+            mu::remove(m_compatFileNameToResourceId, io::completeBasename(pair.second.path));
         }
     }
 
@@ -255,4 +259,25 @@ mu::Ret KnownAudioPluginsRegister::writePluginsInfo()
     Ret ret = fileSystem()->writeFile(knownAudioPluginsPath, JsonDocument(array).toJson());
 
     return ret;
+}
+
+const AudioPluginInfo* KnownAudioPluginsRegister::findPluginInfo(const AudioResourceId& resourceId) const
+{
+    auto it = m_pluginInfoMap.find(resourceId);
+    if (it != m_pluginInfoMap.end()) {
+        return &it->second;
+    }
+
+    //! NOTE: Compatibility with the old way of generating resourceId (using the file name as resourceId)
+    auto compatId = m_compatFileNameToResourceId.find(resourceId);
+    if (compatId != m_compatFileNameToResourceId.end()) {
+        it = m_pluginInfoMap.find(compatId->second);
+        IF_ASSERT_FAILED(it != m_pluginInfoMap.end()) {
+            return nullptr;
+        }
+
+        return &it->second;
+    }
+
+    return nullptr;
 }

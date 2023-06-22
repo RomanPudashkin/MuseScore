@@ -153,7 +153,7 @@ mu::Ret RegisterAudioPluginsScenario::registerFailedPlugin(const io::path_t& plu
     }
 
     AudioPluginInfo info;
-    info.meta.id = io::filename(pluginPath).toStdString();
+    info.meta.id = io::completeBasename(pluginPath).toStdString();
     info.meta.name = info.meta.id;
 
     std::string ext = io::suffix(pluginPath);

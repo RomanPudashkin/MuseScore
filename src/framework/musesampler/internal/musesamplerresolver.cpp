@@ -25,6 +25,7 @@
 #include "types/version.h"
 
 #include "musesamplerwrapper.h"
+#include "audio/audioutils.h"
 
 #include "log.h"
 
@@ -97,7 +98,7 @@ AudioResourceMetaList MuseSamplerResolver::resolveResources() const
     auto instrumentList = m_libHandler->getInstrumentList();
     while (auto instrument = m_libHandler->getNextInstrument(instrumentList))
     {
-        int uniqueId = m_libHandler->getInstrumentId(instrument);
+        String uniqueId = String::fromStdString(std::to_string(m_libHandler->getInstrumentId(instrument)));
         String internalName = String::fromUtf8(m_libHandler->getInstrumentName(instrument));
         String internalCategory = String::fromUtf8(m_libHandler->getInstrumentCategory(instrument));
         String instrumentPack = String::fromUtf8(m_libHandler->getInstrumentPackage(instrument));
@@ -108,14 +109,14 @@ AudioResourceMetaList MuseSamplerResolver::resolveResources() const
         }
 
         AudioResourceMeta meta;
-        meta.id = buildMuseInstrumentId(internalCategory, internalName, uniqueId).toStdString();
+        meta.id = makeResourceId(internalCategory, internalName, uniqueId);
         meta.name = internalName.toStdString();
         meta.type = AudioResourceType::MuseSamplerSoundPack;
         meta.vendor = instrumentPack.toStdString();
         meta.attributes = {
             { u"playbackSetupData", instrumentSoundId },
             { u"museCategory", internalCategory },
-            { u"museUID", String::fromStdString(std::to_string(uniqueId)) },
+            { u"museUID", uniqueId },
         };
 
         result.push_back(std::move(meta));
@@ -178,14 +179,4 @@ bool MuseSamplerResolver::checkLibrary() const
     }
 
     return true;
-}
-
-String MuseSamplerResolver::buildMuseInstrumentId(const String& category, const String& name, int uniqueId) const
-{
-    StringList list;
-    list.append(category);
-    list.append(name);
-    list.append(String::fromStdString(std::to_string(uniqueId)));
-
-    return list.join(u"\\");
 }

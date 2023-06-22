@@ -25,8 +25,6 @@
 #include "vsttypes.h"
 #include "vsterrors.h"
 
-#include "log.h"
-
 using namespace mu::audio;
 using namespace mu::vst;
 
@@ -64,7 +62,7 @@ mu::RetVal<AudioResourceMetaList> VstPluginMetaReader::readMeta(const io::path_t
         }
 
         audio::AudioResourceMeta meta;
-        meta.id = classInfo.name();
+        meta.id = makeResourceId(classInfo);
         meta.name = classInfo.name();
         meta.type = audio::AudioResourceType::VstPlugin;
         meta.attributes.emplace(audio::CATEGORIES_ATTRIBUTE, String::fromStdString(classInfo.subCategoriesString()));

@@ -38,6 +38,21 @@ inline AudioResourceMeta makeReverbMeta()
     return meta;
 }
 
+inline AudioResourceId makeResourceId(const String& vendor, const String& name, const String& uid)
+{
+    StringList list;
+    list.push_back(vendor);
+    list.push_back(name);
+    list.push_back(uid);
+
+    return list.join(u"\\").toStdString();
+}
+
+inline AudioResourceId makeResourceId(const std::string& vendor, const std::string& name, const std::string& uid)
+{
+    return makeResourceId(String::fromStdString(vendor), String::fromStdString(name), String::fromStdString(uid));
+}
+
 inline AudioPluginType audioPluginTypeFromCategoriesString(const String& categoriesStr)
 {
     static const std::map<String, AudioPluginType> STRING_TO_PLUGIN_TYPE_MAP = {

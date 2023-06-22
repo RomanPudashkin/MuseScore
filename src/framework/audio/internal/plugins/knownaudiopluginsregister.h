@@ -50,8 +50,12 @@ public:
 private:
     Ret writePluginsInfo();
 
+    const AudioPluginInfo* findPluginInfo(const AudioResourceId& resourceId) const;
+
     bool m_loaded = false;
+
     std::multimap<AudioResourceId, AudioPluginInfo> m_pluginInfoMap;
+    std::map<io::path_t /*completeBasename*/, AudioResourceId> m_compatFileNameToResourceId;
     std::set<io::path_t> m_pluginPaths;
 };
 }

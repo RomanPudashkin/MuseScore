@@ -25,6 +25,7 @@
 #include "audio/internal/plugins/knownaudiopluginsregister.h"
 #include "global/tests/mocks/filesystemmock.h"
 #include "audio/tests/mocks/audioconfigurationmock.h"
+#include "audio/audioutils.h"
 
 #include "serialization/json.h"
 
@@ -58,9 +59,16 @@ protected:
             { AudioResourceType::VstPlugin, "VstPlugin" },
         };
 
+        std::multimap<AudioResourceId, AudioPluginInfo> infoMap;
+        for (const AudioPluginInfo& info : infoList) {
+            infoMap.emplace(info.meta.id, info);
+        }
+
         JsonArray array;
 
-        for (const AudioPluginInfo& info : infoList) {
+        for (const auto& pair : infoMap) {
+            const AudioPluginInfo& info = pair.second;
+
             JsonObject attributesObj;
             for (auto it = info.meta.attributes.cbegin(); it != info.meta.attributes.cend(); ++it) {
                 if (it->first == audio::PLAYBACK_SETUP_DATA_ATTRIBUTE) {
@@ -109,9 +117,11 @@ protected:
         AudioPluginInfo pluginInfo1;
         pluginInfo1.type = AudioPluginType::Fx;
         pluginInfo1.path = "/some/path/to/vst/plugin/AAA.vst3";
-        pluginInfo1.meta.id = "AAA";
         pluginInfo1.meta.type = AudioResourceType::VstPlugin;
+        pluginInfo1.meta.name = "AAA";
         pluginInfo1.meta.vendor = "Some vendor";
+        pluginInfo1.meta.id = makeResourceId(pluginInfo1.meta.vendor, pluginInfo1.meta.name,
+                                             "ecde4aa8fe6848e5ba372df413fa30f9");
         pluginInfo1.meta.attributes = { { audio::CATEGORIES_ATTRIBUTE, u"Fx|Reverb" },
             { audio::PLAYBACK_SETUP_DATA_ATTRIBUTE, mpe::GENERIC_SETUP_DATA_STRING } };
         pluginInfo1.enabled = true;
@@ -120,9 +130,11 @@ protected:
         AudioPluginInfo pluginInfo2;
         pluginInfo2.type = AudioPluginType::Fx;
         pluginInfo2.path = "/some/path/to/vst/plugin/BBB.vst3";
-        pluginInfo2.meta.id = "BBB";
         pluginInfo2.meta.type = AudioResourceType::VstPlugin;
+        pluginInfo2.meta.name = "B B B";
         pluginInfo2.meta.vendor = "Another vendor";
+        pluginInfo2.meta.id = makeResourceId(pluginInfo2.meta.vendor, pluginInfo2.meta.name,
+                                             "4b379dc4027846c9b63b8be50764f6dd");
         pluginInfo2.meta.attributes = { { audio::CATEGORIES_ATTRIBUTE, u"Fx|Distortion" },
             { audio::PLAYBACK_SETUP_DATA_ATTRIBUTE, mpe::GENERIC_SETUP_DATA_STRING } };
         pluginInfo2.enabled = true;
@@ -131,13 +143,18 @@ protected:
         AudioPluginInfo disabledPluginInfo;
         disabledPluginInfo.type = AudioPluginType::Instrument;
         disabledPluginInfo.path = "/some/path/to/vst/plugin/CCC.vst3";
-        disabledPluginInfo.meta.id = "CCC";
+        disabledPluginInfo.meta.name = "Disabled plugin";
+        disabledPluginInfo.meta.id = makeResourceId(disabledPluginInfo.meta.vendor, disabledPluginInfo.meta.name,
+                                                    "edd69e313ea4483984195171a33510bd");
         disabledPluginInfo.meta.type = AudioResourceType::VstPlugin;
         disabledPluginInfo.enabled = false;
         disabledPluginInfo.meta.attributes = { { audio::CATEGORIES_ATTRIBUTE, u"Instrument|Synth" },
             { audio::PLAYBACK_SETUP_DATA_ATTRIBUTE, mpe::GENERIC_SETUP_DATA_STRING } };
         disabledPluginInfo.errorCode = -1;
         plugins.push_back(disabledPluginInfo);
+
+        ON_CALL(*m_fileSystem, exists(m_knownAudioPluginsFilePath))
+        .WillByDefault(Return(mu::make_ok()));
 
         mu::ByteArray data = pluginInfoListToJson(plugins);
         ON_CALL(*m_fileSystem, readFile(m_knownAudioPluginsFilePath))
@@ -169,10 +186,6 @@ TEST_F(Audio_KnownAudioPluginsRegisterTest, PluginInfoList)
 {
     // [GIVEN] All known plugins
     std::vector<AudioPluginInfo> expectedPluginInfoList = setupTestData();
-
-    // [GIVEN] File exists
-    ON_CALL(*m_fileSystem, exists(m_knownAudioPluginsFilePath))
-    .WillByDefault(Return(mu::make_ok()));
 
     // [WHEN] Load the info
     mu::Ret ret = m_knownPlugins->load();
@@ -258,4 +271,24 @@ TEST_F(Audio_KnownAudioPluginsRegisterTest, PluginInfoList)
     EXPECT_EQ(m_knownPlugins->pluginPath(unregisteredPlugin.meta.id), "");
     actualPluginInfoList = m_knownPlugins->pluginInfoList();
     EXPECT_FALSE(mu::contains(actualPluginInfoList, unregisteredPlugin));
+}
+
+TEST_F(Audio_KnownAudioPluginsRegisterTest, PluginInfoList_Compatibility)
+{
+    // [GIVEN] All known plugins
+    std::vector<AudioPluginInfo> expectedPluginInfoList = setupTestData();
+
+    // [WHEN] Load the info
+    mu::Ret ret = m_knownPlugins->load();
+
+    // [THEN] Successfully loaded the info
+    EXPECT_TRUE(ret);
+
+    // [THEN] We can use the old format of resourceId
+    for (const AudioPluginInfo& info : expectedPluginInfoList) {
+        AudioResourceId oldFormatResourceId = mu::io::completeBasename(info.path).toStdString();
+
+        EXPECT_TRUE(m_knownPlugins->exists(oldFormatResourceId));
+        EXPECT_EQ(m_knownPlugins->pluginPath(oldFormatResourceId), info.path);
+    }
 }

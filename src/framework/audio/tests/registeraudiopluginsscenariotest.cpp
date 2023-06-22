@@ -288,7 +288,7 @@ TEST_F(Audio_RegisterAudioPluginsScenarioTest, RegisterFailedPlugin)
 
     // [THEN] The plugin has been registered
     AudioPluginInfo expectedPluginInfo;
-    expectedPluginInfo.meta.id = mu::io::filename(pluginPath).toStdString();
+    expectedPluginInfo.meta.id = mu::io::completeBasename(pluginPath).toStdString();
     expectedPluginInfo.meta.name = expectedPluginInfo.meta.id;
     expectedPluginInfo.meta.type = AudioResourceType::VstPlugin;
     expectedPluginInfo.path = pluginPath;

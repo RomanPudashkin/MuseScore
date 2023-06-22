@@ -41,6 +41,7 @@
 #include "pluginterfaces/vst/ivstmidicontrollers.h"
 
 #include "framework/midi/miditypes.h"
+#include "audio/audioutils.h"
 #include "io/path.h"
 #include "log.h"
 
@@ -129,6 +130,11 @@ inline PluginModulePtr createModule(const io::path_t& path)
     }
 
     return result;
+}
+
+inline audio::AudioResourceId makeResourceId(const ClassInfo& info)
+{
+    return audio::makeResourceId(info.vendor(), info.name(), info.ID().toString(false /*comFormat*/));
 }
 }
 

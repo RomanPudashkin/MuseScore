@@ -34,6 +34,29 @@ using namespace mu::async;
 static const std::string_view COMPONENT_STATE_KEY = "componentState";
 static const std::string_view CONTROLLER_STATE_KEY = "controllerState";
 
+static std::optional<ClassInfo> findClassInfo(const audio::AudioResourceId& resourceId, const PluginFactory& factory)
+{
+    std::optional<ClassInfo> result = std::nullopt;
+
+    for (const ClassInfo& classInfo : factory.classInfos()) {
+        if (classInfo.category() != kVstAudioEffectClass) {
+            continue;
+        }
+
+        audio::AudioResourceId id = makeResourceId(classInfo);
+        if (id == resourceId) {
+            result = classInfo;
+            break;
+        }
+
+        if (result == std::nullopt) {
+            result = classInfo;
+        }
+    }
+
+    return result;
+}
+
 VstPlugin::VstPlugin(const audio::AudioResourceId& resourceId)
     : m_resourceId(resourceId), m_componentHandlerPtr(new VstComponentHandler())
 {
@@ -102,19 +125,11 @@ void VstPlugin::load()
         }
 
         const auto& factory = m_module->getFactory();
+        std::optional<ClassInfo> classInfo = findClassInfo(m_resourceId, factory);
 
-        for (const ClassInfo& classInfo : factory.classInfos()) {
-            if (classInfo.category() != kVstAudioEffectClass) {
-                continue;
-            }
-
-            if (classInfo.name() != m_resourceId) {
-                continue;
-            }
-
-            m_pluginProvider = std::make_unique<VstPluginProvider>(factory, classInfo);
-            m_classInfo = classInfo;
-            break;
+        if (classInfo.has_value()) {
+            m_classInfo = classInfo.value();
+            m_pluginProvider = std::make_unique<VstPluginProvider>(factory, m_classInfo);
         }
 
         if (!m_pluginProvider) {
