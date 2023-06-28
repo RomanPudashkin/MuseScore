@@ -53,6 +53,8 @@ mu::RetVal<AudioResourceMetaList> VstPluginMetaReader::readMeta(const io::path_t
         return make_ret(Err::NoPluginModule);
     }
 
+    LOGE() << "--- start read meta list: " << pluginPath;
+
     const auto& factory = module->getFactory();
     AudioResourceMetaList result;
 
@@ -66,11 +68,16 @@ mu::RetVal<AudioResourceMetaList> VstPluginMetaReader::readMeta(const io::path_t
         meta.name = classInfo.name();
         meta.type = audio::AudioResourceType::VstPlugin;
         meta.attributes.emplace(audio::CATEGORIES_ATTRIBUTE, String::fromStdString(classInfo.subCategoriesString()));
+        meta.attributes.emplace(u"version", String::fromStdString(classInfo.version()));
         meta.vendor = classInfo.vendor();
         meta.hasNativeEditorSupport = hasNativeEditorSupport();
 
+        LOGE() << "--- read meta: " << meta.id;
+
         result.emplace_back(std::move(meta));
     }
+
+    LOGE() << "--- meta count: " << result.size() << "\n";
 
     return RetVal<AudioResourceMetaList>::make_ok(result);
 }

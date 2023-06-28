@@ -143,6 +143,8 @@ mu::Ret KnownAudioPluginsRegister::load()
         info.enabled = object.value("enabled").toBool();
         info.errorCode = object.value("errorCode").toInt();
 
+        LOGE() << "--- \n" << info.path << "\n resourceId: " << info.meta.id << "\n";
+
         m_pluginPaths.insert(info.path);
         m_compatFileNameToResourceId.emplace(io::completeBasename(info.path), info.meta.id);
         m_pluginInfoMap.emplace(info.meta.id, std::move(info));
@@ -201,7 +203,11 @@ mu::Ret KnownAudioPluginsRegister::registerPlugin(const AudioPluginInfo& info)
         IF_ASSERT_FAILED(it->second.path != info.path) {
             return false;
         }
+
+        LOGE() << "--- already exists: " << info.meta.id << "\n" << info.path;
     }
+
+    LOGE() << "--- start plugin reg: " << info.meta.id << "\n" << info.path;
 
     m_pluginInfoMap.emplace(info.meta.id, info);
     m_compatFileNameToResourceId.emplace(io::completeBasename(info.path), info.meta.id);

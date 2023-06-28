@@ -93,6 +93,8 @@ void RegisterAudioPluginsScenario::processPluginsRegistration(const io::paths_t&
         const io::path_t& pluginPath = pluginPaths[i];
         std::string pluginPathStr = pluginPath.toStdString();
 
+        LOGE() << "--- reg: " << pluginPathStr;
+
         m_progress.progressChanged.send(i, pluginCount, io::filename(pluginPath).toStdString());
         qApp->processEvents();
 
