@@ -107,6 +107,9 @@ mu::Ret AbstractAudioWriter::doWriteAndWait(INotationPtr notation, QIODevice& de
         playbackController()->setNotation(globalContext()->currentNotation());
     });
 
+    qApp->sendPostedEvents();
+    qApp->processEvents();
+
     playback()->sequenceIdList()
     .onResolve(this, [this, path, &format](const audio::TrackSequenceIdList& sequenceIdList) {
         m_progress.started.notify();
