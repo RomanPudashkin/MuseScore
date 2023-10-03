@@ -64,6 +64,8 @@ public:
 
     virtual SoundProfileName defaultProfileForNewProjects() const = 0;
     virtual void setDefaultProfileForNewProjects(const SoundProfileName& name) = 0;
+
+    virtual bool addMasterFxToMasterChannel() const = 0;
 };
 }
 

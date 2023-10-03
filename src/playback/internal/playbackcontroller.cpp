@@ -63,6 +63,22 @@ static AudioOutputParams makeReverbOutputParams()
     return result;
 }
 
+static void addMasterFx(AudioOutputParams& outParams)
+{
+    AudioResourceMeta masterMeta;
+    masterMeta.id = "Master";
+    masterMeta.type = AudioResourceType::VstPlugin;
+    masterMeta.vendor = "MuseFX";
+    masterMeta.hasNativeEditorSupport = true;
+
+    AudioFxParams masterParams;
+    masterParams.resourceMeta = std::move(masterMeta);
+    masterParams.chainOrder = 0;
+    masterParams.active = true;
+
+    outParams.fxChain.emplace(masterParams.chainOrder, std::move(masterParams));
+}
+
 static std::string resolveAuxTrackTitle(aux_channel_idx_t index, const AudioOutputParams& params, bool considerFx = true)
 {
     if (considerFx && params.fxChain.size() == 1) {
@@ -1004,6 +1020,11 @@ void PlaybackController::setupNewCurrentSequence(const TrackSequenceId sequenceI
     }
 
     audio::AudioOutputParams masterOutputParams = audioSettings()->masterAudioOutputParams();
+
+    if (configuration()->addMasterFxToMasterChannel()) {
+        addMasterFx(masterOutputParams);
+    }
+
     playback()->audioOutput()->setMasterOutputParams(masterOutputParams);
 
     subscribeOnAudioParamsChanges();

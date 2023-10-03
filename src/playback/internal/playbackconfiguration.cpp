@@ -48,6 +48,8 @@ static const Settings::Key MIXER_FADER_SECTION_VISIBLE_KEY(moduleName, "playback
 static const Settings::Key MIXER_MUTE_AND_SOLO_SECTION_VISIBLE_KEY(moduleName, "playback/mixer/muteAndSoloSectionVisible");
 static const Settings::Key MIXER_TITLE_SECTION_VISIBLE_KEY(moduleName, "playback/mixer/titleSectionVisible");
 
+static const Settings::Key ADD_MASTERFX_TO_MASTER_CHANNEL(moduleName, "playback/addMasterFxToMasterChannel");
+
 static const Settings::Key DEFAULT_SOUND_PROFILE_FOR_NEW_PROJECTS(moduleName, "playback/profiles/defaultProfileName");
 static const SoundProfileName BASIC_PROFILE_NAME(u"MuseScore Basic");
 static const SoundProfileName MUSE_PROFILE_NAME(u"Muse Sounds");
@@ -85,6 +87,7 @@ void PlaybackConfiguration::init()
     settings()->setDefaultValue(PLAY_CHORD_WHEN_EDITING, Val(true));
     settings()->setDefaultValue(PLAY_HARMONY_WHEN_EDITING, Val(true));
     settings()->setDefaultValue(PLAYBACK_CURSOR_TYPE_KEY, Val(PlaybackCursorType::STEPPED));
+    settings()->setDefaultValue(ADD_MASTERFX_TO_MASTER_CHANNEL, Val(true));
 
     for (MixerSectionType sectionType : allMixerSectionTypes()) {
         bool sectionEnabledByDefault = sectionType != MixerSectionType::Volume;
@@ -222,6 +225,11 @@ SoundProfileName PlaybackConfiguration::defaultProfileForNewProjects() const
 void PlaybackConfiguration::setDefaultProfileForNewProjects(const SoundProfileName& name)
 {
     settings()->setSharedValue(DEFAULT_SOUND_PROFILE_FOR_NEW_PROJECTS, Val(name.toStdString()));
+}
+
+bool PlaybackConfiguration::addMasterFxToMasterChannel() const
+{
+    return settings()->value(ADD_MASTERFX_TO_MASTER_CHANNEL).toBool();
 }
 
 const SoundProfileName& PlaybackConfiguration::fallbackSoundProfileStr() const
