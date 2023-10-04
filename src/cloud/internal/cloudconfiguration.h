@@ -40,6 +40,8 @@ public:
     QByteArray uploadingLicense() const override;
 
     io::path_t tokensFilePath(const std::string& cloudName) const override;
+
+    bool uploadMp3FromConverter() const override;
 };
 }
 

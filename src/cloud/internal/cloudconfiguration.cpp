@@ -31,6 +31,7 @@ using namespace mu::framework;
 
 static const std::string module_name("cloud");
 static const Settings::Key CLIENT_ID_KEY(module_name, "cloud/clientId");
+static const Settings::Key UPLOAD_MP3_FROM_CONVERTER(module_name, "cloud/uploadMp3FromConverter");
 
 static QByteArray generateClientId()
 {
@@ -57,6 +58,8 @@ void CloudConfiguration::init()
     if (settings()->value(CLIENT_ID_KEY).isNull()) {
         settings()->setSharedValue(CLIENT_ID_KEY, Val(generateClientId().toStdString()));
     }
+
+    settings()->setDefaultValue(UPLOAD_MP3_FROM_CONVERTER, Val(true));
 }
 
 std::string CloudConfiguration::clientId() const
@@ -72,4 +75,9 @@ QByteArray CloudConfiguration::uploadingLicense() const
 mu::io::path_t CloudConfiguration::tokensFilePath(const std::string& cloudName) const
 {
     return globalConfiguration()->userAppDataPath() + "/" + cloudName + "_cred.dat";
+}
+
+bool CloudConfiguration::uploadMp3FromConverter() const
+{
+    return settings()->value(UPLOAD_MP3_FROM_CONVERTER).toBool();
 }

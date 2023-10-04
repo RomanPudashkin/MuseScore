@@ -26,6 +26,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonParseError>
+#include <QEventLoop>
 
 #include "io/dir.h"
 #include "stringutils.h"
@@ -33,6 +34,7 @@
 #include "convertercodes.h"
 #include "compat/backendapi.h"
 
+#include "defer.h"
 #include "log.h"
 
 using namespace mu::converter;
@@ -42,6 +44,7 @@ using namespace mu::notation;
 static const std::string PDF_SUFFIX = "pdf";
 static const std::string PNG_SUFFIX = "png";
 static const std::string SVG_SUFFIX = "svg";
+static const std::string MP3_SUFFIX = "mp3";
 
 mu::Ret ConverterController::batchConvert(const io::path_t& batchJobFile, const io::path_t& stylePath, bool forceMode,
                                           const String& soundProfile)
@@ -111,8 +114,19 @@ mu::Ret ConverterController::fileConvert(const io::path_t& in, const io::path_t&
             LOGE() << "Failed to convert page by page, err: " << ret.toString();
         }
     } else {
-        ret = convertFullNotation(writer, notationProject->masterNotation()->notation(), out);
-        if (!ret) {
+        QFile outFile(out.toQString());
+        outFile.open(QFile::ReadWrite);
+        outFile.setProperty("path", out.toQString());
+
+        ret = convertFullNotation(writer, notationProject->masterNotation()->notation(), outFile);
+
+        if (ret) {
+            bool shouldUpload = cloudConfiguration()->uploadMp3FromConverter();
+
+            if (suffix == MP3_SUFFIX && shouldUpload) {
+                uploadMp3(outFile, notationProject->metaInfo().source);
+            }
+        } else {
             LOGE() << "Failed to convert full notation, err: " << ret.toString();
         }
     }
@@ -120,6 +134,37 @@ mu::Ret ConverterController::fileConvert(const io::path_t& in, const io::path_t&
     globalContext()->setCurrentProject(nullptr);
 
     return ret;
+}
+
+void ConverterController::uploadMp3(QFile& mp3File, const QString& sourceUrl)
+{
+    QEventLoop eventLoop;
+
+    framework::ProgressPtr progress = museScoreComService()->uploadAudio(mp3File, QString::fromStdString(MP3_SUFFIX), sourceUrl);
+
+    progress->started.onNotify(this, [sourceUrl]() {
+        LOGI() << "Uploading audio started: " << sourceUrl;
+    });
+
+    progress->progressChanged.onReceive(this, [](int64_t current, int64_t total, const std::string&) {
+        if (total > 0) {
+            LOGI() << "Uploading audio progress: " << current << " / " << total << " bytes";
+        }
+    });
+
+    progress->finished.onReceive(this, [sourceUrl, &eventLoop](const framework::ProgressResult& res) {
+        DEFER {
+            eventLoop.quit();
+        };
+
+        if (res.ret) {
+            LOGI() << "Audio successfully uploaded: " << sourceUrl;
+        } else {
+            LOGE() << "Error during audio upload: " << res.ret.toString();
+        }
+    });
+
+    eventLoop.exec();
 }
 
 mu::Ret ConverterController::convertScoreParts(const mu::io::path_t& in, const mu::io::path_t& out, const mu::io::path_t& stylePath,
@@ -237,21 +282,13 @@ mu::Ret ConverterController::convertPageByPage(INotationWriterPtr writer, INotat
     return make_ret(Ret::Code::Ok);
 }
 
-mu::Ret ConverterController::convertFullNotation(INotationWriterPtr writer, INotationPtr notation, const mu::io::path_t& out) const
+mu::Ret ConverterController::convertFullNotation(INotationWriterPtr writer, INotationPtr notation, QFile& outFile) const
 {
-    QFile file(out.toQString());
-    if (!file.open(QFile::WriteOnly)) {
-        return make_ret(Err::OutFileFailedOpen);
-    }
-
-    file.setProperty("path", out.toQString());
-    Ret ret = writer->write(notation, file);
+    Ret ret = writer->write(notation, outFile);
     if (!ret) {
-        LOGE() << "failed write, err: " << ret.toString() << ", path: " << out;
+        LOGE() << "failed write, err: " << ret.toString() << ", path: " << outFile.property("path").toString();
         return make_ret(Err::OutFileFailedWrite);
     }
-
-    file.close();
 
     return make_ret(Ret::Code::Ok);
 }

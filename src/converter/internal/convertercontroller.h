@@ -31,16 +31,23 @@
 #include "project/inotationwritersregister.h"
 #include "project/iprojectrwregister.h"
 #include "context/iglobalcontext.h"
+#include "cloud/musescorecom/imusescorecomservice.h"
+#include "cloud/icloudconfiguration.h"
+#include "async/asyncable.h"
 
 #include "types/retval.h"
 
+class QFile;
+
 namespace mu::converter {
-class ConverterController : public IConverterController
+class ConverterController : public IConverterController, public async::Asyncable
 {
     INJECT(project::IProjectCreator, notationCreator)
     INJECT(project::INotationWritersRegister, writers)
     INJECT(project::IProjectRWRegister, projectRW)
     INJECT(context::IGlobalContext, globalContext)
+    INJECT(cloud::IMuseScoreComService, museScoreComService)
+    INJECT(cloud::ICloudConfiguration, cloudConfiguration)
 
 public:
     ConverterController() = default;
@@ -82,12 +89,14 @@ private:
 
     bool isConvertPageByPage(const std::string& suffix) const;
     Ret convertPageByPage(project::INotationWriterPtr writer, notation::INotationPtr notation, const io::path_t& out) const;
-    Ret convertFullNotation(project::INotationWriterPtr writer, notation::INotationPtr notation, const io::path_t& out) const;
+    Ret convertFullNotation(project::INotationWriterPtr writer, notation::INotationPtr notation, QFile& outFile) const;
 
     Ret convertScorePartsToPdf(project::INotationWriterPtr writer, notation::IMasterNotationPtr masterNotation,
                                const io::path_t& out) const;
     Ret convertScorePartsToPngs(project::INotationWriterPtr writer, notation::IMasterNotationPtr masterNotation,
                                 const io::path_t& out) const;
+
+    void uploadMp3(QFile& mp3File, const QString& sourceUrl);
 };
 }
 

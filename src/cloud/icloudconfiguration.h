@@ -39,6 +39,8 @@ public:
     virtual QByteArray uploadingLicense() const = 0;
 
     virtual io::path_t tokensFilePath(const std::string& cloudName) const = 0;
+
+    virtual bool uploadMp3FromConverter() const = 0;
 };
 }
 
