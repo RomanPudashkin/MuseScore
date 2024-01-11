@@ -280,7 +280,10 @@ void PlaybackModel::update(const int tickFrom, const int tickTo, const track_idx
 
 void PlaybackModel::updateSetupData()
 {
-    for (const Part* part : m_score->parts()) {
+    const std::vector<Part*>& parts = m_score->parts();
+    bool soloInstrumentScore = parts.size() == 1;
+
+    for (const Part* part : parts) {
         for (const auto& pair : part->instruments()) {
             InstrumentTrackId trackId = idKey(part->id(), pair.second->id().toStdString());
 
@@ -288,7 +291,7 @@ void PlaybackModel::updateSetupData()
                 continue;
             }
 
-            m_setupResolver.resolveSetupData(pair.second, m_playbackDataMap[trackId].setupData);
+            m_setupResolver.resolveSetupData(pair.second, soloInstrumentScore, m_playbackDataMap[trackId].setupData);
         }
 
         if (part->hasChordSymbol()) {

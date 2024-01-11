@@ -33,8 +33,19 @@
 using namespace mu::engraving;
 using namespace mu::mpe;
 
-void PlaybackSetupDataResolver::resolveSetupData(const Instrument* instrument, mpe::PlaybackSetupData& result) const
+static const mu::mpe::PlaybackSetupData PIANO_SETUP_DATA = {
+    SoundId::Piano, SoundCategory::Keyboards, {}, {}
+};
+
+void PlaybackSetupDataResolver::resolveSetupData(const Instrument* instrument, bool soloInstrumentScore, mpe::PlaybackSetupData& result) const
 {
+    if (soloInstrumentScore) {
+        if (instrument->family() == "voices") {
+            result = PIANO_SETUP_DATA;
+            return;
+        }
+    }
+
     if (KeyboardsSetupDataResolver::resolve(instrument, result)) {
         return;
     }
@@ -70,11 +81,7 @@ void PlaybackSetupDataResolver::resolveChordSymbolsSetupData(const Instrument* i
 
         result = CHORD_SYMBOLS_SETUP_DATA;
     } else {
-        static const mpe::PlaybackSetupData CHORD_SYMBOLS_SETUP_DATA = {
-            SoundId::Piano, SoundCategory::Keyboards, {}, {}
-        };
-
-        result = CHORD_SYMBOLS_SETUP_DATA;
+        result = PIANO_SETUP_DATA;
     }
 }
 
