@@ -298,6 +298,9 @@ public:
         bool at_least_v_0_3 = (versionMajor == 0 && versionMinor >= 3) || versionMajor > 0;
         bool at_least_v_0_4 = (versionMajor == 0 && versionMinor >= 4) || versionMajor > 0;
         bool at_least_v_0_5 = (versionMajor == 0 && versionMinor >= 5) || versionMajor > 0;
+        bool at_least_v_0_6 = (versionMajor == 0 && versionMinor >= 6) || versionMajor > 0;
+
+        m_supportsMultipleTracks = at_least_v_0_6;
 
         containsInstrument = (ms_contains_instrument)getLibFunc(m_lib, "ms_contains_instrument");
         getMatchingInstrumentId = (ms_get_matching_instrument_id)getLibFunc(m_lib, "ms_get_matching_instrument_id");
@@ -535,6 +538,13 @@ public:
                && allNotesOff;
     }
 
+    //! NOTE: There was a bug in ms_MuseSampler_add_track
+    //! that prevented adding more than 1 track (fixed in v0.6)
+    bool supportsMultipleTracks() const
+    {
+        return m_supportsMultipleTracks;
+    }
+
 private:
     void printApiStatus() const
     {
@@ -591,6 +601,7 @@ private:
     }
 
     MuseSamplerLib m_lib = nullptr;
+    bool m_supportsMultipleTracks = false;
 };
 #endif
 

@@ -310,4 +310,19 @@ typedef void (* ms_MuseSampler_set_playing)(ms_MuseSampler, int playing);
 
 typedef ms_Result (* ms_MuseSampler_all_notes_off)(ms_MuseSampler);
 
+namespace mu::musesampler {
+using track_idx_t = size_t;
+using TrackList = std::vector<ms_Track>;
+
+struct AuditionStartNoteEvent {
+    ms_AuditionStartNoteEvent_2 msEvent;
+    ms_Track msTrack = nullptr;
+};
+
+struct AuditionStopNoteEvent {
+    ms_AuditionStopNoteEvent msEvent;
+    ms_Track msTrack = nullptr;
+};
+}
+
 #endif // MU_MUSESAMPLER_APITYPES_H
