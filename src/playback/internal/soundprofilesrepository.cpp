@@ -28,6 +28,29 @@
 using namespace mu::playback;
 using namespace mu::audio;
 
+static void appendFallbacks(SoundProfile& profile)
+{
+    using namespace mu::mpe;
+
+    std::map<PlaybackSetupData, PlaybackSetupData /*fallback*/> soundToFallback {
+        {
+            { SoundId::Piano, SoundCategory::Keyboards, { SoundSubCategory::Grand }, {} },
+            { SoundId::Piano, SoundCategory::Keyboards, {}, {} },
+        }
+    };
+
+    for (const auto& pair : soundToFallback) {
+        if (mu::contains(profile.data, pair.first)) {
+            continue;
+        }
+
+        auto fallbackIt = profile.data.find(pair.second);
+        if (fallbackIt != profile.data.end()) {
+            profile.data.emplace(pair.first, fallbackIt->second);
+        }
+    }
+}
+
 void SoundProfilesRepository::init()
 {
     SoundProfile basicProfile;
@@ -63,6 +86,8 @@ void SoundProfilesRepository::refresh()
                 museProfile.data.emplace(mpe::PlaybackSetupData::fromString(setup->second), resource);
             }
         }
+
+        appendFallbacks(museProfile);
     })
     .onReject(this, [](const int errCode, const std::string& errText) {
         LOGE() << "Unable to resolve available output resources"
