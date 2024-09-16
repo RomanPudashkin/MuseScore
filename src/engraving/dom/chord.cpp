@@ -463,33 +463,17 @@ bool Chord::containsEqualArticulations(const Chord* other) const
     return true;
 }
 
-bool Chord::containsEqualArpeggio(const Chord* other) const
-{
-    if (m_arpeggio && other->m_arpeggio) {
-        if (m_arpeggio->arpeggioType() != other->m_arpeggio->arpeggioType()) {
-            return false;
-        }
-    }
-
-    return !m_arpeggio && !other->m_arpeggio;
-}
-
 bool Chord::containsEqualTremolo(const Chord* other) const
 {
     if (tremoloSingleChord() && other->tremoloSingleChord()) {
-        if (tremoloSingleChord()->tremoloType() != other->tremoloSingleChord()->tremoloType()) {
-            return false;
-        }
+        return tremoloSingleChord()->tremoloType() == other->tremoloSingleChord()->tremoloType();
     }
 
     if (tremoloTwoChord() && other->tremoloTwoChord()) {
-        if (tremoloTwoChord()->tremoloType() != other->tremoloTwoChord()->tremoloType()) {
-            return false;
-        }
+        return tremoloTwoChord()->tremoloType() == other->tremoloTwoChord()->tremoloType();
     }
 
-    return !tremoloSingleChord() && !other->tremoloSingleChord()
-           && !tremoloTwoChord() && !other->tremoloTwoChord();
+    return false;
 }
 
 //---------------------------------------------------------
