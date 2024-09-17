@@ -153,15 +153,18 @@ async::Notification AudioConfiguration::driverBufferSizeChanged() const
     return m_driverBufferSizeChanged;
 }
 
-msecs_t AudioConfiguration::audioWorkerInterval(const samples_t samples, const sample_rate_t sampleRate) const
+msecs_t AudioConfiguration::audioWorkerInterval(const samples_t, const sample_rate_t) const
 {
+    /*
     msecs_t interval = float(samples) / 4.f / float(sampleRate) * 1000.f;
     interval = std::max(interval, msecs_t(1));
 
     // Found experementaly on a slow laptop (2 core) running on battery power
     interval = std::min(interval, msecs_t(10));
 
-    return interval;
+    return interval;*/
+
+    return 2;
 }
 
 samples_t AudioConfiguration::minSamplesToReserve(RenderMode mode) const

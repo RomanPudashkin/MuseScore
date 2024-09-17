@@ -135,7 +135,7 @@ private:
             m_threadPool[i] = std::thread(&TaskScheduler::th_workerLoop, this);
         }
 
-        LOGD() << "Thread pool size: " << m_threadPoolSize;
+        LOGI() << "Thread pool size: " << m_threadPoolSize;
     }
 
     void terminateThreads()
