@@ -101,6 +101,9 @@ public:
     MOCK_METHOD(muse::io::path_t, partStyleFilePath, (), (const, override));
     MOCK_METHOD(void, setPartStyleFilePath, (const muse::io::path_t&), (override));
 
+    MOCK_METHOD(NoteInputMethod, defaultNoteInputMethod, (), (const, override));
+    MOCK_METHOD(void, setDefaultNoteInputMethod, (NoteInputMethod), (override));
+
     MOCK_METHOD(bool, isMidiInputEnabled, (), (const, override));
     MOCK_METHOD(void, setIsMidiInputEnabled, (bool), (override));
 

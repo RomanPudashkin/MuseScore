@@ -249,6 +249,15 @@ void NotationConfigurationStub::setPartStyleFilePath(const muse::io::path_t&)
 {
 }
 
+NoteInputMethod NotationConfigurationStub::defaultNoteInputMethod() const
+{
+    return NoteInputMethod::UNKNOWN;
+}
+
+void NotationConfigurationStub::setDefaultNoteInputMethod(NoteInputMethod)
+{
+}
+
 bool NotationConfigurationStub::isMidiInputEnabled() const
 {
     return false;

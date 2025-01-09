@@ -4344,7 +4344,7 @@ void NotationInteraction::putRestToSelection()
     }
 
     if (!m_noteInput->isNoteInputMode()) {
-        m_noteInput->startNoteInput();
+        m_noteInput->startNoteInput(configuration()->defaultNoteInputMethod());
     }
 
     if (is.usingNoteEntryMethod(NoteEntryMethod::RHYTHM)) {

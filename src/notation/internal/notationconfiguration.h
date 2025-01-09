@@ -116,6 +116,9 @@ public:
     muse::io::path_t partStyleFilePath() const override;
     void setPartStyleFilePath(const muse::io::path_t& path) override;
 
+    NoteInputMethod defaultNoteInputMethod() const override;
+    void setDefaultNoteInputMethod(NoteInputMethod method) override;
+
     bool isMidiInputEnabled() const override;
     void setIsMidiInputEnabled(bool enabled) override;
 
