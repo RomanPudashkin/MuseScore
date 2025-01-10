@@ -428,8 +428,12 @@ bool NotationInteraction::showShadowNote(const PointF& pos)
             symNotehead = Note::noteHead(0, noteheadGroup, noteHead);
         }
 
-        shadowNote.setState(symNotehead, duration, false, segmentSkylineTopY, segmentSkylineBottomY,
-                            inputState.accidentalType(), inputState.articulationIds());
+        if (inputState.usingNoteEntryMethod(NoteEntryMethod::BY_DURATION)) {
+            shadowNote.setState(symNotehead, TDuration(), false, segmentSkylineTopY, segmentSkylineBottomY);
+        } else {
+            shadowNote.setState(symNotehead, duration, false, segmentSkylineTopY, segmentSkylineBottomY,
+                                inputState.accidentalType(), inputState.articulationIds());
+        }
     }
 
     score()->renderer()->layoutItem(&shadowNote);
