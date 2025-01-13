@@ -45,6 +45,7 @@ public:
 
     // Shadow note
     virtual bool showShadowNote(const muse::PointF& pos) = 0;
+    virtual bool showShadowNoteAtInputPosition() = 0;
     virtual void hideShadowNote() = 0;
     virtual muse::RectF shadowNoteRect() const = 0;
 

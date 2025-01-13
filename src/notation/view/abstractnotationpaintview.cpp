@@ -239,11 +239,12 @@ void AbstractNotationPaintView::onLoadNotation(INotationPtr)
         m_notation->painting()->setViewMode(m_notation->viewState()->viewMode());
     }
 
-    INotationInteractionPtr interaction = notationInteraction();
+    m_notation->notationChanged().onNotify(this, [this]() {
+        INotationNoteInputPtr noteInput = notationNoteInput();
+        if (noteInput && !noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
+            hideShadowNote();
+        }
 
-    m_notation->notationChanged().onNotify(this, [this, interaction]() {
-        interaction->hideShadowNote();
-        m_shadowNoteRect = RectF();
         scheduleRedraw();
     });
 
@@ -251,6 +252,8 @@ void AbstractNotationPaintView::onLoadNotation(INotationPtr)
     if (isNoteEnterMode()) {
         emit activeFocusRequested();
     }
+
+    INotationInteractionPtr interaction = notationInteraction();
 
     interaction->noteInput()->stateChanged().onNotify(this, [this]() {
         onNoteInputStateChanged();
@@ -469,10 +472,43 @@ void AbstractNotationPaintView::onNoteInputStateChanged()
 
     setAcceptHoverEvents(isNoteEnterMode());
 
+    INotationNoteInputPtr noteInput = notationNoteInput();
+
+    if (noteInput && noteInput->isNoteInputMode() && noteInput->usingNoteInputMethod(NoteInputMethod::BY_DURATION)) {
+        bool visible = notationInteraction()->showShadowNoteAtInputPosition();
+        updateShadowNoteRect(visible);
+    } else {
+        hideShadowNote();
+    }
+
+    scheduleRedraw();
+}
+
+void AbstractNotationPaintView::updateShadowNoteRect(bool visible)
+{
+    if (m_shadowNoteRect.isValid()) {
+        scheduleRedraw(m_shadowNoteRect);
+
+        if (!visible) {
+            m_shadowNoteRect = RectF();
+            return;
+        }
+    }
+
+    RectF shadowNoteRect = fromLogical(notationInteraction()->shadowNoteRect());
+    if (shadowNoteRect.isValid()) {
+        compensateFloatPart(shadowNoteRect);
+        scheduleRedraw(shadowNoteRect);
+    }
+
+    m_shadowNoteRect = shadowNoteRect;
+}
+
+void AbstractNotationPaintView::hideShadowNote()
+{
     if (INotationInteractionPtr interaction = notationInteraction()) {
         interaction->hideShadowNote();
-        m_shadowNoteRect = RectF();
-        scheduleRedraw();
+        updateShadowNoteRect(false);
     }
 }
 
@@ -510,24 +546,7 @@ void AbstractNotationPaintView::showShadowNote(const PointF& pos)
     TRACEFUNC;
 
     bool visible = notationInteraction()->showShadowNote(pos);
-
-    if (m_shadowNoteRect.isValid()) {
-        scheduleRedraw(m_shadowNoteRect);
-
-        if (!visible) {
-            m_shadowNoteRect = RectF();
-            return;
-        }
-    }
-
-    RectF shadowNoteRect = fromLogical(notationInteraction()->shadowNoteRect());
-
-    if (shadowNoteRect.isValid()) {
-        compensateFloatPart(shadowNoteRect);
-        scheduleRedraw(shadowNoteRect);
-    }
-
-    m_shadowNoteRect = shadowNoteRect;
+    updateShadowNoteRect(visible);
 }
 
 void AbstractNotationPaintView::showContextMenu(const ElementType& elementType, const QPointF& pos)

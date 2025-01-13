@@ -352,18 +352,57 @@ INotationNoteInputPtr NotationInteraction::noteInput() const
     return m_noteInput;
 }
 
-bool NotationInteraction::showShadowNote(const PointF& pos)
+bool NotationInteraction::showShadowNote(const PointF& p)
 {
-    const mu::engraving::InputState& inputState = score()->inputState();
-    mu::engraving::ShadowNote& shadowNote = *score()->shadowNote();
-
-    mu::engraving::Position position;
-    if (!score()->getPosition(&position, pos, inputState.voice())) {
-        shadowNote.setVisible(false);
+    Position pos;
+    if (!score()->getPosition(&pos, p, score()->inputState().voice())) {
+        score()->shadowNote()->setVisible(false);
         return false;
     }
 
-    Staff* staff = score()->staff(position.staffIdx);
+    doShowShadowNote(pos);
+    return true;
+}
+
+bool NotationInteraction::showShadowNoteAtInputPosition()
+{
+    const InputState& is = score()->inputState();
+    if (!is.isValid()) {
+        score()->shadowNote()->setVisible(false);
+        return false;
+    }
+
+    Position pos;
+    pos.segment = is.segment();
+    pos.staffIdx = track2staff(is.track());
+
+    const EngravingItem* selectedItem = score()->selection().element();
+    const Staff* staff = score()->staff(pos.staffIdx);
+    const Fraction tick = is.tick();
+
+    if (selectedItem && selectedItem->isNote()) {
+        pos.line = toNote(selectedItem)->line();
+    } else {
+        pos.line = ((staff->lines(tick) - 1) / 2) * 2;
+    }
+
+    const double lineDist = staff->staffType(tick)->lineDistance().val()
+                            * (staff->isTabStaff(tick) ? 1 : .5)
+                            * staff->staffMag(tick)
+                            * score()->style().spatium();
+
+    const SysStaff* sysStaff = pos.segment->system()->staff(pos.staffIdx);
+    const double y = sysStaff->y() + pos.line * lineDist;
+    pos.pos = PointF(pos.segment->x(), y) + pos.segment->measure()->canvasPos();
+
+    doShowShadowNote(pos);
+    return true;
+}
+
+void NotationInteraction::doShowShadowNote(Position& position)
+{
+    const mu::engraving::InputState& inputState = score()->inputState();
+    const Staff* staff = score()->staff(position.staffIdx);
     const mu::engraving::Instrument* instr = staff->part()->instrument();
 
     mu::engraving::Segment* segment = position.segment;
@@ -405,6 +444,7 @@ bool NotationInteraction::showShadowNote(const PointF& pos)
         voice = inputState.voice();
     }
 
+    mu::engraving::ShadowNote& shadowNote = *score()->shadowNote();
     shadowNote.setVisible(true);
     shadowNote.mutldata()->setMag(mag);
     shadowNote.setTick(tick);
@@ -439,8 +479,6 @@ bool NotationInteraction::showShadowNote(const PointF& pos)
     score()->renderer()->layoutItem(&shadowNote);
 
     shadowNote.setPos(position.pos);
-
-    return true;
 }
 
 void NotationInteraction::hideShadowNote()

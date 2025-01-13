@@ -739,7 +739,7 @@ void NotationActionController::toggleNoteInputMethod(NoteInputMethod method)
 
     if (!noteInput->isNoteInputMode()) {
         noteInput->startNoteInput(method);
-    } else if (noteInput->state().usingNoteEntryMethod(method)) {
+    } else if (noteInput->usingNoteInputMethod(method)) {
         toggleNoteInput();
     } else {
         noteInput->setNoteInputMethod(method);
@@ -748,7 +748,7 @@ void NotationActionController::toggleNoteInputMethod(NoteInputMethod method)
 
 void NotationActionController::toggleNoteInputInsert()
 {
-    if (!currentNotationNoteInput()->state().usingNoteEntryMethod(NoteInputMethod::TIMEWISE)) {
+    if (!currentNotationNoteInput()->usingNoteInputMethod(NoteInputMethod::TIMEWISE)) {
         toggleNoteInputMethod(NoteInputMethod::TIMEWISE);
     } else {
         toggleNoteInputMethod(NoteInputMethod::BY_PITCH);

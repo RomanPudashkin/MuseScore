@@ -65,6 +65,7 @@ public:
 
     // Shadow note
     bool showShadowNote(const muse::PointF& pos) override;
+    bool showShadowNoteAtInputPosition() override;
     void hideShadowNote() override;
     muse::RectF shadowNoteRect() const override;
 
@@ -317,6 +318,8 @@ private:
 
     bool needStartEditGrip(QKeyEvent* event) const;
     bool handleKeyPress(QKeyEvent* event);
+
+    void doShowShadowNote(mu::engraving::Position& position);
 
     void doEndEditElement();
     void doEndDrag();

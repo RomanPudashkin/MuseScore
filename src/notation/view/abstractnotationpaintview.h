@@ -236,6 +236,8 @@ private:
     bool adjustCanvasPositionSmoothPan(const muse::RectF& cursorRect);
 
     void onNoteInputStateChanged();
+    void updateShadowNoteRect(bool visible);
+    void hideShadowNote();
 
     void onShowItemRequested(const INotationInteraction::ShowItemRequest& request);
 
