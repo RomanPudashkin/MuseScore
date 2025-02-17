@@ -61,7 +61,7 @@ static QString recognizeTitle(const mu::engraving::Score* score)
 
     const Text* titleText = nullptr;
     double maxFontSize = DBL_MIN;
-    double minY = DBL_MAX;
+    bool conflicts = false;
 
     for (const EngravingItem* item : mb->el()) {
         if (!item || !item->isText()) {
@@ -77,16 +77,12 @@ static QString recognizeTitle(const mu::engraving::Score* score)
             continue;
         }
 
-        if (RealIsEqual(text->size(), maxFontSize) && text->y() > minY) {
-            continue;
-        }
-
+        conflicts = RealIsEqual(text->size(), maxFontSize);
         titleText = text;
         maxFontSize = text->size();
-        minY = text->y();
     }
 
-    return titleText ? titleText->plainText().toQString() : QString();
+    return titleText && !conflicts ? titleText->plainText().toQString() : QString();
 }
 
 static QString recognizeComposer(const mu::engraving::Score* score)
