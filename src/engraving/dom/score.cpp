@@ -1816,21 +1816,28 @@ void Score::doUndoRemoveElement(EngravingItem* element)
     }
 }
 
-bool Score::containsElement(const EngravingItem* element) const
+bool Score::canReselectItem(const EngravingItem* item) const
 {
-    if (!element) {
+    if (!item || item->selected()) {
         return false;
     }
 
-    EngravingItem* parent = element->parentItem();
-    if (!parent) {
-        return false;
+    if (item->isNote()) {
+        const Chord* chord = toNote(item)->chord();
+        const Segment* segment = chord ? chord->segment() : nullptr;
+
+        if (segment) {
+            return segment->elementAt(item->track()) == chord;
+        }
+    } else if (item->isRest()) {
+        const Segment* segment = toRest(item)->segment();
+
+        if (segment) {
+            return segment->elementAt(item->track()) == item;
+        }
     }
 
-    std::vector<EngravingItem*> elements;
-    parent->scanElements(&elements, collectElements, false /*all*/);
-
-    return std::find(elements.cbegin(), elements.cend(), element) != elements.cend();
+    return true;
 }
 
 //---------------------------------------------------------
@@ -3331,10 +3338,11 @@ void Score::padToggle(Pad p, bool toggleForSelectionOnly)
     if (!elementsToSelect.empty()) {
         std::vector<EngravingItem*> selectList;
         for (EngravingItem* e : elementsToSelect) {
-            if (e && !e->selected()) {
+            if (canReselectItem(e)) {
                 selectList.push_back(e);
             }
         }
+
         select(selectList, SelectType::ADD, 0);
         selection().updateSelectedElements();
     }
