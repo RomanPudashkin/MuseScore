@@ -117,6 +117,8 @@ static const Settings::Key PERCUSSION_PANEL_MOVE_MIDI_NOTES_AND_SHORTCUTS(module
 
 static const Settings::Key STYLE_FILE_IMPORT_PATH_KEY(module_name, "import/style/styleFile");
 
+static const Settings::Key OPTION_B(module_name, "ui/optionB");
+
 static constexpr int DEFAULT_GRID_SIZE_SPATIUM = 2;
 
 static const std::string BY_NOTE_NAME_INPUT_METHOD("BY_NOTE_NAME");
@@ -399,6 +401,17 @@ void NotationConfiguration::init()
     context()->currentProjectChanged().onNotify(this, [this]() {
         resetStyleDialogPageIndices();
     });
+
+    settings()->setDefaultValue(OPTION_B, Val(false));
+}
+
+QColor NotationConfiguration::notationColor() const
+{
+    if (engravingConfiguration()->scoreInversionEnabled()) {
+        return engravingConfiguration()->scoreInversionColor().toQColor();
+    }
+
+    return engravingConfiguration()->defaultColor().toQColor();
 }
 
 QColor NotationConfiguration::backgroundColor() const
@@ -1348,4 +1361,9 @@ void NotationConfiguration::resetStyleDialogPageIndices()
 {
     setStyleDialogLastPageIndex(0);
     setStyleDialogLastSubPageIndex(0);
+}
+
+bool NotationConfiguration::optionB() const
+{
+    return settings()->value(OPTION_B).toBool();
 }

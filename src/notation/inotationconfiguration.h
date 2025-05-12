@@ -40,6 +40,8 @@ class INotationConfiguration : MODULE_EXPORT_INTERFACE
 public:
     virtual ~INotationConfiguration() = default;
 
+    virtual QColor notationColor() const = 0;
+
     virtual QColor backgroundColor() const = 0;
     virtual void setBackgroundColor(const QColor& color) = 0;
 
@@ -267,6 +269,8 @@ public:
     virtual void setStyleDialogLastSubPageIndex(int value) = 0;
 
     virtual void resetStyleDialogPageIndices() = 0;
+
+    virtual bool optionB() const = 0;
 };
 }
 

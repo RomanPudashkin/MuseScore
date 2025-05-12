@@ -192,6 +192,11 @@ FocusScope {
 
                         onClosed: paintView.onElementPopupIsOpenChanged()
                     }
+
+                    NotationRegionsBeingProcessedView {
+                        notationViewRect: Qt.rect(notationView.x, notationView.y, notationView.width, notationView.height)
+                        notationViewMatrix: notationView.matrix
+                    }
                 }
 
                 onPinchToZoom: function(scale, pos) {

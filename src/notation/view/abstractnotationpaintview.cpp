@@ -382,6 +382,7 @@ void AbstractNotationPaintView::onMatrixChanged(const Transform& oldMatrix, cons
 
     emit horizontalScrollChanged();
     emit verticalScrollChanged();
+    emit matrixChanged();
     emit viewportChanged();
 
     onPlaybackCursorRectChanged();
@@ -745,6 +746,11 @@ std::pair<qreal, qreal> AbstractNotationPaintView::constraintCanvas(qreal dx, qr
     }
 
     return { dx, dy };
+}
+
+QVariant AbstractNotationPaintView::matrix() const
+{
+    return Transform::toQTransform(m_matrix);
 }
 
 PointF AbstractNotationPaintView::viewportTopLeft() const
