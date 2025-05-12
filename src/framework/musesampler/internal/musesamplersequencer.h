@@ -32,6 +32,10 @@
 typedef typename std::variant<muse::mpe::NoteEvent, muse::musesampler::AuditionStartNoteEvent,
                               muse::musesampler::AuditionStopNoteEvent> MuseSamplerEvent;
 
+namespace muse {
+class Timer;
+}
+
 template<>
 struct std::less<MuseSamplerEvent>
 {
@@ -65,11 +69,17 @@ class MuseSamplerSequencer : public muse::audio::AbstractEventSequencer<mpe::Not
 {
 public:
     void init(MuseSamplerLibHandlerPtr samplerLib, ms_MuseSampler sampler, IMuseSamplerTracks* tracks, std::string&& defaultPresetCode);
+    void deinit();
+
+    void setRenderingProgress(audio::InputProcessingProgress* progress);
 
 private:
     void updateOffStreamEvents(const mpe::PlaybackEventsMap& events, const mpe::PlaybackParamList& params) override;
     void updateMainStreamEvents(const mpe::PlaybackEventsMap& events, const mpe::DynamicLevelLayers& dynamics,
                                 const mpe::PlaybackParamLayers& params) override;
+
+    void pollRenderingProgress();
+    void sendChunksBeingRendered(ms_RenderingRangeList list, int size, long long& totalChunksDurationUs);
 
     void clearAllTracks();
     void finalizeAllTracks();
@@ -114,6 +124,21 @@ private:
         }
     };
 
+    struct RenderingInfo {
+        long long initialChunksDurationUs = 0;
+        int errorCode = 0;
+        int64_t percentage = 0;
+        std::vector<audio::InputProcessingProgress::ChunkInfo> lastReceivedChunks;
+
+        void clear()
+        {
+            initialChunksDurationUs = 0;
+            errorCode = 0;
+            percentage = 0;
+            lastReceivedChunks.clear();
+        }
+    };
+
     void parseOffStreamParams(const mpe::PlaybackParamList& params, OffStreamParams& out) const;
 
     MuseSamplerLibHandlerPtr m_samplerLib = nullptr;
@@ -124,6 +149,10 @@ private:
 
     std::string m_defaultPresetCode;
     OffStreamParams m_offStreamCache;
+
+    std::unique_ptr<Timer> m_pollRenderingProgressTimer;
+    audio::InputProcessingProgress* m_renderingProgress = nullptr;
+    RenderingInfo m_renderingInfo;
 };
 }
 
