@@ -24,6 +24,9 @@
 
 #include "apitypes.h"
 
+#include "global/timer.h"
+#include "audio/audioerrors.h"
+
 using namespace muse;
 using namespace muse::musesampler;
 using namespace muse::mpe;
@@ -114,6 +117,24 @@ void MuseSamplerSequencer::init(MuseSamplerLibHandlerPtr samplerLib, ms_MuseSamp
     m_defaultPresetCode = std::move(defaultPresetCode);
 }
 
+void MuseSamplerSequencer::deinit()
+{
+    if (m_renderingProgress && m_renderingProgress->progress.isStarted()) {
+        m_renderingProgress->progress.cancel();
+    }
+
+    if (m_pollRenderingProgressTimer) {
+        m_pollRenderingProgressTimer->stop();
+    }
+
+    m_renderingProgress = nullptr;
+}
+
+void MuseSamplerSequencer::setRenderingProgress(audio::InputProcessingProgress* progress)
+{
+    m_renderingProgress = progress;
+}
+
 void MuseSamplerSequencer::updateOffStreamEvents(const PlaybackEventsMap& events, const PlaybackParamList& params)
 {
     flushOffstream();
@@ -179,6 +200,100 @@ void MuseSamplerSequencer::updateMainStreamEvents(const PlaybackEventsMap& event
     loadDynamicEvents(dynamics);
 
     finalizeAllTracks();
+    pollRenderingProgress();
+}
+
+void MuseSamplerSequencer::pollRenderingProgress()
+{
+    if (!m_renderingProgress) {
+        return;
+    }
+
+    m_lastReceivedChunks.clear();
+    m_initialChunksDurationUs = 0;
+    m_renderingErrorCode = 0;
+
+    if (!m_pollRenderingProgressTimer) {
+        m_pollRenderingProgressTimer = std::make_unique<Timer>(std::chrono::microseconds(500000)); // poll every 500ms
+    }
+
+    m_pollRenderingProgressTimer->stop();
+
+    if (m_renderingProgress->progress.isStarted()) {
+        m_renderingProgress->progress.cancel();
+    }
+
+    m_pollRenderingProgressTimer->onTimeout(this, [this]() {
+        int rangeCount = 0;
+        ms_RenderingRangeList rangeList = m_samplerLib->getRenderInfo(m_sampler, &rangeCount);
+
+        //! ########################################################################################
+        rangeCount = 500 - 100 * m_pollRenderingProgressTimer->secondsSinceStart();
+        //! ########################################################################################
+
+        if (m_initialChunksDurationUs == 0) {
+            if (rangeCount > 0) {
+                m_renderingProgress->progress.start();
+                sendChunksBeingRendered(rangeList, rangeCount, m_initialChunksDurationUs);
+            } else if (m_pollRenderingProgressTimer->secondsSinceStart() >= 10.f) { // timeout
+                m_pollRenderingProgressTimer->stop();
+            }
+
+            return;
+        }
+
+        if (rangeCount <= 0) {
+            m_pollRenderingProgressTimer->stop();
+            m_renderingProgress->progress.finish(Ret(m_renderingErrorCode));
+            return;
+        }
+
+        long long chunksDurationUs = 0;
+        sendChunksBeingRendered(rangeList, rangeCount, chunksDurationUs);
+
+        const float percentage = 100.f - (float)chunksDurationUs / (float)m_initialChunksDurationUs * 100.f;
+        m_renderingProgress->progress.progress((int)percentage, 100, std::string());
+    });
+
+    m_pollRenderingProgressTimer->start();
+}
+
+void MuseSamplerSequencer::sendChunksBeingRendered(ms_RenderingRangeList list, int size, long long& totalChunksDurationUs)
+{
+    if (!m_renderingProgress) {
+        return;
+    }
+
+    std::vector<audio::InputProcessingProgress::ChunkInfo> chunks;
+
+    for (int i = 0; i < size; ++i) {
+        const ms_RenderRangeInfo info = m_samplerLib->getNextRenderProgressInfo(list);
+
+        switch (info._state) {
+        case ms_RenderingState_ErrorNetwork:
+            m_renderingErrorCode = static_cast<int>(muse::audio::Err::OnlineSoundsNetworkError);
+            break;
+        case ms_RenderingState_ErrorInternal:
+            m_renderingErrorCode = static_cast<int>(muse::audio::Err::UnknownError);
+            break;
+        case ms_RenderingState_Rendering:
+            break;
+        }
+
+        totalChunksDurationUs += info._end_us - info._start_us;
+        chunks.push_back({ audio::microsecsToSecs(info._start_us), audio::microsecsToSecs(info._end_us) });
+    }
+
+    //! ########################################################################################
+    totalChunksDurationUs = 5 - m_pollRenderingProgressTimer->secondsSinceStart();
+    //! ########################################################################################
+
+    if (m_lastReceivedChunks == chunks) {
+        return;
+    }
+
+    m_renderingProgress->chunksBeingProcessedChannel.send(chunks);
+    m_lastReceivedChunks = chunks;
 }
 
 void MuseSamplerSequencer::clearAllTracks()
