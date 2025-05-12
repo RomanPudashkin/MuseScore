@@ -50,6 +50,8 @@
 #include "view/notationtoolbarmodel.h"
 #include "view/notationnavigator.h"
 
+#include "view/internal/notationregionsbeingprocessedmodel.h"
+
 #include "view/selectionfilter/voicesselectionfiltermodel.h"
 #include "view/selectionfilter/elementsselectionfiltermodel.h"
 
@@ -230,6 +232,8 @@ void NotationModule::registerUiTypes()
     qmlRegisterType<GlissandoSectionModel>("MuseScore.NotationScene", 1, 0, "GlissandoSectionModel");
     qmlRegisterType<NoteLineSectionModel>("MuseScore.NotationScene", 1, 0, "NoteLineSectionModel");
     qmlRegisterType<ClefKeyTimeSigPageModel>("MuseScore.NotationScene", 1, 0, "ClefKeyTimeSigPageModel");
+
+    qmlRegisterType<NotationRegionsBeingProcessedModel>("MuseScore.NotationScene", 1, 0, "NotationRegionsBeingProcessedModel");
 
     qmlRegisterUncreatableType<NoteInputBarCustomiseItem>("MuseScore.NotationScene", 1, 0, "NoteInputBarCustomiseItem", "Cannot create");
 
