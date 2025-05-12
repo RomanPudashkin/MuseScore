@@ -267,6 +267,8 @@ public:
     virtual void setStyleDialogLastSubPageIndex(int value) = 0;
 
     virtual void resetStyleDialogPageIndices() = 0;
+
+    virtual QColor notationUnderOnlineProcessingColor() const = 0;
 };
 }
 

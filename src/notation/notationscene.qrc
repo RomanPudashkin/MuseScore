@@ -99,5 +99,6 @@
         <file>qml/MuseScore/NotationScene/internal/EditStyle/courtesyImages/repeats-on-parens.png</file>
         <file>qml/MuseScore/NotationScene/internal/EditStyle/courtesyImages/repeats-on.png</file>
         <file>qml/MuseScore/NotationScene/internal/SelectionFilterSection.qml</file>
+        <file>qml/MuseScore/NotationScene/internal/NotationRegionsBeingProcessedView.qml</file>
     </qresource>
 </RCC>

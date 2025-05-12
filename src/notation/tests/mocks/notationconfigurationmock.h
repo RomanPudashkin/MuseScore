@@ -256,6 +256,8 @@ public:
     MOCK_METHOD(void, setStyleDialogLastSubPageIndex, (int), (override));
 
     MOCK_METHOD(void, resetStyleDialogPageIndices, (), (override));
+
+    MOCK_METHOD(QColor, notationUnderOnlineProcessingColor, (), (const, override));
 };
 }
 

@@ -709,3 +709,8 @@ muse::async::Channel<std::string> NotationConfigurationStub::styleFileImportPath
     static muse::async::Channel<std::string> ch;
     return ch;
 }
+
+QColor NotationConfigurationStub::notationUnderOnlineProcessingColor() const
+{
+    return QColor();
+}

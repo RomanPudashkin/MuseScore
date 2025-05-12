@@ -117,6 +117,8 @@ static const Settings::Key PERCUSSION_PANEL_MOVE_MIDI_NOTES_AND_SHORTCUTS(module
 
 static const Settings::Key STYLE_FILE_IMPORT_PATH_KEY(module_name, "import/style/styleFile");
 
+static const Settings::Key NOTATION_UNDER_ONLINE_PROCESSING_COLOR(module_name, "ui/canvas/onlineProcessingColor");
+
 static constexpr int DEFAULT_GRID_SIZE_SPATIUM = 2;
 
 static const std::string BY_NOTE_NAME_INPUT_METHOD("BY_NOTE_NAME");
@@ -372,6 +374,10 @@ void NotationConfiguration::init()
     settings()->valueChanged(PERCUSSION_PANEL_MOVE_MIDI_NOTES_AND_SHORTCUTS).onReceive(this, [this](const Val&) {
         m_percussionPanelMoveMidiNotesAndShortcutsChanged.notify();
     });
+
+    settings()->setDefaultValue(NOTATION_UNDER_ONLINE_PROCESSING_COLOR, Val(QColor(255, 147, 0, 102)));
+    settings()->setCanBeManuallyEdited(NOTATION_UNDER_ONLINE_PROCESSING_COLOR, true);
+    settings()->setDescription(NOTATION_UNDER_ONLINE_PROCESSING_COLOR, muse::trc("notation", "Online processing color"));
 
     engravingConfiguration()->scoreInversionChanged().onNotify(this, [this]() {
         m_foregroundChanged.notify();
@@ -1348,4 +1354,9 @@ void NotationConfiguration::resetStyleDialogPageIndices()
 {
     setStyleDialogLastPageIndex(0);
     setStyleDialogLastSubPageIndex(0);
+}
+
+QColor NotationConfiguration::notationUnderOnlineProcessingColor() const
+{
+    return settings()->value(NOTATION_UNDER_ONLINE_PROCESSING_COLOR).toQColor();
 }

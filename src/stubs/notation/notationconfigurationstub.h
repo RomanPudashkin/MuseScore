@@ -232,6 +232,8 @@ public:
     muse::io::path_t styleFileImportPath() const override;
     void setStyleFileImportPath(const muse::io::path_t& path)  override;
     muse::async::Channel<std::string> styleFileImportPathChanged() const override;
+
+    QColor notationUnderOnlineProcessingColor() const override;
 };
 }
 

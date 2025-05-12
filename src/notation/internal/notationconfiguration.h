@@ -272,6 +272,8 @@ public:
 
     void resetStyleDialogPageIndices() override;
 
+    QColor notationUnderOnlineProcessingColor() const override;
+
 private:
     muse::io::path_t firstScoreOrderListPath() const;
     void setFirstScoreOrderListPath(const muse::io::path_t& path);
