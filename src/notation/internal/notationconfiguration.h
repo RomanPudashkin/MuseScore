@@ -44,6 +44,8 @@ class NotationConfiguration : public INotationConfiguration, public muse::async:
 public:
     void init();
 
+    QColor notationColor() const override;
+
     QColor backgroundColor() const override;
     void setBackgroundColor(const QColor& color) override;
 
@@ -271,6 +273,8 @@ public:
     void setStyleDialogLastSubPageIndex(int value) override;
 
     void resetStyleDialogPageIndices() override;
+
+    bool optionB() const override;
 
 private:
     muse::io::path_t firstScoreOrderListPath() const;
