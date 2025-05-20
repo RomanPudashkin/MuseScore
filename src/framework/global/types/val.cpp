@@ -262,7 +262,7 @@ Val::Val(const QString& str)
     : m_val(str.toStdString()), m_type(Type::String) {}
 
 Val::Val(const QColor& color)
-    : m_val(color.name().toStdString()), m_type(Type::Color) {}
+    : m_val(color.name(QColor::HexArgb).toStdString()), m_type(Type::Color) {}
 
 QString Val::toQString() const
 {
