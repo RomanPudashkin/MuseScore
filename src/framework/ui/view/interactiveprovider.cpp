@@ -118,6 +118,7 @@ RetVal<QColor> InteractiveProvider::selectColor(const QColor& color, const QStri
         }
 
         dlg.setCurrentColor(color);
+        dlg.setOption(QColorDialog::ShowAlphaChannel, true);
         dlg.exec();
         selectedColor = dlg.selectedColor();
     }
