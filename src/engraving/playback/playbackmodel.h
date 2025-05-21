@@ -60,6 +60,7 @@ public:
     void load(Score* score);
     void reload();
 
+    muse::async::Channel<ChangesRange> dataAboutToBeChanged() const;
     muse::async::Notification dataChanged() const;
 
     bool isPlayRepeatsEnabled() const;
@@ -125,8 +126,8 @@ private:
     void processMeasureRepeat(const int tickPositionOffset, const MeasureRepeat* measureRepeat, const Measure* currentMeasure,
                               const staff_idx_t staffIdx, ChangedTrackIdSet* trackChanges);
 
-    bool hasToReloadTracks(const ScoreChangesRange& changesRange) const;
-    bool hasToReloadScore(const ScoreChangesRange& changesRange) const;
+    bool hasToReloadTracks(const ScoreChanges& changes) const;
+    bool hasToReloadScore(const ScoreChanges& changes) const;
 
     bool containsTrack(const InstrumentTrackId& trackId) const;
     void clearExpiredTracks();
@@ -140,8 +141,8 @@ private:
     void removeTrackEvents(const InstrumentTrackId& trackId, const muse::mpe::timestamp_t timestampFrom = -1,
                            const muse::mpe::timestamp_t timestampTo = -1);
 
-    TrackBoundaries trackBoundaries(const ScoreChangesRange& changesRange) const;
-    TickBoundaries tickBoundaries(const ScoreChangesRange& changesRange) const;
+    TrackBoundaries trackBoundaries(const ScoreChanges& changes) const;
+    TickBoundaries tickBoundaries(const ScoreChanges& changes) const;
 
     const RepeatList& repeatList() const;
 
@@ -165,7 +166,9 @@ private:
     std::unordered_map<InstrumentTrackId, PlaybackContextPtr> m_playbackCtxMap;
     std::unordered_map<InstrumentTrackId, muse::mpe::PlaybackData> m_playbackDataMap;
 
+    muse::async::Channel<ChangesRange> m_dataAboutToBeChanged;
     muse::async::Notification m_dataChanged;
+
     muse::async::Channel<InstrumentTrackId> m_trackAdded;
     muse::async::Channel<InstrumentTrackId> m_trackRemoved;
 };

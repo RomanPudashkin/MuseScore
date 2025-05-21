@@ -130,7 +130,7 @@ bool SystemObjectsLayerTreeItem::canAcceptDrop(const QVariant&) const
     return m_staffIdx != 0; // all except the first
 }
 
-void SystemObjectsLayerTreeItem::onScoreChanged(const mu::engraving::ScoreChangesRange& changes)
+void SystemObjectsLayerTreeItem::onScoreChanged(const mu::engraving::ScoreChanges& changes)
 {
     if (muse::contains(changes.changedStyleIdSet, Sid::timeSigPlacement)) {
         m_systemObjectGroups = collectSystemObjectGroups(m_staff);
@@ -138,7 +138,7 @@ void SystemObjectsLayerTreeItem::onScoreChanged(const mu::engraving::ScoreChange
         return;
     }
 
-    if (changes.staffIdxFrom > m_staffIdx || changes.staffIdxTo < m_staffIdx) {
+    if (changes.range.staffIdxFrom > m_staffIdx || changes.range.staffIdxTo < m_staffIdx) {
         return;
     }
 

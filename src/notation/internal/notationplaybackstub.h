@@ -32,6 +32,8 @@ public:
     void init() override;
     void reload() override;
 
+    muse::async::Channel<ChangesRange> aboutToBeChanged() const override;
+
     const engraving::InstrumentTrackId& metronomeTrackId() const override;
     engraving::InstrumentTrackId chordSymbolsTrackId(const muse::ID& partId) const override;
     bool isChordSymbolsTrack(const engraving::InstrumentTrackId& trackId) const override;
@@ -60,7 +62,6 @@ public:
     const LoopBoundaries& loopBoundaries() const override;
     muse::async::Notification loopBoundariesChanged() const override;
 
-    const Tempo& tempo(muse::midi::tick_t tick) const override;
     MeasureBeat beat(muse::midi::tick_t tick) const override;
     muse::midi::tick_t beatToRawTick(int measureIndex, int beatIndex) const override;
 

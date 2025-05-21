@@ -40,6 +40,11 @@ void NotationPlaybackStub::reload()
 {
 }
 
+muse::async::Channel<ChangesRange> NotationPlaybackStub::aboutToBeChanged() const
+{
+    return muse::async::Channel<ChangesRange>();
+}
+
 const engraving::InstrumentTrackId& NotationPlaybackStub::metronomeTrackId() const
 {
     static const engraving::InstrumentTrackId dummy;
@@ -142,12 +147,6 @@ const LoopBoundaries& NotationPlaybackStub::loopBoundaries() const
 Notification NotationPlaybackStub::loopBoundariesChanged() const
 {
     return Notification();
-}
-
-const Tempo& NotationPlaybackStub::tempo(tick_t) const
-{
-    static const Tempo dummy;
-    return dummy;
 }
 
 MeasureBeat NotationPlaybackStub::beat(tick_t) const

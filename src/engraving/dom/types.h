@@ -531,18 +531,13 @@ enum class GuitarBendShowHoldLine : unsigned char {
     HIDE,
 };
 
-struct ScoreChangesRange {
+struct ChangesRange {
     int tickFrom = -1;
     int tickTo = -1;
     staff_idx_t staffIdxFrom = muse::nidx;
     staff_idx_t staffIdxTo = muse::nidx;
 
-    std::map<EngravingItem*, std::unordered_set<CommandType> > changedItems;
-    ElementTypeSet changedTypes;
-    PropertyIdSet changedPropertyIdSet;
-    StyleIdSet changedStyleIdSet;
-
-    bool isValidBoundary() const
+    bool isValid() const
     {
         bool tickRangeValid = (tickFrom != -1 && tickTo != -1);
         bool staffRangeValid = (staffIdxFrom != muse::nidx && staffIdxTo != muse::nidx);
@@ -550,26 +545,35 @@ struct ScoreChangesRange {
         return tickRangeValid && staffRangeValid;
     }
 
-    bool isValid() const
+    bool operator==(const ChangesRange& r) const
     {
-        return isValidBoundary() || !changedTypes.empty();
+        return tickFrom == r.tickFrom
+               && tickTo == r.tickTo
+               && staffIdxFrom == r.staffIdxFrom
+               && staffIdxTo == r.staffIdxTo;
     }
 
     void clear()
     {
-        *this = ScoreChangesRange();
+        *this = ChangesRange();
+    }
+};
+
+struct ScoreChanges {
+    ChangesRange range;
+    std::map<EngravingItem*, std::unordered_set<CommandType> > changedItems;
+    ElementTypeSet changedTypes;
+    PropertyIdSet changedPropertyIdSet;
+    StyleIdSet changedStyleIdSet;
+
+    bool isValid() const
+    {
+        return range.isValid() || !changedTypes.empty();
     }
 
-    void combine(const ScoreChangesRange& r)
+    void clear()
     {
-        tickFrom = std::min(tickFrom, r.tickFrom);
-        tickTo = std::max(tickTo, r.tickTo);
-        staffIdxFrom = std::min(staffIdxFrom, r.staffIdxFrom);
-        staffIdxTo = std::max(staffIdxTo, r.staffIdxTo);
-        changedItems.insert(r.changedItems.begin(), r.changedItems.end());
-        changedTypes.insert(r.changedTypes.begin(), r.changedTypes.end());
-        changedPropertyIdSet.insert(r.changedPropertyIdSet.begin(), r.changedPropertyIdSet.end());
-        changedStyleIdSet.insert(r.changedStyleIdSet.begin(), r.changedStyleIdSet.end());
+        *this = ScoreChanges();
     }
 };
 } // namespace mu::engraving
