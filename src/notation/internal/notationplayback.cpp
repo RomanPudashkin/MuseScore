@@ -118,6 +118,11 @@ void NotationPlayback::reload()
     m_playbackModel.reload();
 }
 
+muse::async::Channel<ChangesRange> NotationPlayback::aboutToBeChanged() const
+{
+    return m_playbackModel.dataAboutToBeChanged();
+}
+
 const engraving::InstrumentTrackId& NotationPlayback::metronomeTrackId() const
 {
     return m_playbackModel.metronomeTrackId();
