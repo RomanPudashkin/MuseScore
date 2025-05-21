@@ -854,24 +854,24 @@ TEST_F(Engraving_PlaybackModelTests, SimpleRepeat_Changes_Notification)
     });
 
     // [WHEN] Score has been changed: the range starts ouside the repeat and ends inside it
-    ScoreChangesRange range;
-    range.tickFrom = 480; // 2nd note of the 1st measure (outside the repeat)
-    range.tickTo = 3840; // 1st note of the 3rd measure (inside the repeat)
-    range.staffIdxFrom = 0;
-    range.staffIdxTo = 0;
-    range.changedTypes = { ElementType::NOTE };
+    ScoreChanges changes;
+    changes.range.tickFrom = 480; // 2nd note of the 1st measure (outside the repeat)
+    changes.range.tickTo = 3840; // 1st note of the 3rd measure (inside the repeat)
+    changes.range.staffIdxFrom = 0;
+    changes.range.staffIdxTo = 0;
+    changes.changedTypes = { ElementType::NOTE };
 
-    score->changesChannel().send(range);
+    score->changesChannel().send(changes);
 
     // [WHEN] Score has been changed: the range is inside the repeat and tickTo == the end tick of the repeat
     // See: https://github.com/musescore/MuseScore/issues/25899
-    range.tickFrom = 4800; // 3rd note of the 3rd measure (inside the repeat)
-    range.tickTo = 5760; // end tick of the repeat
-    range.staffIdxFrom = 0;
-    range.staffIdxTo = 0;
-    range.changedTypes = { ElementType::PEDAL };
+    changes.range.tickFrom = 4800; // 3rd note of the 3rd measure (inside the repeat)
+    changes.range.tickTo = 5760; // end tick of the repeat
+    changes.range.staffIdxFrom = 0;
+    changes.range.staffIdxTo = 0;
+    changes.changedTypes = { ElementType::PEDAL };
 
-    score->changesChannel().send(range);
+    score->changesChannel().send(changes);
 }
 
 /**

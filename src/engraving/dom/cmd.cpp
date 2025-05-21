@@ -105,14 +105,14 @@ static UndoMacro::ChangesInfo changesInfo(const UndoStack* stack, bool undo = fa
     }
 
     if (!actualMacro) {
-        static UndoMacro::ChangesInfo empty;
+        static const UndoMacro::ChangesInfo empty;
         return empty;
     }
 
     return actualMacro->changesInfo(undo);
 }
 
-static ScoreChangesRange buildChangesRange(const CmdState& cmdState, const UndoMacro::ChangesInfo& changes)
+static ScoreChanges buildScoreChanges(const CmdState& cmdState, const UndoMacro::ChangesInfo& changes)
 {
     int startTick = cmdState.startTick().ticks();
     int endTick = cmdState.endTick().ticks();
@@ -129,8 +129,7 @@ static ScoreChangesRange buildChangesRange(const CmdState& cmdState, const UndoM
         }
     }
 
-    return { startTick, endTick,
-             cmdState.startStaff(), cmdState.endStaff(),
+    return { { startTick, endTick, cmdState.startStaff(), cmdState.endStaff() },
              std::move(changes.changedItems),
              std::move(changes.changedObjectTypes),
              std::move(changes.changedPropertyIdSet),
@@ -378,8 +377,8 @@ void Score::undoRedo(bool undo, EditData* ed)
     masterScore()->setPlaylistDirty();    // TODO: flag all individual operations
     updateSelection();
 
-    ScoreChangesRange range = buildChangesRange(cmdState(), changes);
-    changesChannel().send(range);
+    ScoreChanges result = buildScoreChanges(cmdState(), changes);
+    changesChannel().send(result);
 }
 
 //---------------------------------------------------------
@@ -410,9 +409,9 @@ void Score::endCmd(bool rollback, bool layoutAllParts)
 
     update(false, layoutAllParts);
 
-    ScoreChangesRange range;
+    ScoreChanges changes;
     if (!rollback) {
-        range = buildChangesRange(cmdState(), changesInfo(undoStack()));
+        changes = buildScoreChanges(cmdState(), changesInfo(undoStack()));
     }
 
     LOGD() << "Undo stack current macro child count: " << undoStack()->activeCommand()->childCount();
@@ -427,7 +426,7 @@ void Score::endCmd(bool rollback, bool layoutAllParts)
     cmdState().reset();
 
     if (!isCurrentCommandEmpty && !rollback) {
-        changesChannel().send(range);
+        changesChannel().send(changes);
     }
 }
 

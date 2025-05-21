@@ -570,7 +570,7 @@ public:
     void lockUpdates(bool locked);
     void undoRedo(bool undo, EditData*);
 
-    virtual muse::async::Channel<ScoreChangesRange> changesChannel() const;
+    virtual muse::async::Channel<ScoreChanges> changesChannel() const;
 
     void cmdRemoveTimeSig(TimeSig*);
     void cmdAddTimeSig(Measure*, staff_idx_t staffIdx, TimeSig*, bool local);
