@@ -178,6 +178,7 @@ void MuseSamplerWrapper::setupSound(const mpe::PlaybackSetupData& setupData)
     m_sequencer.init(m_samplerLib, m_sampler, this, resolveDefaultPresetCode(m_instrument));
 
     if (!m_samplerLib->needsOfflineRender(m_instrument.msInstrument)) {
+        m_sequencer.setUpdateMainStreamWhenInactive(true);
         m_sequencer.setRenderingProgress(&m_inputProcessingProgress);
     }
 }
