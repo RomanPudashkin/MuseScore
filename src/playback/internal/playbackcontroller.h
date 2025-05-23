@@ -115,6 +115,9 @@ public:
 
     bool canReceiveAction(const muse::actions::ActionCode& code) const override;
 
+    const std::set<muse::audio::TrackId>& onlineTracks() const override;
+    muse::Progress onlineTracksProcessingProgress() const override;
+
 private:
     muse::audio::IPlayerPtr currentPlayer() const;
 
@@ -216,6 +219,8 @@ private:
 
     void onTrackNewlyAdded(const engraving::InstrumentTrackId& instrumentTrackId);
 
+    void listenOnlineTrackProcessingProgress(const muse::audio::TrackId trackId);
+
     muse::audio::secs_t playedTickToSecs(int tick) const;
 
     notation::INotationPtr m_notation;
@@ -252,6 +257,10 @@ private:
     DrumsetLoader m_drumsetLoader;
 
     bool m_measureInputLag = false;
+
+    muse::Progress m_onlineTracksProcessingProgress;
+    std::set<muse::audio::TrackId> m_onlineTracks;
+    std::set<muse::audio::TrackId> m_onlineTracksBeingProcessed;
 };
 }
 

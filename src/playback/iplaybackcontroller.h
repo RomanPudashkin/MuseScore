@@ -103,6 +103,9 @@ public:
 
     virtual void setNotation(notation::INotationPtr notation) = 0;
     virtual void setIsExportingAudio(bool exporting) = 0;
+
+    virtual const std::set<muse::audio::TrackId>& onlineTracks() const = 0;
+    virtual muse::Progress onlineTracksProcessingProgress() const = 0;
 };
 }
 
