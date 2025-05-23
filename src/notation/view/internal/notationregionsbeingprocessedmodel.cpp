@@ -53,6 +53,13 @@ void NotationRegionsBeingProcessedModel::load()
     playbackController()->trackRemoved().onReceive(this, [this](const TrackId trackId) {
         onTrackRemoved(trackId);
     });
+
+    playbackController()->isPlayingChanged().onNotify(this, [this]() {
+        if (configuration()->optionB()) {
+            updateRegionsBeingProcessed();
+            emit regionsChanged();
+        }
+    });
 }
 
 QRectF NotationRegionsBeingProcessedModel::notationViewRect() const
@@ -219,6 +226,10 @@ void NotationRegionsBeingProcessedModel::clear()
 
 void NotationRegionsBeingProcessedModel::updateRegionsBeingProcessed()
 {
+    if (configuration()->optionB() && !playbackController()->isPlaying()) {
+        return;
+    }
+
     const INotationPtr notation = globalContext()->currentNotation();
     if (!notation) {
         return;

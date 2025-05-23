@@ -119,6 +119,8 @@ static const Settings::Key STYLE_FILE_IMPORT_PATH_KEY(module_name, "import/style
 
 static const Settings::Key NOTATION_UNDER_ONLINE_PROCESSING_COLOR(module_name, "ui/canvas/onlineProcessingColor");
 
+static const Settings::Key OPTION_B(module_name, "ui/optionB");
+
 static constexpr int DEFAULT_GRID_SIZE_SPATIUM = 2;
 
 static const std::string BY_NOTE_NAME_INPUT_METHOD("BY_NOTE_NAME");
@@ -405,6 +407,8 @@ void NotationConfiguration::init()
     context()->currentProjectChanged().onNotify(this, [this]() {
         resetStyleDialogPageIndices();
     });
+
+    settings()->setDefaultValue(OPTION_B, Val(false));
 }
 
 QColor NotationConfiguration::backgroundColor() const
@@ -1359,4 +1363,9 @@ void NotationConfiguration::resetStyleDialogPageIndices()
 QColor NotationConfiguration::notationUnderOnlineProcessingColor() const
 {
     return settings()->value(NOTATION_UNDER_ONLINE_PROCESSING_COLOR).toQColor();
+}
+
+bool NotationConfiguration::optionB() const
+{
+    return settings()->value(OPTION_B).toBool();
 }

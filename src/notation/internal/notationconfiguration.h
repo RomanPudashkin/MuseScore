@@ -274,6 +274,8 @@ public:
 
     QColor notationUnderOnlineProcessingColor() const override;
 
+    bool optionB() const override;
+
 private:
     muse::io::path_t firstScoreOrderListPath() const;
     void setFirstScoreOrderListPath(const muse::io::path_t& path);

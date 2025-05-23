@@ -269,6 +269,8 @@ public:
     virtual void resetStyleDialogPageIndices() = 0;
 
     virtual QColor notationUnderOnlineProcessingColor() const = 0;
+
+    virtual bool optionB() const = 0;
 };
 }
 
