@@ -98,6 +98,13 @@ Item {
             visible: !hiddenControlsMenuButton.visible
         }
 
+        OnlineSoundsProcessingIndicator {
+            id: onlineSoundsIndicator
+
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: 28
+        }
+
         SeparatorLine { orientation: Qt.Vertical; visible: workspaceControl.visible }
 
         FlatButton {

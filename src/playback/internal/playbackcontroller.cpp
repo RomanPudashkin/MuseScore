@@ -1096,6 +1096,11 @@ void PlaybackController::doAddTrack(const InstrumentTrackId& instrumentTrackId, 
         if (shouldLoadDrumset(instrumentTrackId, originMeta, appliedParams.in.resourceMeta)) {
             m_drumsetLoader.loadDrumset(m_notation, instrumentTrackId, appliedParams.in.resourceMeta);
         }
+
+        if (muse::audio::isOnlineSound(appliedParams.in)) {
+            m_onlineTracks.insert(trackId);
+            listenOnlineTrackProcessingProgress(trackId);
+        }
     })
     .onReject(this, [instrumentTrackId, onFinished](int code, const std::string& msg) {
         LOGE() << "can't add a new track, code: [" << code << "] " << msg;
@@ -1235,6 +1240,9 @@ void PlaybackController::removeTrack(const InstrumentTrackId& instrumentTrackId)
 
     m_trackRemoved.send(search->second);
     m_instrumentTrackIdMap.erase(instrumentTrackId);
+
+    muse::remove(m_onlineTracks, search->second);
+    muse::remove(m_onlineTracksBeingProcessed, search->second);
 }
 
 void PlaybackController::onTrackNewlyAdded(const InstrumentTrackId& instrumentTrackId)
@@ -1248,6 +1256,28 @@ void PlaybackController::onTrackNewlyAdded(const InstrumentTrackId& instrumentTr
             notation->soloMuteState()->setTrackSoloMuteState(instrumentTrackId, soloMuteState);
         }
     }
+}
+
+void PlaybackController::listenOnlineTrackProcessingProgress(const TrackId trackId)
+{
+    playback()->tracks()->inputProcessingProgress(m_currentSequenceId, trackId)
+    .onResolve(this, [this, trackId](muse::audio::InputProcessingProgress inputProgress) {
+        inputProgress.progress.started().onNotify(this, [this, trackId]() {
+            m_onlineTracksBeingProcessed.insert(trackId);
+
+            if (!m_onlineTracksProcessingProgress.isStarted()) {
+                m_onlineTracksProcessingProgress.start();
+            }
+        });
+
+        inputProgress.progress.finished().onReceive(this, [this, trackId](const muse::ProgressResult&) {
+            muse::remove(m_onlineTracksBeingProcessed, trackId);
+
+            if (m_onlineTracksBeingProcessed.empty()) {
+                m_onlineTracksProcessingProgress.finish(make_ok());
+            }
+        });
+    });
 }
 
 void PlaybackController::setupNewCurrentSequence(const TrackSequenceId sequenceId)
@@ -1725,6 +1755,16 @@ void PlaybackController::setIsExportingAudio(bool exporting)
 bool PlaybackController::canReceiveAction(const ActionCode&) const
 {
     return m_masterNotation != nullptr && m_masterNotation->hasParts();
+}
+
+const std::set<TrackId>& PlaybackController::onlineTracks() const
+{
+    return m_onlineTracks;
+}
+
+muse::Progress PlaybackController::onlineTracksProcessingProgress() const
+{
+    return m_onlineTracksProcessingProgress;
 }
 
 muse::audio::secs_t PlaybackController::playedTickToSecs(int tick) const
