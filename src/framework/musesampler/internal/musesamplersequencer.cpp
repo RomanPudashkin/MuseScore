@@ -401,7 +401,7 @@ void MuseSamplerSequencer::loadParams(const PlaybackParamLayers& changes)
                     addTextArticulation(param.val, params.first, track);
                     break;
                 case PlaybackParam::Syllable:
-                    addSyllable(param.val, params.first, track);
+                    addSyllable(param.val, param.flags.testFlag(PlaybackParam::HyphenedToNext), params.first, track);
                     break;
                 case PlaybackParam::Undefined:
                     UNREACHABLE;
@@ -546,7 +546,7 @@ void MuseSamplerSequencer::addPresets(const StringList& presets, long long start
     }
 }
 
-void MuseSamplerSequencer::addSyllable(const String& syllable, long long positionUs, ms_Track track)
+void MuseSamplerSequencer::addSyllable(const String& syllable, bool hyphenedToNext, long long positionUs, ms_Track track)
 {
     if (syllable.empty()) {
         return;
@@ -554,9 +554,10 @@ void MuseSamplerSequencer::addSyllable(const String& syllable, long long positio
 
     std::string str = syllable.toStdString();
 
-    ms_SyllableEvent evt;
+    SyllableEvent evt;
     evt._position_us = positionUs;
     evt._text = str.c_str();
+    evt._hyphened_to_next = hyphenedToNext;
 
     m_samplerLib->addSyllableEvent(m_sampler, track, evt);
 }
@@ -727,11 +728,11 @@ void MuseSamplerSequencer::parseOffStreamParams(const PlaybackParamList& params,
             break;
         case PlaybackParam::PlayingTechnique:
             out.textArticulation = param.val.toStdString();
-            out.textArticulationStartsAtNote = !param.isPersistent.value_or(false);
+            out.textArticulationStartsAtNote = !param.flags.testFlag(PlaybackParam::IsPersistent);
             break;
         case PlaybackParam::Syllable:
             out.syllable = param.val.toStdString();
-            out.syllableStartsAtNote = !param.isPersistent.value_or(false);
+            out.syllableStartsAtNote = !param.flags.testFlag(PlaybackParam::IsPersistent);
             break;
         case PlaybackParam::Undefined:
             UNREACHABLE;
