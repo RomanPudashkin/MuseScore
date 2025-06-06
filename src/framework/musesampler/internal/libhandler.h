@@ -325,7 +325,7 @@ public:
             getRenderInfo = (ms_MuseSampler_get_render_info)muse::getLibFunc(m_lib, "ms_MuseSampler_get_render_info");
             getNextRenderProgressInfo = (ms_RenderProgressInfo_get_next)muse::getLibFunc(m_lib, "ms_RenderProgressInfo_get_next");
         } else {
-            isOnlineInstrument = [](ms_InstrumentInfo) { return true; }; // <--- TMP
+            isOnlineInstrument = [](ms_InstrumentInfo) { return false; };
             getRenderInfo = [](ms_MuseSampler, int*) { return ms_RenderingRangeList(); };
             getNextRenderProgressInfo = [](ms_RenderingRangeList) { return ms_RenderRangeInfo { 0, 0, ms_RenderingState_ErrorInternal }; };
         }

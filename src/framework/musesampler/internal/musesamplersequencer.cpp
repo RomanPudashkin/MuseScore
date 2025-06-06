@@ -227,10 +227,6 @@ void MuseSamplerSequencer::pollRenderingProgress()
         int rangeCount = 0;
         ms_RenderingRangeList rangeList = m_samplerLib->getRenderInfo(m_sampler, &rangeCount);
 
-        //! ########################################################################################
-        rangeCount = 500 - 100 * m_pollRenderingProgressTimer->secondsSinceStart();
-        //! ########################################################################################
-
         if (m_initialChunksDurationUs == 0) {
             if (rangeCount > 0) {
                 m_renderingProgress->progress.start();
@@ -283,10 +279,6 @@ void MuseSamplerSequencer::sendChunksBeingRendered(ms_RenderingRangeList list, i
         totalChunksDurationUs += info._end_us - info._start_us;
         chunks.push_back({ audio::microsecsToSecs(info._start_us), audio::microsecsToSecs(info._end_us) });
     }
-
-    //! ########################################################################################
-    totalChunksDurationUs = 5 - m_pollRenderingProgressTimer->secondsSinceStart();
-    //! ########################################################################################
 
     if (m_lastReceivedChunks == chunks) {
         return;

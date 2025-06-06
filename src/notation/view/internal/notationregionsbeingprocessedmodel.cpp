@@ -280,8 +280,6 @@ void NotationRegionsBeingProcessedModel::onChunksReceived(const InstrumentTrackI
     TrackInfo& info = it->second;
     info.ranges.clear();
 
-    UNUSED(chunks);
-    /*
     const mu::engraving::Score* score = notation->elements()->msScore();
     bool shouldUpdate = false;
 
@@ -298,10 +296,7 @@ void NotationRegionsBeingProcessedModel::onChunksReceived(const InstrumentTrackI
 
     if (shouldUpdate) {
         updateRegionsBeingProcessed({ { instrumentTrackId, info } });
-    }*/
-
-    info.ranges.push_back(m_lastChangedRange);
-    updateRegionsBeingProcessed({ { instrumentTrackId, info } });
+    }
 
     if (wasEmpty != m_regions.empty()) {
         emit isEmptyChanged();
