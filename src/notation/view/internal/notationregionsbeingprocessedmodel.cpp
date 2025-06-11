@@ -95,6 +95,12 @@ static const Segment* findSegmentTo(const mu::engraving::Score* score, const Sys
 NotationRegionsBeingProcessedModel::NotationRegionsBeingProcessedModel(QObject* parent)
     : QAbstractListModel(parent)
 {
+    LOGI() << "CREATED: " << this;
+}
+
+NotationRegionsBeingProcessedModel::~NotationRegionsBeingProcessedModel()
+{
+    LOGI() << "DESTROYED: " << this;
 }
 
 QVariant NotationRegionsBeingProcessedModel::data(const QModelIndex& index, int role) const
@@ -235,10 +241,12 @@ void NotationRegionsBeingProcessedModel::startListeningToProgress(const TrackId 
     playback()->tracks()->inputProcessingProgress(sequenceId, trackId)
     .onResolve(this, [this, instrumentTrackId](InputProcessingProgress inputProgress) {
         if (inputProgress.progress.isStarted()) {
+            LOGI() << "ALREADY STARTED: " << instrumentTrackId.instrumentId;
             onProgressStarted(instrumentTrackId);
         }
 
         inputProgress.progress.started().onNotify(this, [this, instrumentTrackId]() {
+            LOGI() << "STARTED: " << instrumentTrackId.instrumentId;
             onProgressStarted(instrumentTrackId);
         });
 
@@ -285,6 +293,7 @@ void NotationRegionsBeingProcessedModel::onChunksReceived(const InstrumentTrackI
 
     auto it = m_tracksBeingProcessed.find(instrumentTrackId);
     if (it == m_tracksBeingProcessed.end()) {
+        LOGI() << "NO TRACK: " << instrumentTrackId.instrumentId;
         return;
     }
 
@@ -295,16 +304,22 @@ void NotationRegionsBeingProcessedModel::onChunksReceived(const InstrumentTrackI
 
     bool shouldUpdate = false;
 
+    LOGI() << "CHUNKS RECEIVED: " << instrumentTrackId.instrumentId;
+
     for (const InputProcessingProgress::ChunkInfo& chunk : chunks) {
         TickRange range;
         range.tickFrom = master->playback()->secToPlayedTick(chunk.start);
         range.tickTo = master->playback()->secToPlayedTick(chunk.end);
+
+        LOGI() << "FROM: " << chunk.start << ", TO: " << chunk.end;
 
         if (!muse::contains(info.ranges, range)) {
             info.ranges.push_back(range);
             shouldUpdate = true;
         }
     }
+
+    LOGI() << "\n";
 
     if (shouldUpdate) {
         updateRegionsBeingProcessed({ { instrumentTrackId, info } });
@@ -341,6 +356,8 @@ void NotationRegionsBeingProcessedModel::onProgressChanged(const InstrumentTrack
 
 void NotationRegionsBeingProcessedModel::onProgressFinished(const InstrumentTrackId& instrumentTrackId)
 {
+    LOGI() << "FINISHED: " << instrumentTrackId.instrumentId;
+
     muse::remove(m_tracksBeingProcessed, instrumentTrackId);
 
     const QList<RegionInfo> regionsCopy = m_regions;

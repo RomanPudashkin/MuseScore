@@ -175,7 +175,7 @@ void MuseSamplerWrapper::setupSound(const mpe::PlaybackSetupData& setupData)
         }
     }
 
-    m_sequencer.init(m_samplerLib, m_sampler, this, resolveDefaultPresetCode(m_instrument));
+    m_sequencer.init(m_samplerLib, m_sampler, this, setupData.toString().toStdString(), resolveDefaultPresetCode(m_instrument));
 
     if (m_instrument.isValid() && m_samplerLib->isOnlineInstrument(m_instrument.msInstrument)) {
         m_sequencer.setUpdateMainStreamWhenInactive(true);

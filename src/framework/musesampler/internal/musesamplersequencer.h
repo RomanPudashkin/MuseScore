@@ -68,7 +68,8 @@ namespace muse::musesampler {
 class MuseSamplerSequencer : public muse::audio::AbstractEventSequencer<mpe::NoteEvent, AuditionStartNoteEvent, AuditionStopNoteEvent>
 {
 public:
-    void init(MuseSamplerLibHandlerPtr samplerLib, ms_MuseSampler sampler, IMuseSamplerTracks* tracks, std::string&& defaultPresetCode);
+    void init(MuseSamplerLibHandlerPtr samplerLib, ms_MuseSampler sampler, IMuseSamplerTracks* tracks, const std::string& title,
+              std::string&& defaultPresetCode);
     void deinit();
 
     void setRenderingProgress(audio::InputProcessingProgress* progress);
@@ -144,6 +145,7 @@ private:
     MuseSamplerLibHandlerPtr m_samplerLib = nullptr;
     ms_MuseSampler m_sampler = nullptr;
     IMuseSamplerTracks* m_tracks = nullptr;
+    std::string m_title;
 
     std::unordered_map<mpe::layer_idx_t, track_idx_t> m_layerIdxToTrackIdx;
 

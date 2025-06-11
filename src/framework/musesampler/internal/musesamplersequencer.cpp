@@ -109,11 +109,13 @@ static const std::unordered_map<ArticulationType, ms_NoteHead> NOTEHEAD_TYPES = 
 };
 
 void MuseSamplerSequencer::init(MuseSamplerLibHandlerPtr samplerLib, ms_MuseSampler sampler, IMuseSamplerTracks* tracks,
+                                const std::string& title,
                                 std::string&& defaultPresetCode)
 {
     m_samplerLib = samplerLib;
     m_sampler = sampler;
     m_tracks = tracks;
+    m_title = title;
     m_defaultPresetCode = std::move(defaultPresetCode);
 }
 
@@ -225,11 +227,15 @@ void MuseSamplerSequencer::pollRenderingProgress()
         if (m_renderingInfo.initialChunksDurationUs == 0) {
             if (rangeCount > 0) {
                 if (!m_renderingProgress->progress.isStarted()) {
+                    LOGI() << "START: " << m_title << ", RANGES: " << rangeCount;
                     m_renderingProgress->progress.start();
+                } else {
+                    LOGI() << "ALREADY STARTED: " << m_title << ", RANGES: " << rangeCount;
                 }
 
                 sendChunksBeingRendered(rangeList, rangeCount, m_renderingInfo.initialChunksDurationUs);
             } else if (m_pollRenderingProgressTimer->secondsSinceStart() >= 10.f) { // timeout
+                LOGI() << "TIMEOUT: " << m_title;
                 m_pollRenderingProgressTimer->stop();
                 m_renderingInfo.clear();
             }
@@ -238,6 +244,7 @@ void MuseSamplerSequencer::pollRenderingProgress()
         }
 
         if (rangeCount <= 0) {
+            LOGI() << "FINISH: " << m_title << ", CODE: " << m_renderingInfo.errorCode;
             m_pollRenderingProgressTimer->stop();
             m_renderingProgress->progress.finish(Ret(m_renderingInfo.errorCode));
             m_renderingInfo.clear();
@@ -287,6 +294,7 @@ void MuseSamplerSequencer::sendChunksBeingRendered(ms_RenderingRangeList list, i
         return;
     }
 
+    LOGI() << "SEND CHUNKS: " << m_title << ", SIZE: " << chunks.size();
     m_renderingInfo.lastReceivedChunks = chunks;
     m_renderingProgress->chunksBeingProcessedChannel.send(chunks);
 }
