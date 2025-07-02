@@ -231,6 +231,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/rendering/paddingtable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/rendering/paddingtable.h
 
+    ${CMAKE_CURRENT_LIST_DIR}/utils/chordnamerecognizer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/chordnamerecognizer.h
+
     ${RENDERING_SCORE_SRC}
     ${RENDERING_SINGLE_SRC}
     ${RENDERING_EDITMODE_SRC}
