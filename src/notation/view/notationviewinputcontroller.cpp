@@ -1525,18 +1525,18 @@ void NotationViewInputController::updateShadowNotePopupVisibility(bool forceHide
 
 EngravingItem* NotationViewInputController::resolveStartPlayableElement() const
 {
-    EngravingItem* hitElement = hitElementContext().element;
+    EngravingItem* ctxElement = viewInteraction()->contextItem();
 
     if (playbackController()->isPlaying()) {
-        return seekAllowed(hitElement) ? hitElement : nullptr;
+        return seekAllowed(ctxElement) ? ctxElement : nullptr;
     }
 
     INotationSelectionPtr selection = viewInteraction()->selection();
     if (!selection->isRange()) {
-        return hitElement;
+        return ctxElement;
     }
 
-    EngravingItem* playbackStartElement = hitElement;
+    EngravingItem* playbackStartElement = ctxElement;
 
     for (EngravingItem* element: selection->elements()) {
         if (!element || element == playbackStartElement) {

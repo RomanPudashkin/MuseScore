@@ -308,9 +308,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_Range_Start_Drag_From_Selec
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] There is a range selection
     ON_CALL(*m_selection, isRange())
@@ -374,9 +377,12 @@ TEST_F(NotationViewInputControllerTests, DISABLED_Mouse_Press_On_Selected_Text_E
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] There isn't a range selection
     ON_CALL(*m_selection, isRange())
@@ -450,9 +456,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Selected_Non_Text_Elemen
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] There isn't a range selection
     ON_CALL(*m_selection, isRange())
@@ -524,9 +533,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_Range_Start_Play_From_First
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] No note enter mode, no playing
     EXPECT_CALL(m_view, isNoteEnterMode())
@@ -587,9 +599,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Already_Selected_Range)
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(context))
+    .Times(1)
     .WillOnce(ReturnRef(context));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(context.element));
 
     //! [GIVEN] There is a range selection
     ON_CALL(*m_selection, isRange())
@@ -637,9 +652,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_Shift_On_Already_Selected_R
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(context))
+    .Times(1)
     .WillOnce(ReturnRef(context));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(context.element));
 
     //! [GIVEN] There is a range selection
     ON_CALL(*m_selection, isRange())
@@ -690,9 +708,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Already_Selected_Element
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] No note enter mode, no playing
     EXPECT_CALL(m_view, isNoteEnterMode())
@@ -747,9 +768,12 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Range)
     .Times(1);
 
     EXPECT_CALL(*m_interaction, hitElementContext())
-    .Times(2)
-    .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(newContext));
+    .Times(1)
+    .WillOnce(ReturnRef(oldContext));
+
+    EXPECT_CALL(*m_interaction, contextItem())
+    .Times(1)
+    .WillOnce(Return(newContext.element));
 
     //! [GIVEN] No note enter mode, no playing
     EXPECT_CALL(m_view, isNoteEnterMode())
@@ -820,10 +844,8 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Range_Context_Menu)
 
     EXPECT_CALL(*m_interaction, hitElementContext())
     .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(selectMeasureContext))
     //! right button click
     .WillOnce(ReturnRef(selectMeasureContext))
-    .WillOnce(ReturnRef(contextMenuOnMeasureContext))
 #if QT_VERSION < QT_VERSION_CHECK(6, 9, 0)
     .WillOnce(ReturnRef(contextMenuOnMeasureContext)) // for context menu
 #endif
@@ -912,10 +934,8 @@ TEST_F(NotationViewInputControllerTests, Mouse_Press_On_Range_Context_Menu_New_S
 
     EXPECT_CALL(*m_interaction, hitElementContext())
     .WillOnce(ReturnRef(oldContext))
-    .WillOnce(ReturnRef(selectMeasureContext))
     //! right button click
     .WillOnce(ReturnRef(selectMeasureContext))
-    .WillOnce(ReturnRef(contextMenuOnMeasureContext))
 #if QT_VERSION < QT_VERSION_CHECK(6, 9, 0)
     .WillOnce(ReturnRef(contextMenuOnMeasureContext)) // for context menu
 #endif
