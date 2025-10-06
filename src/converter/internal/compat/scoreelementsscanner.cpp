@@ -138,6 +138,8 @@ static void addElementInfoIfNeed(void* data, mu::engraving::EngravingItem* item)
         info.notes = chordToNotes(chord);
     } else if (item->isTempoText()) {
         info.text = mu::engraving::toTempoText(item)->tempoInfo();
+    } else if (item->isPlayTechAnnotation() || item->isDynamic()) {
+        info.name = item->translatedSubtypeUserName();
     } else if (item->isTextBase()) {
         info.text = mu::engraving::toTextBase(item)->plainText();
     } else {
