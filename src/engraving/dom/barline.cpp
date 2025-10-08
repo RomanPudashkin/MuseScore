@@ -81,6 +81,17 @@ String BarLine::translatedUserTypeName(BarLineType t)
     return String();
 }
 
+BarLineType BarLine::barlineTypeByUserName(const String& name)
+{
+    for (const BarLineTableItem& item : barLineTable) {
+        if (item.userName.translated() == name) {
+            return item.type;
+        }
+    }
+
+    return BarLineType::NORMAL;
+}
+
 //---------------------------------------------------------
 //   BarLine
 //---------------------------------------------------------

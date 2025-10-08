@@ -47,6 +47,8 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/internal/compat/notationmeta.h
     ${CMAKE_CURRENT_LIST_DIR}/internal/compat/scoreelementsscanner.cpp
     ${CMAKE_CURRENT_LIST_DIR}/internal/compat/scoreelementsscanner.h
+    ${CMAKE_CURRENT_LIST_DIR}/internal/compat/scoreelementsreader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/internal/compat/scoreelementsreader.h
     )
 
 if (MUE_BUILD_CONVERTER_TESTS)

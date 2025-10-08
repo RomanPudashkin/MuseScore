@@ -817,17 +817,6 @@ void Hairpin::reset()
 
 muse::TranslatableString Hairpin::subtypeUserName() const
 {
-    switch (hairpinType()) {
-    case HairpinType::CRESC_HAIRPIN:
-        return TranslatableString("engraving/hairpintype", "Crescendo hairpin");
-    case HairpinType::DIM_HAIRPIN:
-        return TranslatableString("engraving/hairpintype", "Diminuendo hairpin");
-    case HairpinType::CRESC_LINE:
-        return TranslatableString("engraving/hairpintype", "Crescendo line");
-    case HairpinType::DIM_LINE:
-        return TranslatableString("engraving/hairpintype", "Diminuendo line");
-    default:
-        return TranslatableString("engraving/hairpintype", "Custom");
-    }
+    return TConv::userName(m_hairpinType);
 }
 }

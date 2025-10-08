@@ -125,10 +125,12 @@ public:
     static BeatsPerSecond fromXml(const AsciiStringView& tag, BeatsPerSecond def);
 
     static String translatedUserName(DurationType v);
+    static DurationType durationTypeByUserName(const String& name);
     static AsciiStringView toXml(DurationType v);
     static DurationType fromXml(const AsciiStringView& tag, DurationType def);
 
     static const TranslatableString& userName(PlayingTechniqueType v);
+    static PlayingTechniqueType playingTechniqueTypeByUserName(const String& name);
     static AsciiStringView toXml(PlayingTechniqueType v);
     static PlayingTechniqueType fromXml(const AsciiStringView& tag, PlayingTechniqueType def);
 
@@ -183,6 +185,7 @@ public:
     static BracketType fromXml(const AsciiStringView& str, BracketType def);
 
     static const TranslatableString& userName(ArpeggioType v);
+    static ArpeggioType arpeggioTypeByUserName(const String& name);
     static AsciiStringView toXml(ArpeggioType v);
     static ArpeggioType fromXml(const AsciiStringView& tag, ArpeggioType def);
 
@@ -238,6 +241,7 @@ public:
 
     static const TranslatableString& userName(Key v, bool isAtonal = false, bool isCustom = false);
     static String translatedUserName(Key v, bool isAtonal = false, bool isCustom = false);
+    static Key keyByUserName(const String& name);
 
     static AsciiStringView toXml(TiePlacement interval);
     static TiePlacement fromXml(const AsciiStringView& str, TiePlacement def);
@@ -294,5 +298,8 @@ public:
 
     static AsciiStringView toXml(MeasureNumberPlacement v);
     static MeasureNumberPlacement fromXml(const AsciiStringView& str, MeasureNumberPlacement def);
+
+    static const TranslatableString& userName(HairpinType v);
+    static HairpinType hairpinTypeByUserName(const String& name);
 };
 }

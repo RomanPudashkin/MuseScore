@@ -1288,6 +1288,14 @@ enum class PreferSharpFlat : char {
     NONE, SHARPS, FLATS, AUTO
 };
 
+enum class HairpinType : signed char {
+    INVALID = -1,
+    CRESC_HAIRPIN,
+    DIM_HAIRPIN,
+    CRESC_LINE,
+    DIM_LINE
+};
+
 struct SwingParameters {
     int swingUnit = 0;
     int swingRatio = 0;

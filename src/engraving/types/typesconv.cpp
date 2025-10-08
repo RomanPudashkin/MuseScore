@@ -89,6 +89,20 @@ static const TranslatableString& findCapitalizedUserNameByType(const C& cont, co
 }
 
 template<typename T, typename C>
+static T findTypeByCapitalizedUserName(const C& cont, const String& name, T def)
+{
+    const auto it = std::find_if(cont.cbegin(), cont.cend(), [&name](const Item<T>& item) {
+        return item.capitalizedUserName.translated() == name;
+    });
+
+    if (it == cont.cend()) {
+        return def;
+    }
+
+    return it->type;
+}
+
+template<typename T, typename C>
 static AsciiStringView findXmlTagByType(const C& cont, const T& v)
 {
     const Item<T>& item = findItemByType(cont, v);
@@ -2072,6 +2086,11 @@ String TConv::translatedUserName(DurationType v)
     return findCapitalizedUserNameByType(DURATION_TYPES, v).translated();
 }
 
+DurationType TConv::durationTypeByUserName(const String& name)
+{
+    return findTypeByCapitalizedUserName(DURATION_TYPES, name, DurationType::V_INVALID);
+}
+
 AsciiStringView TConv::toXml(DurationType v)
 {
     return findXmlTagByType<DurationType>(DURATION_TYPES, v);
@@ -2118,6 +2137,11 @@ static const std::vector<Item<PlayingTechniqueType> > PLAY_TECH_TYPES = {
 const muse::TranslatableString& TConv::userName(PlayingTechniqueType v)
 {
     return findCapitalizedUserNameByType(PLAY_TECH_TYPES, v);
+}
+
+PlayingTechniqueType TConv::playingTechniqueTypeByUserName(const String& name)
+{
+    return findTypeByCapitalizedUserName(PLAY_TECH_TYPES, name, PlayingTechniqueType::Undefined);
 }
 
 AsciiStringView TConv::toXml(PlayingTechniqueType v)
@@ -2563,6 +2587,11 @@ static const std::array<Item<ArpeggioType>, 6> ARPEGGIO_TYPES = { {
 const muse::TranslatableString& TConv::userName(ArpeggioType v)
 {
     return findCapitalizedUserNameByType(ARPEGGIO_TYPES, v);
+}
+
+ArpeggioType TConv::arpeggioTypeByUserName(const String& name)
+{
+    return findTypeByCapitalizedUserName(ARPEGGIO_TYPES, name, ArpeggioType::NORMAL);
 }
 
 AsciiStringView TConv::toXml(ArpeggioType v)
@@ -3374,6 +3403,20 @@ String TConv::translatedUserName(Key v, bool isAtonal, bool isCustom)
     return userName(v, isAtonal, isCustom).translated();
 }
 
+Key TConv::keyByUserName(const String& name)
+{
+    for (int i = 0; i < static_cast<int>(KEY_NAMES.size() - 2); ++i) {
+        if (name != KEY_NAMES.at(i).translated()) {
+            continue;
+        }
+
+        Key key = static_cast<Key>(i - 7);
+        return key;
+    }
+
+    return Key::INVALID;
+}
+
 const std::array<Item<MeasureNumberPlacement>, 4> MEASURE_NUMBER_MODES = { {
     { MeasureNumberPlacement::ABOVE_SYSTEM,   "above-system" },
     { MeasureNumberPlacement::BELOW_SYSTEM,   "below-system" },
@@ -3389,4 +3432,22 @@ AsciiStringView TConv::toXml(MeasureNumberPlacement v)
 MeasureNumberPlacement TConv::fromXml(const AsciiStringView& tag, MeasureNumberPlacement def)
 {
     return findTypeByXmlTag<MeasureNumberPlacement>(MEASURE_NUMBER_MODES, tag, def);
+}
+
+static const std::vector<Item<HairpinType> > HAIRPIN_TYPES = {
+    { HairpinType::INVALID,        "-1", muse::TranslatableString("engraving/hairpintype", "Custom") },
+    { HairpinType::CRESC_HAIRPIN,  "0",  muse::TranslatableString("engraving/hairpintype", "Crescendo hairpin") },
+    { HairpinType::DIM_HAIRPIN,    "1",  muse::TranslatableString("engraving/hairpintype", "Diminuendo hairpin") },
+    { HairpinType::CRESC_LINE,     "2",  muse::TranslatableString("engraving/hairpintype", "Crescendo line") },
+    { HairpinType::DIM_LINE,       "3",  muse::TranslatableString("engraving/hairpintype", "Diminuendo line") },
+};
+
+const TranslatableString& TConv::userName(HairpinType v)
+{
+    return findCapitalizedUserNameByType<HairpinType>(HAIRPIN_TYPES, v);
+}
+
+HairpinType TConv::hairpinTypeByUserName(const String& name)
+{
+    return findTypeByCapitalizedUserName(HAIRPIN_TYPES, name, HairpinType::INVALID);
 }

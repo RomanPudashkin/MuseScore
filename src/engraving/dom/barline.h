@@ -120,6 +120,7 @@ public:
     const ElementList* el() const { return &m_el; }
 
     static String translatedUserTypeName(BarLineType);
+    static BarLineType barlineTypeByUserName(const String& name);
 
     void setBarLineType(BarLineType i) { m_barLineType = i; }
     BarLineType barLineType() const { return m_barLineType; }

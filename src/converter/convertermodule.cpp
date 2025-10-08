@@ -23,9 +23,11 @@
 
 #include "modularity/ioc.h"
 #include "internal/convertercontroller.h"
+#include "internal/compat/scoreelementsreader.h"
 
 #include "global/api/iapiregister.h"
 #include "api/converterapi.h"
+#include "project/inotationreadersregister.h"
 
 using namespace muse::modularity;
 using namespace mu::converter;
@@ -38,6 +40,14 @@ std::string ConverterModule::moduleName() const
 void ConverterModule::registerExports()
 {
     ioc()->registerExport<IConverterController>(moduleName(), new ConverterController(iocContext()));
+}
+
+void ConverterModule::resolveImports()
+{
+    auto readers = ioc()->resolve<project::INotationReadersRegister>(moduleName());
+    if (readers) {
+        readers->reg({ "elems" }, std::make_shared<ScoreElementsReader>(iocContext()));
+    }
 }
 
 void ConverterModule::registerApi()

@@ -29,14 +29,6 @@
 namespace mu::engraving {
 class Hairpin;
 
-enum class HairpinType : signed char {
-    INVALID = -1,
-    CRESC_HAIRPIN,
-    DIM_HAIRPIN,
-    CRESC_LINE,
-    DIM_LINE
-};
-
 //---------------------------------------------------------
 //   @@ HairpinSegment
 //---------------------------------------------------------
