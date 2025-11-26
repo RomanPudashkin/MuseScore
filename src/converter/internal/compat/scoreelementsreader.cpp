@@ -614,7 +614,7 @@ static void addMeasures(size_t measures, MasterScore* score)
     mu::engraving::Fraction prevTimeSig;
 
     for (size_t i = 0; i < measures; ++i) {
-        const engraving::Fraction tick = Fraction::fromTicks(score->sigmap()->bar2tick(i, 0));
+        const engraving::Fraction tick = Fraction::fromTicks(score->sigmap()->bar2tick(i, 0.f));
         const engraving::Fraction timeSig = score->sigmap()->timesig(tick.ticks()).timesig();
 
         Measure* measure = Factory::createMeasure(score->dummy()->system());
@@ -724,7 +724,7 @@ muse::RetVal<ScoreElementsReader::ScoreInfo> ScoreElementsReader::readScoreInfo(
                 if (timeSigMap.empty()) {
                     timeSigMap.add(0, timeSig);
                 } else {
-                    const int tick = timeSigMap.bar2tick((int)info.start.measureIdx, (int)info.start.beat);
+                    const int tick = timeSigMap.bar2tick((int)info.start.measureIdx, info.start.beat);
                     timeSigMap.add(tick, timeSig);
                 }
 

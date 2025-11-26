@@ -1145,7 +1145,7 @@ void NotationActionController::move(MoveDirection direction, bool quickly)
 
                     // Set target beat to max beat of previous bar
                     engraving::TimeSigMap* timeSigMap = currentMasterNotation()->masterScore()->sigmap();
-                    int targetBarStartTick = timeSigMap->bar2tick(targetMeasureIdx, 0);
+                    int targetBarStartTick = timeSigMap->bar2tick(targetMeasureIdx, 0.f);
                     targetBeatIdx = timeSigMap->timesig(Fraction::fromTicks(targetBarStartTick)).timesig().numerator() - 1;
                 }
             }

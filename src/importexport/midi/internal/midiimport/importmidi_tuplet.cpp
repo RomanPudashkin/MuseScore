@@ -1091,9 +1091,9 @@ void findTuplets(
     }
 
     const auto startBarTick = ReducedFraction::fromTicks(
-        sigmap->bar2tick(startBarChordIt->second.barIndex, 0));
+        sigmap->bar2tick(startBarChordIt->second.barIndex, 0.f));
     const auto endBarTick = ReducedFraction::fromTicks(
-        sigmap->bar2tick(startBarChordIt->second.barIndex + 1, 0));
+        sigmap->bar2tick(startBarChordIt->second.barIndex + 1, 0.f));
 
     const auto barFraction = ReducedFraction(sigmap->timesig(startBarTick.ticks()).timesig());
     std::vector<TupletInfo> tuplets = detectTuplets(startBarChordIt, endBarChordIt, startBarTick,
@@ -1152,7 +1152,7 @@ void setAllTupletOffTimes(
                 continue;
             }
             const auto barEnd = ReducedFraction::fromTicks(
-                sigmap->bar2tick(chord.barIndex + 1, 0));
+                sigmap->bar2tick(chord.barIndex + 1, 0.f));
             if (note.offTime > barEnd) {
                 const auto it = findTupletContainingTime(
                     chord.voice, note.offTime, tupletEvents, true);
@@ -1206,7 +1206,7 @@ void findAllTuplets(
                     bool nextBarFound = false;
 #endif
                     const auto endBarTick = ReducedFraction::fromTicks(
-                        sigmap->bar2tick(currentBarIndex + 1, 0));
+                        sigmap->bar2tick(currentBarIndex + 1, 0.f));
                     for (auto it = endBarIt; it != chords.end() && it->first < endBarTick; ++it) {
                         if (it->second.barIndex == currentBarIndex) {
 #ifdef QT_DEBUG

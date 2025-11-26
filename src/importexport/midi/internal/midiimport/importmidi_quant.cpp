@@ -417,7 +417,7 @@ bool isHumanPerformance(
         int barIndex, beat, tick;
         sigmap->tickValues(onTime.ticks(), &barIndex, &beat, &tick);
 
-        const auto barStart = ReducedFraction::fromTicks(sigmap->bar2tick(barIndex, 0));
+        const auto barStart = ReducedFraction::fromTicks(sigmap->bar2tick(barIndex, 0.f));
         const auto barFraction = ReducedFraction(sigmap->timesig(barStart.ticks()).timesig());
         const auto beatLen = Meter::beatLength(barFraction);
 
@@ -1350,7 +1350,7 @@ void quantizeOnTimes(
                 if (currentBarIndex != chordIt->second.barIndex) {
                     currentBarIndex = chordIt->second.barIndex;
                     barStart = ReducedFraction::fromTicks(
-                        sigmap->bar2tick(currentBarIndex, 0));
+                        sigmap->bar2tick(currentBarIndex, 0.f));
                     barFraction = ReducedFraction(sigmap->timesig(barStart.ticks()).timesig());
                     if (!currentlyInTuplet) {
                         rangeStart = barStart;
@@ -1378,13 +1378,13 @@ void quantizeOnTimes(
                     if (nextChord != chords.end()) {
                         if (nextChord->second.barIndex != currentBarIndex) {
                             rangeEnd = ReducedFraction::fromTicks(
-                                sigmap->bar2tick(currentBarIndex + 1, 0));
+                                sigmap->bar2tick(currentBarIndex + 1, 0.f));
                         } else if (nextChord->second.isInTuplet) {
                             rangeEnd = nextChord->second.tuplet->second.onTime;
                         }
                     } else {
                         rangeEnd = ReducedFraction::fromTicks(
-                            sigmap->bar2tick(currentBarIndex + 1, 0));
+                            sigmap->bar2tick(currentBarIndex + 1, 0.f));
                     }
                 }
 

@@ -365,7 +365,7 @@ String TimeSigMap::pos(int t) const
 //    of beat in bar
 //---------------------------------------------------------
 
-int TimeSigMap::bar2tick(int bar, int beat) const
+int TimeSigMap::bar2tick(int bar, float beat) const
 {
     // bar - index of current bar (terminology: bar == measure)
     // beat - index of beat in current bar

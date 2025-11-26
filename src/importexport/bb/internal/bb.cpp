@@ -426,7 +426,7 @@ Err importBB(MasterScore* score, const QString& name)
 
     for (int i = 0; i < bb.measures(); ++i) {
         Measure* measure  = Factory::createMeasure(score->dummy()->system());
-        Fraction tick = Fraction::fromTicks(score->sigmap()->bar2tick(i, 0));
+        Fraction tick = Fraction::fromTicks(score->sigmap()->bar2tick(i, 0.f));
         measure->setTick(tick);
         Fraction ts = score->sigmap()->timesig(tick.ticks()).timesig();
         measure->setTimesig(ts);
@@ -935,7 +935,7 @@ void BBTrack::cleanup()
     }
     int startTick = 0;
     for (int i = 1;; ++i) {
-        int endTick = bb->siglist().bar2tick(i, 0);
+        int endTick = bb->siglist().bar2tick(i, 0.f);
         quantize(startTick, endTick, &dl);
         if (endTick > lastTick) {
             break;

@@ -667,17 +667,12 @@ void setBarIndexes(
     }
     auto it = chords.begin();
     for (int barIndex = 0;; ++barIndex) {         // iterate over all measures by indexes
-        const auto endBarTick = ReducedFraction::fromTicks(sigmap->bar2tick(barIndex + 1, 0));
+        const auto endBarTick = ReducedFraction::fromTicks(sigmap->bar2tick(barIndex + 1, 0.f));
         if (endBarTick <= it->first) {
             continue;
         }
         for (; it != chords.end(); ++it) {
             const auto onTime = Quantize::findQuantizedChordOnTime(*it, basicQuant);
-#ifdef QT_DEBUG
-            const auto barStart = ReducedFraction::fromTicks(sigmap->bar2tick(barIndex, 0));
-            Q_ASSERT_X(!(it->first >= barStart && onTime < barStart),
-                       "MChord::setBarIndexes", "quantized on time cannot be in previous bar");
-#endif
             if (onTime < endBarTick) {
                 it->second.barIndex = barIndex;
                 continue;

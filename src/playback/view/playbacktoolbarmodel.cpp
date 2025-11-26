@@ -282,7 +282,7 @@ void PlaybackToolBarModel::rewind(secs_t secs)
 
 void PlaybackToolBarModel::rewindToBeat(const MeasureBeat& beat)
 {
-    secs_t secs = playbackController()->beatToSecs(beat.measureIndex, static_cast<int>(beat.beat));
+    secs_t secs = playbackController()->beatToSecs(beat.measureIndex, beat.beat);
     rewind(secs);
 }
 

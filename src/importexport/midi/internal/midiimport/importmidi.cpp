@@ -736,7 +736,7 @@ std::multimap<int, MTrack> createMTrackList(TimeSigMap* sigmap, const MidiFile* 
                 // we need to round tick value to integral bar count
                 int bars, beats, ticks;
                 sigmap->tickValues(tick.ticks(), &bars, &beats, &ticks);
-                sigmap->add(sigmap->bar2tick(bars, 0), ts);
+                sigmap->add(sigmap->bar2tick(bars, 0.f), ts);
             } else if (e.type() == ME_NOTE) {
                 hasNotes = true;
                 const int pitch = e.pitch();
@@ -785,7 +785,7 @@ std::multimap<int, MTrack> createMTrackList(TimeSigMap* sigmap, const MidiFile* 
 
 Measure* barFromIndex(const Score* score, int barIndex)
 {
-    const int tick = score->sigmap()->bar2tick(barIndex, 0);
+    const int tick = score->sigmap()->bar2tick(barIndex, 0.f);
     return score->tick2measure(Fraction::fromTicks(tick));
 }
 
@@ -807,12 +807,12 @@ bool isPickupWithGreaterTimeSig(
 // search for pickup measure only if next 3 bars have equal time signatures
 bool areNextBarsEqual(const Score* score, int barCount)
 {
-    const int baseBarTick = score->sigmap()->bar2tick(1, 0);
+    const int baseBarTick = score->sigmap()->bar2tick(1, 0.f);
     const Fraction baseTimeSig = score->sigmap()->timesig(baseBarTick).timesig();
 
     const int equalTimeSigCount = 3;
     for (int i = 2; i <= equalTimeSigCount - 1 && i < barCount; ++i) {
-        const int barTick = score->sigmap()->bar2tick(i, 0);
+        const int barTick = score->sigmap()->bar2tick(i, 0.f);
         const Fraction timeSig = score->sigmap()->timesig(barTick).timesig();
         if (timeSig != baseTimeSig) {
             return false;
@@ -827,8 +827,8 @@ void tryCreatePickupMeasure(
     int* begBarIndex,
     int* barCount)
 {
-    const int firstBarTick  = score->sigmap()->bar2tick(0, 0);
-    const int secondBarTick = score->sigmap()->bar2tick(1, 0);
+    const int firstBarTick  = score->sigmap()->bar2tick(0, 0.f);
+    const int secondBarTick = score->sigmap()->bar2tick(1, 0.f);
     const Fraction firstTimeSig = score->sigmap()->timesig(firstBarTick).timesig();
     const Fraction secondTimeSig = score->sigmap()->timesig(secondBarTick).timesig();
 
@@ -890,7 +890,7 @@ void createMeasures(const ReducedFraction& firstTick, ReducedFraction& lastTick,
 
     for (int i = begBarIndex; i < barCount; ++i) {
         Measure* m = Factory::createMeasure(score->dummy()->system());
-        const int t = score->sigmap()->bar2tick(i, 0);
+        const int t = score->sigmap()->bar2tick(i, 0.f);
         m->setTick(Fraction::fromTicks(tick));
         m->setNo(i);
         const Fraction timeSig = score->sigmap()->timesig(t).timesig();

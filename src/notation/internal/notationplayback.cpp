@@ -414,7 +414,7 @@ MeasureBeat NotationPlayback::beat(tick_t tick) const
 
 tick_t NotationPlayback::beatToRawTick(int measureIndex, int beatIndex) const
 {
-    return score() ? score()->sigmap()->bar2tick(measureIndex, beatIndex) : 0;
+    return score() ? score()->sigmap()->bar2tick(measureIndex, (float)beatIndex) : 0;
 }
 
 double NotationPlayback::tempoMultiplier() const

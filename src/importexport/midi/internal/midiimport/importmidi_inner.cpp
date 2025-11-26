@@ -272,7 +272,7 @@ ReducedFraction findBarStart(const ReducedFraction& time, const engraving::TimeS
 {
     int barIndex, beat, tick;
     sigmap->tickValues(time.ticks(), &barIndex, &beat, &tick);
-    return ReducedFraction::fromTicks(sigmap->bar2tick(barIndex, 0));
+    return ReducedFraction::fromTicks(sigmap->bar2tick(barIndex, 0.f));
 }
 } // namespace MidiBar
 namespace MidiDuration {

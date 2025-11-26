@@ -158,7 +158,7 @@ public:
     const SigEvent& timesig(const Fraction& f) const { return timesig(f.ticks()); }
 
     void tickValues(int t, int* bar, int* beat, int* tick) const;
-    int bar2tick(int bar, int beat) const;
+    int bar2tick(int bar, float beat) const;
     String pos(int t) const;
 
     unsigned raster(unsigned tick, int raster) const;
