@@ -294,7 +294,7 @@ std::shared_ptr<muse::IApplication> AppFactory::newGuiApp(const CmdOptions& opti
     bool shouldAddMuseSamplerModule = true;
 #ifndef MUSE_MODULE_MUSESAMPLER_LOAD_IN_DEBUG
     if (runtime::isDebug()) {
-        shouldAddMuseSamplerModule = false;
+        // shouldAddMuseSamplerModule = false;
         LOGI() << "Not adding MuseSampler module in a debug build";
     }
 #endif

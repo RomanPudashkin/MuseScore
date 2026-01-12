@@ -357,16 +357,18 @@ void MuseSamplerWrapper::setupOnlineSound()
     m_sequencer.setUpdateMainStreamWhenInactive(autoProcess);
     m_samplerLib->setAutoRenderInterval(m_sampler, autoProcess ? AUTO_PROCESS_INTERVAL : NO_AUTO_PROCESS);
 
-    //! NOTE: update progress on the worker thread
-    m_renderingStateChanged.onReceive(this, [this](ms_RenderingRangeList list, int size) {
-        updateRenderingProgress(list, size);
-    });
+    struct RenderingData {
+        MuseSamplerLibHandlerPtr samplerLib;
+    };
+
+    RenderingData* rdata = new RenderingData { m_samplerLib };
 
     m_samplerLib->setRenderingStateChangedCallback(m_sampler, [](void* data, ms_RenderingRangeList list, int size) {
-        //! NOTE: move call to the worker thread
-        RenderingStateChangedChannel* channel = reinterpret_cast<RenderingStateChangedChannel*>(data);
-        channel->send(list, size);
-    }, &m_renderingStateChanged);
+        RenderingData* rdata = reinterpret_cast<RenderingData*>(data);
+        for (int i = 0; i <= size; ++i) {
+            const RenderRangeInfo info = rdata->samplerLib->getNextRenderProgressInfo(list);
+        }
+    }, rdata);
 
     config()->autoProcessOnlineSoundsInBackgroundChanged().onReceive(this, [this](bool on) {
         m_sequencer.setUpdateMainStreamWhenInactive(on);
