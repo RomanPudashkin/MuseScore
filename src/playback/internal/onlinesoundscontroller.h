@@ -58,12 +58,12 @@ public:
     muse::async::Notification onlineSoundsChanged() const;
     muse::Progress onlineSoundsProcessingProgress() const;
 
+    void processOnlineSounds();
+    void clearOnlineSoundsCache();
+
 private:
     void listenProcessingProgress(const muse::audio::TrackId trackId);
     void showLimitReachedErrorIfNeed(const muse::audio::InputProcessingProgress::StatusInfo& status);
-
-    void processOnlineSounds();
-    void clearOnlineSoundsCache();
 
     muse::audio::TrackSequenceId m_currentSequenceId = -1;
     std::map<muse::audio::TrackId, muse::audio::AudioResourceMeta> m_onlineSounds;

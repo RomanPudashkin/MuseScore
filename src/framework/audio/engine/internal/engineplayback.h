@@ -119,18 +119,23 @@ public:
     RetVal<AudioSignalChanges> signalChanges(const TrackSequenceId sequenceId, const TrackId trackId) const override;
     RetVal<AudioSignalChanges> masterSignalChanges() const override;
 
-    Ret saveSoundTrack(const TrackSequenceId sequenceId, const io::path_t& destination, const SoundTrackFormat& format) override;
+    async::Promise<Ret> saveSoundTrack(const TrackSequenceId sequenceId, const io::path_t& destination,
+                                       const SoundTrackFormat& format) override;
     void abortSavingAllSoundTracks() override;
-    async::Channel<int64_t, int64_t> saveSoundTrackProgressChanged(const TrackSequenceId sequenceId) const override;
+    SaveSoundTrackProgress saveSoundTrackProgressChanged(const TrackSequenceId sequenceId) const override;
 
     void clearAllFx() override;
 
 private:
-
     std::shared_ptr<Mixer> mixer() const;
 
     void ensureSubscriptions(const ITrackSequencePtr s);
     void ensureMixerSubscriptions();
+
+    void listenInputProcessing(ITrackSequencePtr s, std::function<void()> completed);
+    size_t tracksBeingProcessedCount(const ITrackSequencePtr s) const;
+
+    Ret doSaveSoundTrack(ITrackSequencePtr s, const io::path_t& destination, const SoundTrackFormat& format);
 
     async::Channel<TrackSequenceId, TrackId> m_trackAdded;
     async::Channel<TrackSequenceId, TrackId> m_trackRemoved;
@@ -140,7 +145,7 @@ private:
 
     std::map<TrackSequenceId, ITrackSequencePtr> m_sequences;
 
-    mutable std::unordered_map<TrackSequenceId, async::Channel<int64_t, int64_t> > m_saveSoundTracksProgressMap;
+    mutable std::unordered_map<TrackSequenceId, SaveSoundTrackProgress> m_saveSoundTracksProgressMap;
     std::unordered_map<TrackSequenceId, soundtrack::SoundTrackWriterPtr> m_saveSoundTracksWritersMap;
 };
 }

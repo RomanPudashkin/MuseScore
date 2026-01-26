@@ -520,4 +520,13 @@ struct InputProcessingProgress {
     bool isStarted = false;
     async::Channel<StatusInfo, ChunkInfoList, ProgressInfo> processedChannel;
 };
+
+enum SaveSoundTrackStage {
+    Unknown = 0,
+    ProcessingOnlineSounds,
+    ProcessingSounds,
+    WritingSoundTrack,
+};
+
+using SaveSoundTrackProgress = async::Channel<int64_t /*current*/, int64_t /*total*/, SaveSoundTrackStage>;
 }

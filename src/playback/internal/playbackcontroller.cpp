@@ -1822,9 +1822,7 @@ void PlaybackController::setIsExportingAudio(bool exporting)
         notationPlayback()->sendEventsForChangedTracks();
     }
 
-    if (!onlineSounds().empty() && !audioConfiguration()->autoProcessOnlineSoundsInBackground()) {
-        dispatcher()->dispatch("process-online-sounds");
-    }
+    m_onlineSoundsController->processOnlineSounds();
 }
 
 bool PlaybackController::canReceiveAction(const ActionCode& code) const

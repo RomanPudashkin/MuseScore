@@ -115,7 +115,7 @@ void MuseSamplerWrapper::setOutputSpec(const audio::OutputSpec& spec)
 
     m_outputSpec = spec;
 
-    if (isOffline) {
+    if (isOffline && !m_offlineModeStarted) {
         LOGD() << "Start offline mode, sampleRate: " << spec.sampleRate;
         m_samplerLib->startOfflineMode(m_sampler, spec.sampleRate);
         m_offlineModeStarted = true;
@@ -254,8 +254,12 @@ void MuseSamplerWrapper::updateRenderingMode(const RenderMode mode)
 
     m_sequencer.updateMainStream();
 
-    if (mode != RenderMode::OfflineMode && m_offlineModeStarted) {
+    if (mode == RenderMode::OfflineMode && m_instrument.isOnline) {
+        m_samplerLib->setLazyRender(m_sampler, false);
+    } else if (mode != RenderMode::OfflineMode && m_offlineModeStarted) {
+        const bool autoProcess = config()->autoProcessOnlineSoundsInBackground();
         m_samplerLib->stopOfflineMode(m_sampler);
+        m_samplerLib->setLazyRender(m_sampler, autoProcess);
         m_offlineModeStarted = false;
     }
 }
@@ -351,9 +355,9 @@ void MuseSamplerWrapper::setupOnlineSound()
 {
     constexpr double AUTO_PROCESS_INTERVAL = 3.0;
     constexpr double NO_AUTO_PROCESS = -1.0; // interval < 0 -> no auto process
-
     const bool autoProcess = config()->autoProcessOnlineSoundsInBackground();
 
+    m_samplerLib->setLazyRender(m_sampler, autoProcess);
     m_sequencer.setUpdateMainStreamWhenInactive(autoProcess);
     m_samplerLib->setAutoRenderInterval(m_sampler, autoProcess ? AUTO_PROCESS_INTERVAL : NO_AUTO_PROCESS);
 
@@ -372,6 +376,7 @@ void MuseSamplerWrapper::setupOnlineSound()
         m_sequencer.setUpdateMainStreamWhenInactive(on);
         m_sequencer.updateMainStream();
         m_samplerLib->setAutoRenderInterval(m_sampler, on ? AUTO_PROCESS_INTERVAL : NO_AUTO_PROCESS);
+        m_samplerLib->setLazyRender(m_sampler, on);
     });
 }
 
@@ -379,7 +384,7 @@ void MuseSamplerWrapper::updateRenderingProgress(ms_RenderingRangeList list, int
 {
     ONLY_AUDIO_ENGINE_THREAD;
 
-    IF_ASSERT_FAILED(m_samplerLib && m_sampler) {
+    IF_ASSERT_FAILED(m_samplerLib) {
         return;
     }
 
