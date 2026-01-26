@@ -398,6 +398,7 @@ void MuseSamplerWrapper::updateRenderingProgress(ms_RenderingRangeList list, int
 
         switch (info._state) {
         case ms_RenderingState_Rendering:
+        case ms_RenderingState_OutOfRange:
             isRendering = true;
             break;
         case ms_RenderingState_ErrorNetwork:
@@ -428,7 +429,7 @@ void MuseSamplerWrapper::updateRenderingProgress(ms_RenderingRangeList list, int
 
         // Failed regions remain in the list, but should be excluded when
         // calculating the total remaining rendering duration
-        if (info._state != ms_RenderingState_Rendering) {
+        if (info._state != ms_RenderingState_Rendering && info._state != ms_RenderingState_OutOfRange) {
             continue;
         }
 
