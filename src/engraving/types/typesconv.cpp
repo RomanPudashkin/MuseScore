@@ -1931,7 +1931,7 @@ static const std::vector<Item<ChangeMethod> > CHANGE_METHODS = {
     { ChangeMethod::EXPONENTIAL,      "exponential" },
 };
 
-static float easingFactor(const float x, const ChangeMethod method)
+float TConv::easingFactor(const float x, const ChangeMethod method)
 {
     switch (method) {
     case ChangeMethod::NORMAL:
@@ -1970,7 +1970,7 @@ static std::map<int /*tickPosition*/, T> buildEasedValueCurve(const int ticksDur
     float durationStep = static_cast<float>(ticksDuration) / static_cast<float>(stepsCount);
 
     for (int i = 0; i <= stepsCount; ++i) {
-        result.emplace(i * durationStep, easingFactor(i / static_cast<float>(stepsCount), method) * amplitude);
+        result.emplace(i * durationStep, TConv::easingFactor(i / static_cast<float>(stepsCount), method) * amplitude);
     }
 
     return result;

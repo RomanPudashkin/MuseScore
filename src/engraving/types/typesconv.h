@@ -116,6 +116,7 @@ public:
 
     static AsciiStringView toXml(ChangeMethod v);
     static ChangeMethod fromXml(const AsciiStringView& tag, ChangeMethod def);
+    static float easingFactor(float x, ChangeMethod method);
     static std::map<int /*positionTick*/, int> easingValueCurve(const int ticksDuration, const int stepsCount, const int amplitude,
                                                                 const ChangeMethod method);
     static std::map<int /*positionTick*/, double> easingValueCurve(const int ticksDuration, const int stepsCount, const double amplitude,

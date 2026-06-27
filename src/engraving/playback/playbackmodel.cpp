@@ -460,7 +460,7 @@ void PlaybackModel::updateContext(const InstrumentTrackId& trackId)
     ctx->update(trackId.partId, m_score, m_expandRepeats);
 
     PlaybackData& trackData = m_playbackDataMap[trackId];
-    trackData.dynamics = ctx->dynamicLevelLayers(m_score);
+    trackData.dynamics = ctx->dynamicLevelLayers();
 
     std::set<timestamp_t> newEventTimestamps;
 
@@ -477,9 +477,9 @@ void PlaybackModel::updateContext(const InstrumentTrackId& trackId)
         }
     };
 
-    appendEvents(ctx->soundPresets(m_score));
-    appendEvents(ctx->textArticulations(m_score));
-    appendEvents(ctx->syllables(m_score));
+    appendEvents(ctx->soundPresets());
+    appendEvents(ctx->textArticulations());
+    appendEvents(ctx->syllables());
 }
 
 void PlaybackModel::processSegment(const int tickPositionOffset, const Segment* segment, const std::set<staff_idx_t>& staffIdxSet,
