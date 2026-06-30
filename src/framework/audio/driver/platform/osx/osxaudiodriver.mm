@@ -106,6 +106,12 @@ bool OSXAudioDriver::open(const Spec& spec, Spec* activeSpec)
         return false;
     }
 
+    // Dispose before clearing so the leaked queue can't fire OnFillBuffer against an empty callback
+    auto disposeAndClear = [this]() {
+        AudioQueueDispose(m_data->audioQueue, true);
+        m_data->clear();
+    };
+
     audioQueueSetDeviceName(m_data->format.deviceId);
 
     AudioValueRange bufferSizeRange = { 0, 0 };
@@ -118,7 +124,7 @@ bool OSXAudioDriver::open(const Spec& spec, Spec* activeSpec)
 
     result = AudioObjectGetPropertyData(osxDeviceId(), &bufferSizeRangeAddress, 0, 0, &bufferSizeRangeSize, &bufferSizeRange);
     if (result != noErr) {
-        m_data->clear();
+        disposeAndClear();
         logError("Failed to create Audio Queue Output, err: ", result);
         return false;
     }
@@ -135,7 +141,7 @@ bool OSXAudioDriver::open(const Spec& spec, Spec* activeSpec)
 
     result = AudioObjectSetPropertyData(osxDeviceId(), &preferredBufferSizeAddress, 0, 0, sizeof(bufferSizeOut), (void*)&bufferSizeOut);
     if (result != noErr) {
-        m_data->clear();
+        disposeAndClear();
         logError("Failed to create Audio Queue Output, err: ", result);
         return false;
     }
@@ -145,7 +151,7 @@ bool OSXAudioDriver::open(const Spec& spec, Spec* activeSpec)
         AudioQueueBufferRef buffer;
         result = AudioQueueAllocateBuffer(m_data->audioQueue, spec.output.samplesPerChannel * audioFormat.mBytesPerFrame, &buffer);
         if (result != noErr) {
-            m_data->clear();
+            disposeAndClear();
             logError("Failed to allocate Audio Buffer, err: ", result);
             return false;
         }
@@ -160,7 +166,7 @@ bool OSXAudioDriver::open(const Spec& spec, Spec* activeSpec)
     // start playback
     result = AudioQueueStart(m_data->audioQueue, NULL);
     if (result != noErr) {
-        m_data->clear();
+        disposeAndClear();
         logError("Failed to start  Audio Queue, err: ", result);
         return false;
     }
@@ -472,6 +478,10 @@ void OSXAudioDriver::initDeviceMapListener()
 void OSXAudioDriver::OnFillBuffer(void* context, AudioQueueRef, AudioQueueBufferRef buffer)
 {
     Data* pData = (Data*)context;
-    pData->callback((uint8_t*)buffer->mAudioData, buffer->mAudioDataByteSize);
+    if (pData->callback) {
+        pData->callback((uint8_t*)buffer->mAudioData, buffer->mAudioDataByteSize);
+    } else {
+        memset(buffer->mAudioData, 0, buffer->mAudioDataByteSize);
+    }
     AudioQueueEnqueueBuffer(pData->audioQueue, buffer, 0, NULL);
 }
