@@ -63,13 +63,21 @@ FocusScope {
         }
     }
 
+    NavigationPanel {
+        id: navTopPanel
+        name: "MuseSoundsTopPanel"
+        section: navSec
+        order: 1
+        accessible.name: qsTrc("appshell", "MuseSounds")
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent
         color: ui.theme.backgroundSecondaryColor
     }
 
-    Column {
+    RowLayout {
         id: topLayout
 
         anchors.top: parent.top
@@ -79,7 +87,7 @@ FocusScope {
         anchors.right: parent.right
         anchors.rightMargin: prv.sideMargin
 
-        spacing: 24
+        spacing: 12
 
         StyledTextLabel {
             id: pageTitle
@@ -88,6 +96,19 @@ FocusScope {
             text: qsTrc("appshell", "MuseSounds")
             font: ui.theme.titleBoldFont
             horizontalAlignment: Text.AlignLeft
+        }
+
+        SearchField {
+            id: searchField
+
+            Layout.preferredWidth: 220
+
+            navigation.name: "MuseSoundsSearch"
+            navigation.panel: navTopPanel
+            navigation.order: 1
+            accessible.name: qsTrc("musesounds", "Search sounds")
+
+            onSearchTextChanged: museSoundsModel.searchText = searchText
         }
     }
 
@@ -137,9 +158,10 @@ FocusScope {
                     width: parent.width
 
                     title: catalogueTitle
-                    visible: count > 0
 
                     model: catalogueSoundsLibraries
+
+                    visible: count > 0
 
                     flickableItem: column
 

@@ -37,6 +37,7 @@ class MuseSoundsListModel : public QAbstractListModel, public muse::async::Async
     Q_OBJECT
 
     Q_PROPERTY(bool isEmpty READ isEmpty NOTIFY isEmptyChanged)
+    Q_PROPERTY(QString searchText READ searchText WRITE setSearchText NOTIFY searchTextChanged)
 
     QML_ELEMENT
 
@@ -54,8 +55,12 @@ public:
 
     bool isEmpty() const;
 
+    QString searchText() const;
+    void setSearchText(const QString& text);
+
 signals:
     void isEmptyChanged();
+    void searchTextChanged();
 
 private:
     enum Roles {
@@ -64,7 +69,10 @@ private:
     };
 
     void setSoundsCatalogs(const SoundCatalogueInfoList& soundsCatalogs);
+    void applyFilter();
 
     SoundCatalogueInfoList m_soundsCatalogs;
+    SoundCatalogueInfoList m_filteredCatalogs;
+    QString m_searchText;
 };
 }
