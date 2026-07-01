@@ -70,6 +70,11 @@ static QByteArray soundsRequestJson()
                           museHub
                         }
                       }
+                      ... on ProductBundle {
+                        code
+                        title
+                        subtitle
+                      }
                     }
                   }
                 }
