@@ -27,6 +27,7 @@ import QtQuick
 import Muse.Ui
 import Muse.UiComponents
 import Muse.Dock
+import Muse.Toast
 import MuseScore.Project
 
 DockPage {
@@ -40,6 +41,7 @@ DockPage {
         case "settings": root.central = settingsComp; break
         case "gallery": root.central = galleryComp; break
         case "interactive": root.central = interactiveComp; break
+        case "toast": root.central = toastComp; break
         case "crashhandler": root.central = crashhandlerComp; break
         case "corruptscore": root.central = corruptScoreComp; break
         case "importfiletoscore": root.central = importFileToScoreComp; break
@@ -73,6 +75,7 @@ DockPage {
                         { "name": "settings", "title": "Settings" },
                         { "name": "gallery", "title": "UI Gallery" },
                         { "name": "interactive", "title": "Interactive" },
+                        { "name": "toast", "title": "Toast" },
                         { "name": "crashhandler", "title": "Crash handler" },
                         { "name": "corruptscore", "title": "Corrupt score" },
                         { "name": "importfiletoscore", "title": "Import file to score" },
@@ -107,6 +110,12 @@ DockPage {
         id: interactiveComp
 
         InteractiveTests {}
+    }
+
+    Component {
+        id: toastComp
+
+        ToastNotificationTests {}
     }
 
     Component {
