@@ -28,19 +28,20 @@
 #include "async/asyncable.h"
 
 #include "actions/iactionsdispatcher.h"
-#include "global/iinteractive.h"
 #include "modularity/ioc.h"
 #include "project/iimportfiletoscorescenario.h"
+#include "toast/itoastservice.h"
 
 namespace mu::project {
 class ImportFileToScoreDevToolsModel : public QObject, public muse::async::Asyncable, public muse::Contextable
 {
     Q_OBJECT
+
     QML_ELEMENT
 
     muse::ContextInject<IImportFileToScoreScenario> importFileToScoreScenario = { this };
-    muse::ContextInject<muse::IInteractive> interactive = { this };
     muse::ContextInject<muse::actions::IActionsDispatcher> dispatcher = { this };
+    muse::GlobalInject<muse::toast::IToastService> toastService;
 
 public:
     explicit ImportFileToScoreDevToolsModel(QObject* parent = nullptr);
