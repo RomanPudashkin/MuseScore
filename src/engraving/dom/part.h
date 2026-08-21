@@ -147,6 +147,7 @@ public:
     void setInstrument(const Instrument&, Fraction = { -1, 1 });
     void setInstruments(const InstrumentList& instruments);
     void removeInstrument(const Fraction&);
+    void removeInstrument(const Instrument*);
     void removeNonPrimaryInstruments();
     const InstrumentList& instruments() const;
 

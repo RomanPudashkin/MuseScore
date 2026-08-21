@@ -52,6 +52,9 @@ StaffState::StaffState(const StaffState& ss)
 
 StaffState::~StaffState()
 {
+    if (Part* p = part()) {
+        p->removeInstrument(m_instrument);
+    }
     delete m_instrument;
 }
 

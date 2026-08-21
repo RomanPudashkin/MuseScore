@@ -384,6 +384,17 @@ void Part::removeInstrument(const Fraction& tick)
     m_instruments.erase(i);
 }
 
+void Part::removeInstrument(const Instrument* instrument)
+{
+    for (auto it = m_instruments.begin(); it != m_instruments.end();) {
+        if (it->second == instrument) {
+            it = m_instruments.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
 //---------------------------------------------------------
 //   removeNonPrimaryInstruments
 //---------------------------------------------------------

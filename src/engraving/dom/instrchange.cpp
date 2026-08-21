@@ -79,6 +79,9 @@ InstrumentChange::InstrumentChange(const InstrumentChange& is)
 
 InstrumentChange::~InstrumentChange()
 {
+    if (Part* p = part()) {
+        p->removeInstrument(m_instrument);
+    }
     delete m_instrument;
 }
 
