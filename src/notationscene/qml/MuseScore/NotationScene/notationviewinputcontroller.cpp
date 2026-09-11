@@ -72,7 +72,7 @@ void NotationViewInputController::init()
 {
     m_possibleZoomPercentages = configuration()->possibleZoomPercentageList();
 
-    if (dispatcher() && !m_readonly) {
+    if (dispatcher()) {
         dispatcher()->reg(this, "zoomin", this, &NotationViewInputController::zoomIn);
         dispatcher()->reg(this, "zoomout", this, &NotationViewInputController::zoomOut);
         dispatcher()->reg(this, "zoom-page-width", this, &NotationViewInputController::zoomToPageWidth);
@@ -105,7 +105,9 @@ void NotationViewInputController::init()
         dispatcher()->reg(this, "page-prev", this, &NotationViewInputController::previousPage);
         dispatcher()->reg(this, "page-top", this, &NotationViewInputController::startOfScore);
         dispatcher()->reg(this, "page-end", this, &NotationViewInputController::endOfScore);
+    }
 
+    if (dispatcher() && !m_readonly) {
         dispatcher()->reg(this, "notation-context-menu", [this]() {
             m_view->showContextMenu(selectionType(), m_view->fromLogical(selectionElementPos()).toQPointF());
         });
