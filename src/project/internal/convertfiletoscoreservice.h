@@ -64,11 +64,11 @@ public:
     muse::async::Channel<muse::Ret, ScoreInfo> convertFinished() const override;
 
     muse::ValNt<WatchedScoreList> watchedScores() const override;
+    const WatchedScore* watchedScoreById(int scoreId) const override;
 
     muse::async::Channel<PollingFailure> pollingFailed() const override;
     void retryPolling() override;
 
-    muse::async::Channel<int> reviewRequested() const override;
     void submitReview(int scoreId, ReviewRating rating, const QString& comment = QString()) override;
     void submitReviewComment(int scoreId, const QString& comment) override;
 
@@ -92,8 +92,6 @@ private:
 
     void finishConvert(const muse::Ret& ret, const ScoreInfo& scoreInfo = ScoreInfo());
 
-    WatchedScore* findWatchedScoreByScoreId(int scoreId);
-
     ConvertConfig m_config;
 
     QTimer m_timer;
@@ -106,6 +104,5 @@ private:
     muse::async::Channel<PollingFailure> m_pollingFailed;
     muse::async::Notification m_watchedScoresChanged;
     muse::async::Channel<muse::Ret, ScoreInfo> m_convertFinished;
-    muse::async::Channel<int> m_reviewRequested;
 };
 }

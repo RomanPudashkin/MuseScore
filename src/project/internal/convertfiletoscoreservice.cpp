@@ -176,12 +176,6 @@ void ConvertFileToScoreService::resumeConvert()
     m_timer.start();
     m_watchedScoresChanged.notify();
 
-    for (const WatchedScore& watched : m_watchedScores) {
-        if (watched.convertStatus == ConvertStatus::AwaitingReview && watched.scoreId) {
-            m_reviewRequested.send(*watched.scoreId);
-        }
-    }
-
     poll();
 }
 
@@ -351,6 +345,15 @@ ValNt<WatchedScoreList> ConvertFileToScoreService::watchedScores() const
     return result;
 }
 
+const WatchedScore* ConvertFileToScoreService::watchedScoreById(int scoreId) const
+{
+    auto it = std::find_if(m_watchedScores.cbegin(), m_watchedScores.cend(), [scoreId](const WatchedScore& watched) {
+        return watched.scoreId == scoreId;
+    });
+
+    return it != m_watchedScores.cend() ? &*it : nullptr;
+}
+
 async::Channel<PollingFailure> ConvertFileToScoreService::pollingFailed() const
 {
     return m_pollingFailed;
@@ -363,18 +366,13 @@ void ConvertFileToScoreService::retryPolling()
     poll();
 }
 
-async::Channel<int> ConvertFileToScoreService::reviewRequested() const
-{
-    return m_reviewRequested;
-}
-
 void ConvertFileToScoreService::submitReview(int scoreId, ReviewRating rating, const QString& comment)
 {
     IF_ASSERT_FAILED(rating == ReviewRating::Bad || comment.isEmpty()) {
         return;
     }
 
-    const WatchedScore* watched = findWatchedScoreByScoreId(scoreId);
+    const WatchedScore* watched = watchedScoreById(scoreId);
     IF_ASSERT_FAILED(watched) {
         return;
     }
@@ -392,7 +390,7 @@ void ConvertFileToScoreService::submitReview(int scoreId, ReviewRating rating, c
 
 void ConvertFileToScoreService::submitReviewComment(int scoreId, const QString& comment)
 {
-    const WatchedScore* watched = findWatchedScoreByScoreId(scoreId);
+    const WatchedScore* watched = watchedScoreById(scoreId);
     IF_ASSERT_FAILED(watched) {
         return;
     }
@@ -690,10 +688,6 @@ void ConvertFileToScoreService::handleItem(WatchedScore& watched, ConvertStatus 
         }
 
         watched.scoreId = *scoreId;
-
-        if (status == ConvertStatus::AwaitingReview) {
-            m_reviewRequested.send(*scoreId);
-        }
         break;
     case ConvertStatus::Failed: {
         if (!statusChanged) {
@@ -719,13 +713,4 @@ void ConvertFileToScoreService::handleItem(WatchedScore& watched, ConvertStatus 
 void ConvertFileToScoreService::finishConvert(const Ret& ret, const ScoreInfo& scoreInfo)
 {
     m_convertFinished.send(ret, scoreInfo);
-}
-
-WatchedScore* ConvertFileToScoreService::findWatchedScoreByScoreId(int scoreId)
-{
-    auto it = std::find_if(m_watchedScores.begin(), m_watchedScores.end(), [scoreId](const WatchedScore& watched) {
-        return watched.scoreId == scoreId;
-    });
-
-    return it != m_watchedScores.end() ? &*it : nullptr;
 }
