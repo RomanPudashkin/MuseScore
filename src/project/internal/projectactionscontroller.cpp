@@ -49,7 +49,7 @@ using namespace mu::notation;
 using namespace muse;
 using namespace muse::actions;
 
-static const muse::Uri NOTATION_PAGE_URI("musescore://notation");
+static const muse::Uri NOTATION_PAGE_URI("musescore://notation/review");
 static const muse::Uri NOTATION_REVIEW_PAGE_URI("musescore://notation/review");
 static const muse::Uri HOME_PAGE_URI("musescore://home");
 static const muse::Uri NEW_SCORE_URI("musescore://project/newscore");
