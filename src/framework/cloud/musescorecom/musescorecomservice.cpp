@@ -206,10 +206,18 @@ static RetVal<ScoresList> parseScoreList(const QByteArray& data, int batchNumber
     result.meta.thisBatchNumber = metaObj.value("currentPage").toInt();
     result.meta.scoresPerBatch = metaObj.value("perPage").toInt();
 
+    LOGI() << "[MuseScoreComService] parseScoreList: requestedBatchNumber=" << batchNumber
+           << " meta.thisBatchNumber=" << result.meta.thisBatchNumber
+           << " meta.batchesCount=" << result.meta.batchesCount
+           << " meta.scoresPerBatch=" << result.meta.scoresPerBatch
+           << " meta.totalScoresCount=" << result.meta.totalScoresCount;
+
     if (result.meta.thisBatchNumber < batchNumber) {
         // This happens when the requested page number was too high.
         // In this situation, the API just returns the last page and the items from that page.
         // We will return just an empty list, in order not to confuse the caller.
+        LOGI() << "[MuseScoreComService] parseScoreList: requested page " << batchNumber
+               << " is beyond the last page (" << result.meta.thisBatchNumber << "), returning empty items";
         return RetVal<ScoresList>::make_ok(result);
     }
 
@@ -229,8 +237,14 @@ static RetVal<ScoresList> parseScoreList(const QByteArray& data, int batchNumber
         item.viewCount = itemObj.value("view_count").toInt();
         item.conversion = parseScoreConversionInfo(itemObj);
 
+        LOGI() << "[MuseScoreComService] parseScoreList:   item id=" << item.id
+               << " title=" << item.title
+               << " lastModified=" << item.lastModified.toString(Qt::ISODate);
+
         result.items.push_back(item);
     }
+
+    LOGI() << "[MuseScoreComService] parseScoreList: parsed " << result.items.size() << " item(s) for page " << batchNumber;
 
     return RetVal<ScoresList>::make_ok(result);
 }
@@ -775,23 +789,36 @@ void MuseScoreComService::doDownloadScoreInfo(int scoreId, std::function<void(co
 Promise<ScoresList> MuseScoreComService::downloadScoresList(int scoresPerBatch, int batchNumber)
 {
     return Promise<ScoresList>([this, scoresPerBatch, batchNumber](auto resolve, auto reject) {
+        LOGI() << "[MuseScoreComService] downloadScoresList: requesting per-page=" << scoresPerBatch
+               << " page=" << batchNumber;
+
         QVariantMap params;
         params["per-page"] = scoresPerBatch;
         params["page"] = batchNumber;
 
         RetVal<QUrl> scoresListUrl = prepareUrlForRequest(MUSESCORECOM_SCORES_LIST_API_URL, params);
         if (!scoresListUrl.ret) {
+            LOGE() << "[MuseScoreComService] downloadScoresList: failed to prepare URL: " << scoresListUrl.ret.toString();
             return reject(scoresListUrl.ret.code(), scoresListUrl.ret.toString());
         }
+
+        LOGI() << "[MuseScoreComService] downloadScoresList: GET " << scoresListUrl.val.toString();
 
         auto receivedData = std::make_shared<QBuffer>();
         RetVal<Progress> progress = m_networkManager->get(scoresListUrl.val, receivedData, headers());
         if (!progress.ret) {
+            LOGE() << "[MuseScoreComService] downloadScoresList: request failed to start: " << progress.ret.toString();
             return reject(progress.ret.code(), progress.ret.toString());
         }
 
         progress.val.finished().onReceive(this, [batchNumber, receivedData, resolve, reject](const ProgressResult& res) {
+            LOGI() << "[MuseScoreComService] downloadScoresList: finished page=" << batchNumber
+                   << " ok=" << static_cast<bool>(res.ret)
+                   << " responseSize=" << receivedData->data().size();
+
             if (!res.ret) {
+                LOGE() << "[MuseScoreComService] downloadScoresList: page=" << batchNumber
+                       << " network error: " << res.ret.toString();
                 (void)reject(res.ret.code(), res.ret.toString());
                 return;
             }
@@ -800,6 +827,8 @@ Promise<ScoresList> MuseScoreComService::downloadScoresList(int scoresPerBatch, 
             if (list.ret) {
                 (void)resolve(list.val);
             } else {
+                LOGE() << "[MuseScoreComService] downloadScoresList: page=" << batchNumber
+                       << " parse error: " << list.ret.toString();
                 (void)reject(list.ret.code(), list.ret.toString());
             }
         });

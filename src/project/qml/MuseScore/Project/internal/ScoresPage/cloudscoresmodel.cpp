@@ -80,6 +80,10 @@ void CloudScoresModel::load()
 
 void CloudScoresModel::reload()
 {
+    LOGI() << "[CloudScoresModel] reload() called, current m_items.size=" << m_items.size()
+           << " m_watchedItemCount=" << m_watchedItemCount
+           << " requestState=" << static_cast<int>(m_requestState);
+
     if (m_requestState != RequestState::Idle) {
         m_requestState = RequestState::PendingStale;
         m_queuedRefreshPage.reset();
@@ -169,6 +173,14 @@ void CloudScoresModel::loadItemsIfNecessary(std::optional<int> refreshPage)
 
     int page = refreshPage.value_or(static_cast<int>(loadedCloudItemCount()) / BATCH_SIZE + 1);
 
+    LOGI() << "[CloudScoresModel] requesting page=" << page
+           << " isRefresh=" << isRefresh
+           << " loadedCloudItemCount=" << loadedCloudItemCount()
+           << " m_watchedItemCount=" << m_watchedItemCount
+           << " m_items.size=" << m_items.size()
+           << " m_totalItems=" << m_totalItems
+           << " m_desiredRowCount=" << m_desiredRowCount;
+
     if (!isRefresh) {
         setState(State::Loading);
     }
@@ -176,11 +188,18 @@ void CloudScoresModel::loadItemsIfNecessary(std::optional<int> refreshPage)
     m_requestState = RequestState::Pending;
 
     museScoreComService()->downloadScoresList(BATCH_SIZE, page)
-    .onResolve(this, [this, isRefresh](const cloud::ScoresList& scoresList) {
+    .onResolve(this, [this, isRefresh, page](const cloud::ScoresList& scoresList) {
         const RequestState prevState = m_requestState;
         m_requestState = RequestState::Idle;
 
+        LOGI() << "[CloudScoresModel] resolved page=" << page
+               << " isRefresh=" << isRefresh
+               << " prevState==PendingStale=" << (prevState == RequestState::PendingStale)
+               << " itemsReturned=" << scoresList.items.size()
+               << " serverTotal=" << scoresList.meta.totalScoresCount;
+
         if (prevState == RequestState::PendingStale) {
+            LOGI() << "[CloudScoresModel] request was stale, discarding and re-requesting";
             loadItemsIfNecessary();
             return;
         }
@@ -189,16 +208,23 @@ void CloudScoresModel::loadItemsIfNecessary(std::optional<int> refreshPage)
         downloadedScoreIds.reserve(scoresList.items.size());
         for (const cloud::ScoresList::Item& item : scoresList.items) {
             downloadedScoreIds.insert(item.id);
+            LOGI() << "[CloudScoresModel]   returned item id=" << item.id << " title=" << item.title;
         }
 
         updateWatchedItems(downloadedScoreIds, /*allowRefresh*/ false);
         int insertAt = isRefresh ? static_cast<int>(m_watchedItemCount) : static_cast<int>(m_items.size());
 
+        int skippedCount = 0;
+        int insertedCount = 0;
+
         for (const cloud::ScoresList::Item& item : scoresList.items) {
             if (containsCloudScore(item.id)) {
+                ++skippedCount;
+                LOGI() << "[CloudScoresModel]   skipping duplicate id=" << item.id << " title=" << item.title;
                 continue;
             }
 
+            ++insertedCount;
             QVariantMap obj;
 
             obj[NAME_KEY] = item.title;
@@ -223,16 +249,23 @@ void CloudScoresModel::loadItemsIfNecessary(std::optional<int> refreshPage)
         m_totalItems = scoresList.meta.totalScoresCount;
         emit hasMoreChanged();
 
+        LOGI() << "[CloudScoresModel] page=" << page << " done: inserted=" << insertedCount
+               << " skippedAsDuplicate=" << skippedCount
+               << " -> loadedCloudItemCount=" << loadedCloudItemCount()
+               << " m_totalItems=" << m_totalItems
+               << " nextComputedPage=" << (static_cast<int>(loadedCloudItemCount()) / BATCH_SIZE + 1);
+
         if (m_queuedRefreshPage) {
             const int queuedPage = *m_queuedRefreshPage;
+            LOGI() << "[CloudScoresModel] running queued refresh for page=" << queuedPage;
             m_queuedRefreshPage.reset();
             loadItemsIfNecessary(queuedPage);
         } else if (!isRefresh) {
             loadItemsIfNecessary();
         }
     })
-    .onReject(this, [this, isRefresh](int code, const std::string& err) {
-        LOGE() << "Loading scores list failed: [" << code << "] " << err;
+    .onReject(this, [this, isRefresh, page](int code, const std::string& err) {
+        LOGE() << "Loading scores list failed: page=" << page << " [" << code << "] " << err;
 
         const RequestState prevState = m_requestState;
         m_requestState = RequestState::Idle;
@@ -309,6 +342,12 @@ void CloudScoresModel::updateWatchedItems(const std::unordered_set<int>& downloa
     const std::vector<QVariantMap> watchedItems = buildWatchedItems(downloadedScoreIds);
     const bool watchedItemFinished = watchedItems.size() < m_watchedItemCount;
 
+    LOGI() << "[CloudScoresModel] updateWatchedItems: prevWatchedCount=" << m_watchedItemCount
+           << " newWatchedCount=" << watchedItems.size()
+           << " watchedItemFinished=" << watchedItemFinished
+           << " allowRefresh=" << allowRefresh
+           << " downloadedScoreIds.size=" << downloadedScoreIds.size();
+
     if (m_watchedItemCount > 0) {
         beginRemoveRows(QModelIndex(), 0, static_cast<int>(m_watchedItemCount) - 1);
         m_items.erase(m_items.begin(), m_items.begin() + m_watchedItemCount);
@@ -326,6 +365,7 @@ void CloudScoresModel::updateWatchedItems(const std::unordered_set<int>& downloa
 
     if (watchedItemFinished && allowRefresh) {
         //! NOTE: a conversion finished - fetch the newest page to pick it up
+        LOGI() << "[CloudScoresModel] a watched conversion finished, triggering page-1 refresh";
         loadItemsIfNecessary(1);
     }
 }
