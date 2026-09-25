@@ -27,6 +27,7 @@
 
 namespace mu::engraving {
 class Note;
+class Fingering;
 
 class NoteArticulationsParser : public MetaParserBase<NoteArticulationsParser>
 {
@@ -46,6 +47,8 @@ protected:
     static void doParse(const EngravingItem* item, const RenderingContext& ctx, muse::mpe::ArticulationMap& result);
 
 private:
+    static void parseFingering(const Fingering* fingering, const RenderingContext& ctx, muse::mpe::ArticulationMap& result);
+
     static muse::mpe::ArticulationType articulationTypeByNoteheadGroup(const NoteHeadGroup noteheadGroup);
     static void appendArticulations(const muse::mpe::ArticulationTypeSet& types, const RenderingContext& ctx,
                                     muse::mpe::ArticulationMap& result);

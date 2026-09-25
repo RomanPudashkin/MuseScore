@@ -211,6 +211,8 @@ enum class ArticulationType : signed char {
     RandomPizzicato,
     UpBow,
     DownBow,
+    OpenString,
+    StoppedString,
     Detache,
     Martele,
     Jete,

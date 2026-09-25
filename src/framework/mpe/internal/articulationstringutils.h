@@ -60,6 +60,8 @@ static const std::unordered_map<ArticulationType, QString> ARTICULATION_TYPE_NAM
     { ArticulationType::RandomPizzicato, "RandomPizzicato" },
     { ArticulationType::UpBow, "UpBow" },
     { ArticulationType::DownBow, "DownBow" },
+    { ArticulationType::OpenString, "OpenString" },
+    { ArticulationType::StoppedString, "StoppedString" },
     { ArticulationType::Detache, "Detache" },
     { ArticulationType::Martele, "Martele" },
     { ArticulationType::Jete, "Jete" },

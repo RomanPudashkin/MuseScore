@@ -22,6 +22,7 @@
 
 #include "notearticulationsparser.h"
 
+#include "dom/fingering.h"
 #include "dom/note.h"
 #include "dom/spanner.h"
 #include "dom/laissezvib.h"
@@ -192,11 +193,38 @@ void NoteArticulationsParser::parseNoteHead(const Note* note, const RenderingCon
 void NoteArticulationsParser::parseSymbols(const Note* note, const RenderingContext& ctx, mpe::ArticulationMap& result)
 {
     for (const EngravingItem* item : note->el()) {
-        if (item && item->isSymbol()) {
+        if (!item) {
+            continue;
+        }
+
+        if (item->isSymbol()) {
             ArticulationTypeSet types = SymbolsMetaParser::symbolToArticulations(toSymbol(item)->sym());
             appendArticulations(types, ctx, result);
+        } else if (item->isFingering()) {
+            parseFingering(toFingering(item), ctx, result);
         }
     }
+}
+
+void NoteArticulationsParser::parseFingering(const Fingering* fingering, const RenderingContext& ctx, mpe::ArticulationMap& result)
+{
+    const TextStyleType textStyle = fingering->textStyleType();
+    if (textStyle != TextStyleType::FINGERING && textStyle != TextStyleType::LH_GUITAR_FINGERING) {
+        return;
+    }
+
+    const String text = fingering->plainText();
+    if (text.size() != 1) {
+        return;
+    }
+
+    const Char firstChar = text.at(0);
+    if (!firstChar.isDigit() && firstChar != u'T') {
+        return;
+    }
+
+    const mpe::ArticulationType type = firstChar == u'0' ? mpe::ArticulationType::OpenString : mpe::ArticulationType::StoppedString;
+    appendArticulations({ type }, ctx, result);
 }
 
 void NoteArticulationsParser::parseLaissezVibrer(const Note* note, const RenderingContext& ctx, mpe::ArticulationMap& result)
