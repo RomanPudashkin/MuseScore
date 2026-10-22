@@ -334,6 +334,10 @@ void MuseSamplerSequencer::addNoteEvent(const mpe::NoteEvent& noteEvent)
     event._tempo = arrangementCtx.bps * 60.0; // API expects BPM
 
     pitchAndTuning(noteEvent.pitchCtx().nominalPitchLevel, event._pitch, event._offset_cents);
+    LOGI() << "[DEBUG] addNoteEvent: timestamp: " << event._location_us
+           << ", nominalPitchLevel: " << noteEvent.pitchCtx().nominalPitchLevel
+           << ", MIDI pitch sent: " << event._pitch
+           << ", cents: " << event._offset_cents;
     parseArticulations(articulations, event._articulation, event._articulation_2, event._notehead);
 
     long long noteEventId = 0;

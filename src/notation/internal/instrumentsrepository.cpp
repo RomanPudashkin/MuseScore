@@ -274,6 +274,14 @@ void InstrumentsRepository::loadMuseInstruments(const InstrumentTemplateMap& sta
 
     for (const musesampler::Instrument& instrument : instruments) {
         mpe::PlaybackSetupData sound = mpe::PlaybackSetupData::fromString(instrument.soundId);
+        LOGI() << "[DEBUG] Muse instrument: id: " << instrument.id
+               << ", name: " << instrument.name
+               << ", soundId: " << instrument.soundId
+               << ", musicXmlId: " << instrument.musicXmlId
+               << ", clef: " << static_cast<int>(instrument.clefType)
+               << ", valid: " << sound.isValid()
+               << ", known: " << sound.isKnownSound()
+               << (sound.isValid() && !sound.isKnownSound() ? " -> REGISTERED AS NEW INSTRUMENT" : " -> skipped");
         if (!sound.isValid()) {
             continue;
         }

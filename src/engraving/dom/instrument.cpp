@@ -28,6 +28,8 @@
 #include "stringdata.h"
 #include "textbase.h"
 
+#include "types/typesconv.h"
+
 #include "log.h"
 
 using namespace mu;
@@ -1181,6 +1183,14 @@ String Instrument::abbreviatureAsPlainText() const
 
 Instrument Instrument::fromTemplate(const InstrumentTemplate* templ)
 {
+    LOGI() << "[DEBUG] fromTemplate: id: " << templ->id
+           << ", trackName: " << templ->trackName
+           << ", soundId: " << templ->soundId
+           << ", musicXmlId: " << templ->musicXmlId
+           << ", transpose: " << static_cast<int>(templ->transpose.diatonic) << "/" << static_cast<int>(templ->transpose.chromatic)
+           << ", concertClef: " << TConv::toXml(templ->clefTypes[0].concertClef)
+           << ", transposingClef: " << TConv::toXml(templ->clefTypes[0].transposingClef);
+
     Instrument instrument(templ->id);
     instrument.setSoundId(templ->soundId);
     instrument.setAmateurPitchRange(templ->minPitchA, templ->maxPitchA);

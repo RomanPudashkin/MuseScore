@@ -223,6 +223,10 @@ void MuseSamplerWrapper::setupSound(const mpe::PlaybackSetupData& setupData)
         }
     }
 
+    LOGI() << "[DEBUG] setupSound: musesampler instrumentId: " << m_instrument.instrumentId
+           << ", name: " << (m_instrument.msInstrument ? m_samplerLib->getInstrumentName(m_instrument.msInstrument) : "<null>")
+           << ", setupData: " << setupData.toString();
+
     m_sequencer.init(m_samplerLib, m_sampler, this, resolveDefaultPresetCode(m_instrument));
 
     if (m_instrument.isValid() && m_instrument.isOnline) {
