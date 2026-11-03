@@ -5837,6 +5837,21 @@ QT_TRANSLATE_NOOP3("engraving/instruments", "arco", "acoustic-bass channel"),
 //: channel for Acoustic Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
 QT_TRANSLATE_NOOP3("engraving/instruments", "tremolo", "acoustic-bass channel"),
 
+//: description for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Double bass, plucked rather than bowed.", "double-bass-plucked description"),
+//: trackName for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Double Bass", "double-bass-plucked trackName"),
+//: longName for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Double Bass", "double-bass-plucked longName"),
+//: shortName for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Db.", "double-bass-plucked shortName"),
+//: channel for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "pizzicato", "double-bass-plucked channel"),
+//: channel for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "arco", "double-bass-plucked channel"),
+//: channel for Double Bass; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "tremolo", "double-bass-plucked channel"),
+
 //: description for Bass Guitar (tablature); Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
 QT_TRANSLATE_NOOP3("engraving/instruments", "Bass guitar (tablature).", "bass-guitar-tablature description"),
 //: trackName for Bass Guitar (tablature); Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names

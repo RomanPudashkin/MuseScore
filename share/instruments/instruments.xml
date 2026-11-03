@@ -14506,6 +14506,36 @@
                   <genre>common</genre>
                   <genre>jazz</genre>
             </Instrument>
+            <Instrument id="double-bass-plucked">
+                  <family>bass-guitars</family>
+                  <trackName>Double Bass</trackName>
+                  <longName>Double Bass</longName>
+                  <shortName>Db.</shortName>
+                  <description>Double bass, plucked rather than bowed.</description>
+                  <musicXMLid>pluck.bass.acoustic</musicXMLid>
+                  <transposingClef>F</transposingClef>
+                  <concertClef>F8vb</concertClef>
+                  <barlineSpan>1</barlineSpan>
+                  <aPitchRange>28-62</aPitchRange>
+                  <pPitchRange>24-67</pPitchRange>
+                  <transposeDiatonic>-7</transposeDiatonic>
+                  <transposeChromatic>-12</transposeChromatic>
+                  <glissandoStyle>portamento</glissandoStyle>
+                  <Channel name="pizzicato">
+                        <!--MIDI: Bank 0, Prog 32; MS General: Acoustic Bass-->
+                        <program value="32"/> <!--Acoustic Bass-->
+                  </Channel>
+                  <Channel name="arco">
+                        <!--MIDI: Bank 0, Prog 43; MS General: Contrabass-->
+                        <program value="43"/> <!--Contrabass-->
+                  </Channel>
+                  <Channel name="tremolo">
+                        <!--MIDI: Bank 0, Prog 44; MS General: Strings Tremolo-->
+                        <program value="44"/> <!--Tremolo Strings-->
+                  </Channel>
+                  <genre>common</genre>
+                  <genre>jazz</genre>
+            </Instrument>
             <Instrument id="bass-guitar-tablature">
                   <init>bass-guitar</init>
                   <family>bass-guitars</family>
