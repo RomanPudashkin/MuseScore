@@ -1282,12 +1282,12 @@ TEST_F(Engraving_EditPartTests, PartsLayoutChangesScore_DetectsSharedPartChanges
     // [WHEN] The second flute joins the shared part
     // [THEN] The score changes
     EXPECT_TRUE(EditPart::partsLayoutChangesScore(score, { { { sharedPart, nullptr }, { flute1, sharedPart },
-                                                             { flute2, sharedPart } }, {} }));
+                                                      { flute2, sharedPart } }, {} }));
 
     // [WHEN] The first flute leaves the shared part
     // [THEN] The score changes
     EXPECT_TRUE(EditPart::partsLayoutChangesScore(score, { { { sharedPart, nullptr }, { flute1, nullptr },
-                                                             { flute2, nullptr } }, {} }));
+                                                      { flute2, nullptr } }, {} }));
 
     delete score;
 }
@@ -1312,7 +1312,7 @@ TEST_F(Engraving_EditPartTests, SetPartsLayout_JoinSharedPart_MovesAndJoinsInOne
     // [WHEN] The second flute moves after the first one and joins the shared part
     edit(score, [score, sharedPart, flute1, piano, flute2](Transaction& tx) {
         EditPart::setPartsLayout(tx, score, { { { sharedPart, nullptr }, { flute1, sharedPart }, { flute2, sharedPart },
-                                                { piano, nullptr } }, {} });
+                                     { piano, nullptr } }, {} });
     });
 
     // [THEN] Both flutes are next to each other, in the shared part
@@ -1353,7 +1353,7 @@ TEST_F(Engraving_EditPartTests, SetPartsLayout_LeaveSharedPart_MovesAndLeavesInO
     // [WHEN] The second flute moves after the piano and leaves the shared part
     edit(score, [score, sharedPart, flute1, flute2, piano](Transaction& tx) {
         EditPart::setPartsLayout(tx, score, { { { sharedPart, nullptr }, { flute1, sharedPart }, { piano, nullptr },
-                                                { flute2, nullptr } }, {} });
+                                     { flute2, nullptr } }, {} });
     });
 
     // [THEN] The second flute is after the piano, out of the shared part
