@@ -49,6 +49,7 @@ public:
     static SharedPart* createSharedPart(Transaction& tx, const std::vector<Part*>& parts);
     static void addPartsToSharedPart(Transaction& tx, const std::vector<Part*>& parts, SharedPart* sharedPart);
     static void removePartsFromSharedPart(Transaction& tx, const std::vector<Part*>& parts);
+    static bool canShareStaves(const Part* part);
 
     static void addStaveSharingChange(Transaction& tx, Segment* seg, Part* part, bool reset);
     static void addStaveSharingChangeToRange(Transaction& tx, Segment* startSeg, Segment* endSeg, staff_idx_t startStaff,

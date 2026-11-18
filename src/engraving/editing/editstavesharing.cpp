@@ -273,23 +273,9 @@ StaveSharingGroups EditStaveSharing::computeGroups(Score* score)
 
     StaveSharingGroups staveSharingGroups;
 
-    auto excludePart = [](Part* part) {
-        if (part->nstaves() > 1 || part->isSharedPart()) {
-            return true;
-        }
-
-        Staff* firstStaff = part->staves().front();
-        const StaffType* staffType = firstStaff->staffType();
-        if (staffType->group() != StaffGroup::STANDARD && staffType->group() != StaffGroup::JIANPU) {
-            return true;
-        }
-
-        return false;
-    };
-
     for (size_t partIdx = 0; partIdx < parts.size();) {
         Part* part = parts[partIdx];
-        if (excludePart(part)) {
+        if (!canShareStaves(part)) {
             ++partIdx;
             continue;
         }
@@ -306,7 +292,7 @@ StaveSharingGroups EditStaveSharing::computeGroups(Score* score)
         size_t nextPartIdx = partIdx;
         while (nextPartIdx < parts.size()) {
             Part* nextPart = parts[nextPartIdx];
-            if (excludePart(nextPart)) {
+            if (!canShareStaves(nextPart)) {
                 break;
             }
             Instrument* nextInstr = nextPart->instrument();
@@ -474,6 +460,16 @@ void EditStaveSharing::removePartsFromSharedPart(Transaction& tx, const std::vec
     Score* score = parts.front()->score();
     score->setBracketsAndBarlines();
     score->update();
+}
+
+bool EditStaveSharing::canShareStaves(const Part* part)
+{
+    if (part->nstaves() != 1 || part->isSharedPart()) {
+        return false;
+    }
+
+    const StaffGroup group = part->staves().front()->staffType()->group();
+    return group == StaffGroup::STANDARD || group == StaffGroup::JIANPU;
 }
 
 void EditStaveSharing::disconnectBeforeRemovingPart(Transaction& tx, Part* part)
