@@ -22,6 +22,10 @@
 
 #include "editstavesharing.h"
 
+#include <functional>
+#include <optional>
+#include <set>
+
 #include "dom/factory.h"
 #include "dom/instrtemplate.h"
 #include "dom/part.h"
@@ -241,6 +245,38 @@ void undoSetStaveSharingState(Transaction& tx, SharedPart* sharedPart, const Fra
         tx.push(new AddStaveSharingChange(sharedPart, tick, state));
     }
 }
+
+// remap returns nidx for a track that is gone
+void undoRemapUserTrackMaps(Transaction& tx, Score* score, const std::function<track_idx_t(track_idx_t)>& remap)
+{
+    for (SharedPart* sharedPart : score->sharedParts()) {
+        for (const auto& [tick, state] : sharedPart->staveSharingStatesBetweenTicks(Fraction(0, 1), score->endTick())) {
+            if (!state.isUserModified()) {
+                continue;
+            }
+
+            std::optional<SharedTrackMap> newMap = SharedTrackMap();
+            for (const auto& [originTrack, sharedTrack] : state.userTrackMap().value()) {
+                const track_idx_t newOriginTrack = remap(originTrack);
+                const track_idx_t newSharedTrack = remap(sharedTrack);
+                if (newOriginTrack == muse::nidx) {
+                    continue;
+                }
+                if (newSharedTrack == muse::nidx) {
+                    newMap = std::nullopt;
+                    break;
+                }
+                newMap->emplace(newOriginTrack, newSharedTrack);
+            }
+
+            StaveSharingState newState = state;
+            newState.setUserTrackMap(newMap);
+            if (newState != state) {
+                undoSetStaveSharingState(tx, sharedPart, tick, newState);
+            }
+        }
+    }
+}
 }
 
 //-------------------------------------------------------------------
@@ -391,8 +427,20 @@ void EditStaveSharing::connectSharedPart(Transaction& tx, SharedPart* sharedPart
 void EditStaveSharing::disconnectSharedPart(Transaction& tx, SharedPart* sharedPart, Part* originPart)
 {
     Score* score = originPart->score();
+    Staff* removedStaff = sharedPart->staves().back();
+    const track_idx_t removedTrack = staff2track(removedStaff->idx(), 0);
+    const TrackRange originTracks = originPart->trackRange();
+
+    undoRemapUserTrackMaps(tx, score, [&](track_idx_t track) {
+        if ((track >= originTracks.startTrack && track < originTracks.endTrack)
+            || (track >= removedTrack && track < removedTrack + VOICES)) {
+            return muse::nidx;
+        }
+        return track > removedTrack ? track - VOICES : track;
+    });
+
     tx.push(new DisconnectSharedPart(sharedPart, originPart));
-    score->undoRemoveStaff(sharedPart->staves().back());
+    score->undoRemoveStaff(removedStaff);
 }
 
 void EditStaveSharing::disconnectFromCurrentSharedPart(Transaction& tx, Part* part)
@@ -414,50 +462,48 @@ SharedPart* EditStaveSharing::createSharedPart(Transaction& tx, const std::vecto
         return nullptr;
     }
 
-    for (Part* part : parts) {
-        disconnectFromCurrentSharedPart(tx, part);
-    }
-
     Part* firstPart = parts.front();
     Score* score = firstPart->score();
     const size_t idx = muse::indexOf(score->parts(), firstPart);
     SharedPart* sharedPart = createSharedPart(score, idx, firstPart->instrument());
 
+    std::vector<std::pair<Part*, SharedPart*> > newParts;
+    newParts.reserve(parts.size());
     for (Part* part : parts) {
-        connectSharedPart(tx, sharedPart, part);
+        newParts.emplace_back(part, sharedPart);
     }
 
-    score->setBracketsAndBarlines();
-    score->update();
+    setSharedParts(tx, score, newParts);
 
     return sharedPart;
 }
 
-void EditStaveSharing::addPartsToSharedPart(Transaction& tx, const std::vector<Part*>& parts, SharedPart* sharedPart)
+void EditStaveSharing::setSharedParts(Transaction& tx, Score* score, const std::vector<std::pair<Part*, SharedPart*> >& parts)
 {
-    for (Part* part : parts) {
-        if (part->sharedPart() != sharedPart) {
-            disconnectFromCurrentSharedPart(tx, part);
+    std::set<SharedPart*> leftSharedParts;
+
+    for (const auto& [part, sharedPart] : parts) {
+        SharedPart* currentSharedPart = part->sharedPart();
+        if (currentSharedPart == sharedPart) {
+            continue;
+        }
+
+        if (currentSharedPart) {
+            disconnectSharedPart(tx, currentSharedPart, part);
+            leftSharedParts.insert(currentSharedPart);
+        }
+
+        if (sharedPart) {
             connectSharedPart(tx, sharedPart, part);
         }
     }
 
-    Score* score = sharedPart->score();
-    score->setBracketsAndBarlines();
-    score->update();
-}
-
-void EditStaveSharing::removePartsFromSharedPart(Transaction& tx, const std::vector<Part*>& parts)
-{
-    if (parts.empty()) {
-        return;
+    for (SharedPart* sharedPart : leftSharedParts) {
+        if (sharedPart->originParts().empty()) {
+            score->cmdRemovePart(sharedPart);
+        }
     }
 
-    for (Part* part : parts) {
-        disconnectFromCurrentSharedPart(tx, part);
-    }
-
-    Score* score = parts.front()->score();
     score->setBracketsAndBarlines();
     score->update();
 }

@@ -1247,7 +1247,7 @@ TEST_F(Engraving_StaveSharingTests, CreateSharedPart)
     delete score;
 }
 
-TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart)
+TEST_F(Engraving_StaveSharingTests, SetSharedParts_Join)
 {
     // [GIVEN] A shared part with the first flute
     MasterScore* score = ScoreRW::readScore(STAVE_SHARING_DIR + u"staveSharing_00.mscz");
@@ -1269,7 +1269,7 @@ TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart)
 
     // [WHEN] The second flute is added to it
     score->transactionManager()->transaction(muse::TranslatableString::untranslatable("Add to shared part"), [&](Transaction& tx) {
-        EditStaveSharing::addPartsToSharedPart(tx, { flute2 }, sharedPart);
+        EditStaveSharing::setSharedParts(tx, score, { { flute2, sharedPart } });
     });
 
     // [THEN] Both flutes are in it, one staff each, and the changes include the shared part and the flute
@@ -1292,7 +1292,7 @@ TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart)
     delete score;
 }
 
-TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart_LeavesEmptiedSharedPart)
+TEST_F(Engraving_StaveSharingTests, SetSharedParts_MoveToOther_RemovesEmptied)
 {
     // [GIVEN] Each flute in its own shared part
     MasterScore* score = ScoreRW::readScore(STAVE_SHARING_DIR + u"staveSharing_00.mscz");
@@ -1311,7 +1311,7 @@ TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart_LeavesEmptiedSharedPart
 
     // [WHEN] The second flute moves to the first flute's shared part
     score->transactionManager()->transaction(muse::TranslatableString::untranslatable("Add to shared part"), [&](Transaction& tx) {
-        EditStaveSharing::addPartsToSharedPart(tx, { flute2 }, sharedPart1);
+        EditStaveSharing::setSharedParts(tx, score, { { flute2, sharedPart1 } });
     });
 
     // [THEN] Both flutes are in the first shared part, and the second one is removed
@@ -1322,7 +1322,7 @@ TEST_F(Engraving_StaveSharingTests, AddPartsToSharedPart_LeavesEmptiedSharedPart
     delete score;
 }
 
-TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart)
+TEST_F(Engraving_StaveSharingTests, SetSharedParts_Leave)
 {
     // [GIVEN] Both flutes in a shared part
     MasterScore* score = ScoreRW::readScore(STAVE_SHARING_DIR + u"staveSharing_00.mscz");
@@ -1347,7 +1347,7 @@ TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart)
 
     // [WHEN] The first flute leaves it
     score->transactionManager()->transaction(muse::TranslatableString::untranslatable("Remove from shared part"), [&](Transaction& tx) {
-        EditStaveSharing::removePartsFromSharedPart(tx, { flute1 });
+        EditStaveSharing::setSharedParts(tx, score, { { flute1, nullptr } });
     });
 
     // [THEN] Only the second flute is in it, with one staff, and the changes include the shared part and the flute
@@ -1359,7 +1359,7 @@ TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart)
 
     // [WHEN] The second flute leaves it too
     score->transactionManager()->transaction(muse::TranslatableString::untranslatable("Remove from shared part"), [&](Transaction& tx) {
-        EditStaveSharing::removePartsFromSharedPart(tx, { flute2 });
+        EditStaveSharing::setSharedParts(tx, score, { { flute2, nullptr } });
     });
 
     // [THEN] The shared part is removed
@@ -1380,7 +1380,7 @@ TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart)
     delete score;
 }
 
-TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart_All)
+TEST_F(Engraving_StaveSharingTests, SetSharedParts_AllLeave_RemovesSharedPart)
 {
     // [GIVEN] Both flutes in a shared part
     MasterScore* score = ScoreRW::readScore(STAVE_SHARING_DIR + u"staveSharing_00.mscz");
@@ -1400,7 +1400,7 @@ TEST_F(Engraving_StaveSharingTests, RemovePartsFromSharedPart_All)
 
     // [WHEN] Both flutes leave it at once
     score->transactionManager()->transaction(muse::TranslatableString::untranslatable("Remove from shared part"), [&](Transaction& tx) {
-        EditStaveSharing::removePartsFromSharedPart(tx, { flute1, flute2 });
+        EditStaveSharing::setSharedParts(tx, score, { { flute1, nullptr }, { flute2, nullptr } });
     });
 
     // [THEN] The shared part is removed

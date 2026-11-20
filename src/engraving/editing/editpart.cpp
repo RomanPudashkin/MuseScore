@@ -690,20 +690,13 @@ void EditPart::setPartsLayout(Transaction& tx, Score* score, const PartsLayout& 
     std::vector<Part*> parts;
     parts.reserve(placements.size());
 
-    std::vector<Part*> leavingParts;
-    std::map<SharedPart*, std::vector<Part*> > joiningParts;
+    std::vector<std::pair<Part*, SharedPart*> > newSharedParts;
 
     for (const PartPlacement& placement : placements) {
         parts.push_back(placement.part);
 
-        if (!changesSharedPart(placement)) {
-            continue;
-        }
-
-        if (placement.sharedPart) {
-            joiningParts[placement.sharedPart].push_back(placement.part);
-        } else {
-            leavingParts.push_back(placement.part);
+        if (changesSharedPart(placement)) {
+            newSharedParts.emplace_back(placement.part, placement.sharedPart);
         }
     }
 
@@ -742,10 +735,8 @@ void EditPart::setPartsLayout(Transaction& tx, Score* score, const PartsLayout& 
         doReorderParts(tx, excerptScore, excerptScore->parts(), excerptMoves);
     }
 
-    EditStaveSharing::removePartsFromSharedPart(tx, leavingParts);
-
-    for (const auto& [sharedPart, sharedPartParts] : joiningParts) {
-        EditStaveSharing::addPartsToSharedPart(tx, sharedPartParts, sharedPart);
+    if (!newSharedParts.empty()) {
+        EditStaveSharing::setSharedParts(tx, score, newSharedParts);
     }
 }
 
@@ -864,7 +855,13 @@ void EditPart::movePartsToSharedPart(Transaction& tx, Score* score, const std::v
         moveParts(tx, score, movingParts, lastMember, true);
     }
 
-    EditStaveSharing::addPartsToSharedPart(tx, movingParts, sharedPart);
+    std::vector<std::pair<Part*, SharedPart*> > newSharedParts;
+    newSharedParts.reserve(movingParts.size());
+    for (Part* part : movingParts) {
+        newSharedParts.emplace_back(part, sharedPart);
+    }
+
+    EditStaveSharing::setSharedParts(tx, score, newSharedParts);
 }
 
 SharedPart* EditPart::movePartsToNewSharedPart(Transaction& tx, Score* score, const std::vector<Part*>& parts)

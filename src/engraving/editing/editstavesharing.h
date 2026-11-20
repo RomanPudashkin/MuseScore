@@ -21,6 +21,7 @@
  */
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include "../dom/sharedpart.h"
@@ -47,8 +48,8 @@ public:
     static void disconnectBeforeRemovingPart(Transaction& tx, Part* part);
 
     static SharedPart* createSharedPart(Transaction& tx, const std::vector<Part*>& parts);
-    static void addPartsToSharedPart(Transaction& tx, const std::vector<Part*>& parts, SharedPart* sharedPart);
-    static void removePartsFromSharedPart(Transaction& tx, const std::vector<Part*>& parts);
+    //! Moves each part to its shared part (nullptr: out of any), then removes the shared parts left empty
+    static void setSharedParts(Transaction& tx, Score* score, const std::vector<std::pair<Part*, SharedPart*> >& parts);
     static bool canShareStaves(const Part* part);
 
     static void addStaveSharingChange(Transaction& tx, Segment* seg, Part* part, bool reset);
